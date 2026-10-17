@@ -10,9 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
-        run: brew install xcodegen pkgconf
-      - name: Build checksum-pinned native dependencies and app
+        run: brew install xcodegen
+      - name: Build original Swift engine and app
         run: Scripts/build-app.sh
+      - name: Audit shipped dependencies and notices
+        run: python3 Scripts/audit-distribution.py .build/DeviceData/Build/Products/Debug-iphoneos/Qalculate.app
       - uses: actions/upload-artifact@v4
         with:
           name: Qalculate-unsigned-iOS-app

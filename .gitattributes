@@ -1,3 +1,2 @@
-# Preserve upstream definition and license files byte-for-byte.
-App/Resources/Definitions/** -whitespace
+# Preserve third-party license text byte-for-byte.
 App/Resources/Licenses/** -whitespace

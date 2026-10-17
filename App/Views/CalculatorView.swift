@@ -96,7 +96,7 @@ struct CalculatorView: View {
                 ScrollView { calculatorContent.frame(minHeight: 600) }.accessibilityIdentifier("landscapeCalculator")
             } else { calculatorContent }
         }
-        .navigationTitle("Qalculate!").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Fraction Lab").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
                 if sizeClass != .regular { Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History") }
@@ -159,13 +159,19 @@ struct HistoryView: View {
 }
 
 struct AboutView: View {
+    private var licenseNotices: String {
+        ["App-MIT", "KaTeX-MIT"].compactMap { name in
+            Bundle.main.url(forResource: name, withExtension: "txt", subdirectory: "Licenses")
+                .flatMap { try? String(contentsOf: $0, encoding: .utf8) }
+        }.joined(separator: "\n\n")
+    }
     @AppStorage("appearance") private var appearance = "dark"
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         NavigationStack {
             Form {
-                Section("Qalculate! for iPhone & iPad") {
-                    Text("An independent native port powered by libqalculate 5.13.1.")
+                Section("Fraction Lab for iPhone & iPad") {
+                    Text("An independent calculator with an original Swift engine. No Qalculate code or datasets are included.")
                     Text("All calculations run offline. History stays on your device. Choose dark, light, or system appearance below.")
                 }
                 Section("Appearance") {
@@ -174,15 +180,19 @@ struct AboutView: View {
                 Section("Writing expressions") {
                     Text("Use / for fractions, ^ for powers, and parentheses for grouping. Results and interpreted expressions use textbook notation.")
                     Text("Try: 5 ft + 3 in to cm\nsolve(x^2 = 9, x)\ndiff(x^3, x)").font(.system(.callout, design: .monospaced))
-                    Text("Exact/Decimal and RAD/DEG apply to your next calculation. Calculations have a 3-second limit.")
+                    Text("Exact/Decimal and RAD/DEG apply to your next calculation. Expressions are bounded to 256 tokens and 48 nesting levels.")
+                }
+                Section("Supported syntax") {
+                    Text("sin, cos, tan, asin, acos, atan, sqrt, ln, log (base 10), exp, abs, floor, ceil; constants pi, e, i. Complex arguments are supported for arithmetic, powers, sqrt, and abs. Unit names are case-sensitive. See the README for the complete unit list.")
                 }
                 Section("Current scope") {
-                    Text("Scientific and symbolic calculations, unit conversion, complex numbers, matrices, and calculus. Graph plotting, live currency rates, and desktop file workflows are not included yet.")
+                    Text("Exact 64-bit fractions; scientific real functions; complex arithmetic and square roots; common units; elementary derivatives; linear and quadratic equations. Approximate results use about 15 significant digits. Matrices, integration, arbitrary precision, currency rates, and graphing are not supported.")
                 }
                 Section("Open source") {
                     Link("Source repository", destination: URL(string: "https://github.com/boonmam/qalculate-ios")!)
-                    Text("libqalculate: GPL-2.0-or-later\nGMP: LGPL-3.0-or-later or GPL-2.0-or-later\nMPFR: LGPL-3.0-or-later\nKaTeX: MIT")
-                    Text("This combined distribution is GPL-3.0-or-later. See the repository for complete licenses and reproducible source builds.")
+                    Text("Original app and engine: MIT\nKaTeX renderer and fonts: MIT")
+                    Text("License notices are included below and in the source repository.")
+                    NavigationLink("License notices") { ScrollView { Text(licenseNotices).font(.footnote).padding() }.navigationTitle("Licenses") }
                 }
             }.navigationTitle("About").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }

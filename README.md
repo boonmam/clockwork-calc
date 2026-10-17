@@ -1,112 +1,106 @@
-# Qalculate! for iPhone and iPad
+# Fraction Lab for iPhone and iPad
 
-A working native SwiftUI port powered by **libqalculate 5.13.1**, not a JavaScript
-replacement for the calculation engine. This is an independent, unofficial port.
+An offline SwiftUI calculator with an **original MIT-licensed Swift engine**,
+dark mode, history, and textbook-style stacked fractions. Version 0.2 replaces
+the earlier Qalculate-based prototype; it no longer contains or links Qalculate,
+GMP, MPFR, or their definition datasets. It is not an official Qalculate product.
+The repository and Xcode target names remain unchanged for continuity.
 
-## Included
+## Supported calculations
 
-- Real Qalculate scientific and symbolic calculations, unit conversion, calculus,
-  matrices, complex numbers, and built-in functions and constants.
-- Exact fractions or decimal results; radians and degrees; 30-digit precision.
-- Textbook-style stacked fractions, powers, roots, and equations using the
-  engine's LaTeX output and locally bundled KaTeX.
-- Native cursor-aware expression editing and a scientific keypad.
-- iPhone interface and an iPad history sidebar; portrait and landscape support.
-- Dark mode by default, with Light and System options in About.
-- Persistent local history (last 100 calculations), recall, copy, and swipe-delete.
-- All calculation and math rendering run offline, without a service or API key.
+- Exact reduced fractions within signed 64-bit numerator/denominator limits.
+  Overflow falls back to approximately 15 significant digits, visibly marked
+  approximate. Decimal input is exact when its fraction fits the supported range.
+- Arithmetic, parentheses, unary signs, right-associative powers, implicit
+  multiplication (`2(3+4)`, `5 ft`), scientific notation; constants `pi`, `π`, `e`, `i`.
+- Real scientific functions: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `ln`,
+  `log` (base 10), `exp`, `sqrt`, `abs`, `floor`, `ceil`. RAD/DEG controls angles.
+- Complex arithmetic, powers, square roots and absolute values. Other functions
+  require real arguments; complex output is currently marked approximate.
+- Dimension-checked units and compound conversions, including `5 ft + 3 in to cm`
+  and `60 km/h to m/s`. Unit names are case-sensitive; supported units:
+  `m cm mm km in ft yd mi kg g mg lb oz s ms min h day K L mL Hz N Pa J W`.
+  Kelvin is supported; affine Celsius/Fahrenheit conversions are not.
+- Symbolic `diff(expression, x)` with sum/product/quotient/chain rules, constant
+  numeric powers, `sin cos tan ln exp sqrt`. Derivatives use the selected angle
+  mode. Other names act as symbolic constants; domains/singularities are not tracked.
+- `solve(equation, x)` for real-coefficient, dimensionless linear/quadratic
+  polynomials, including complex quadratic roots. A root set cannot be reused
+  as a scalar expression; copy an individual root to calculate with it.
+- Local history (last 100 results), selection-aware editing, copy/recall, iPad
+  sidebar, portrait/landscape, dark/light/system appearance.
+- Offline KaTeX (MIT) renders interpreted input and results. Entry is linear
+  text notation, not a visual fraction editor.
 
-Type expressions in ordinary notation and tap **=** or Return. The interpreted
-expression and result are typeset after calculation. Examples:
+Examples:
 
 ```text
 1/2 + 1/3
+0.1 + 0.2
 5 ft + 3 in to cm
+60 km/h to m/s
 solve(x^2 = 9, x)
 diff(x^3, x)
 sqrt(-1)
+(1+i)/(1-i)
 ```
 
-## Open and run on this Mac
+## Scope changes from the prototype
 
-Open `Qalculate.xcodeproj`, select the **Qalculate** scheme and an iPhone or iPad
-simulator, and press Run. The dependency libraries have already been built in
-`Vendor/Engine` locally. These generated libraries are intentionally not in Git.
+This is a smaller independent calculator, not a replacement for every Qalculate
+feature. Arbitrary precision, matrices, integration, broad symbolic simplification,
+higher-order equation solving, currency rates, external datasets, custom functions,
+and graphing are not supported. Unsupported expressions fail explicitly.
+Input is limited to 4096 UTF-8 bytes, 256 tokens, 48 parser nesting levels, and a
+bounded evaluation operation count. Numeric overflow/nonfinite results produce
+errors. Historical saved results remain readable but may not be recalculable.
 
-## Build from a fresh clone
+## Build
 
-Requirements: an Apple Silicon Mac, full Xcode, its iOS SDK and Simulator
-runtime, Homebrew `xcodegen` and `pkgconf`, Python 3, and internet access for the
-first dependency build. iOS/iPadOS 17 or newer is the deployment target.
+Requirements: Apple Silicon Mac, Xcode with an iOS SDK/Simulator runtime, and
+Homebrew `xcodegen`. Deployment target: iOS/iPadOS 17+. No external calculation
+libraries, downloads, C/C++ compiler setup, or package resolution are needed.
+The build script cleans previous generated products before rebuilding, so old
+prototype resources cannot survive an incremental build. It audits the device
+app after building.
 
 ```sh
-brew install xcodegen pkgconf
+brew install xcodegen
 Scripts/build-app.sh
 open Qalculate.xcodeproj
 ```
 
-The build script verifies pinned SHA-256 hashes, then compiles GMP 6.3.0, MPFR
-4.2.2, and libqalculate separately for arm64 iOS and arm64 Simulator. It uses the
-iOS SDK's libxml2 and iconv, not Homebrew's macOS libraries. Shell execution,
-external plotting, built-in network fetching, and gettext are disabled. The
-English definition XML and math renderer are bundled in the app.
+Select the **Qalculate** scheme and an iPhone or iPad simulator, then Run. The app
+appears as **Fraction Lab**. `project.yml` is the source of Xcode project settings.
+Run `xcodegen generate` after changing it. `Scripts/vendor-math.sh` optionally
+refreshes the committed checksum-pinned KaTeX assets; normal builds are offline.
 
-The checked-in Xcode project is generated from `project.yml`. After adding files
-or changing project settings, run `xcodegen generate` again. `Scripts/vendor-math.sh`
-refreshes the pinned KaTeX assets with a SHA-512 integrity check.
+For a physical device, select your Apple team under Signing & Capabilities,
+connect the device, and Run. Signing credentials and provisioning profiles are
+not included. App Store/TestFlight submission has not been performed.
 
-## Tests
+## Tests and dependency audit
 
 ```sh
 xcodebuild -project Qalculate.xcodeproj -scheme Qalculate \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
-  -derivedDataPath .build/DerivedData CODE_SIGNING_ALLOWED=NO test
+  -derivedDataPath .build/Tests CODE_SIGNING_ALLOWED=NO test
+python3 Scripts/audit-distribution.py .build/DeviceData/Build/Products/Debug-iphoneos/Qalculate.app
 ```
 
-Replace the destination with an installed iPad simulator to test the tablet
-interface. Tests cover the actual native engine, fraction typesetting, units,
-calculus, degree mode, complex numbers, input limits, selection editing, Unicode
-backspace, history persistence, visible equation rendering, and landscape controls.
-
-A manual GitHub Actions workflow builds unsigned device and Simulator apps.
-Local test results and build logs live under `.build/` and are not committed.
-
-## Install on your own iPhone or iPad
-
-The device build compiles successfully without signing. To install it:
-
-1. Open the Xcode project and select the **Qalculate** target.
-2. In **Signing & Capabilities**, choose your Apple development team. Use a
-   different bundle identifier if your team requires one.
-3. Connect your device, select it as the run destination, and press Run.
-
-This repository does not include signing credentials, provisioning profiles, or
-an App Store/TestFlight release. Publication is a separate distribution step.
-
-## Current limits
-
-This is a functional first native release, not complete desktop UI parity.
-Graph plotting, live currency exchange-rate updates, custom-definition editors
-and persistence, RPN mode, and desktop import/export workflows are not yet ported.
-Only the English engine definitions and arm64 platforms are currently packaged.
-Expressions are limited to 4096 characters and evaluations to 3 seconds; printing
-also has time limits. The text entry remains linear notation, not a visual
-fraction editor. The system keyboard provides text input for functions and units.
-
-History stays in the app's Documents directory. Clearing/reinstalling the app
-without restoring its data removes that history. The built-in currency
-conversion definitions are available, but this release does not load fresh
-currency rates and should not be used as a live exchange-rate source.
+The audit checks source/project dependency removal, bundled notices and assets,
+and (when given an app) resources and executable symbols/linkage. It is a technical
+check of the shipped payload, not a general license scanner or legal opinion.
+See [validation](VALIDATION.md) and [third-party inventory](THIRD_PARTY.md).
 
 ## License
 
-GPL-3.0-or-later for the combined application. See `LICENSE` and `THIRD_PARTY.md`
-for upstream attribution, dependency licenses, and source locations.
+Current original code is MIT-licensed; the only vendored runtime component,
+KaTeX, is also MIT-licensed with its notices preserved. See `LICENSE` and
+`THIRD_PARTY.md`. Earlier GPL-based commits retain their original licensing.
 
-## Screenshots and validation
-
-See [validation results](VALIDATION.md) for the tested environments and limits.
+## Screenshots
 
 | iPhone | iPad |
 | --- | --- |
-| ![iPhone with stacked fractions](Screenshots/iphone.png) | ![iPad with history sidebar](Screenshots/ipad.png) |
+| ![Fraction Lab on iPhone](Screenshots/iphone.png) | ![Fraction Lab on iPad](Screenshots/ipad.png) |

@@ -13,13 +13,9 @@ struct Calculation: Codable, Identifiable, Equatable {
 }
 
 actor CalculatorEngine {
-    private let bridge = QalculateBridge()
+    private let math = NativeMath()
     func evaluate(_ expression: String, exact: Bool, degrees: Bool) throws -> Calculation {
-        let result = bridge.evaluate(expression, exact: exact, degrees: degrees)
-        if let error = result.error { throw CalculationError(message: error) }
-        return Calculation(id: UUID(), date: Date(), expression: expression, text: result.text,
-                           latex: result.latex, inputLatex: result.inputLatex,
-                           approximate: result.approximate, warnings: result.warnings)
+        try math.evaluate(expression, exact: exact, degrees: degrees)
     }
 }
 struct CalculationError: LocalizedError { let message: String; var errorDescription: String? { message } }

@@ -10,14 +10,13 @@
 		03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */; };
 		1258738D7409C090653BD597 /* MathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F320996124E5AA1161F3F736 /* MathView.swift */; };
 		41F0AF90205066F6B9AAB7E0 /* Math in Resources */ = {isa = PBXBuildFile; fileRef = 15E6F95C6B8AE3FF2595BE2A /* Math */; };
-		4309C68C3EF7ED6905923BFA /* Definitions in Resources */ = {isa = PBXBuildFile; fileRef = B6DB2653F0EBFF4370B0CDFE /* Definitions */; };
 		45779D0325710CE80AC14766 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77F93BFB627C63CE25AA4DD /* Assets.xcassets */; };
 		517D006235930BFCEF664ECF /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */; };
 		788191F3941766299A40BAAD /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF89DF39A6B0A30D16DEB493 /* UITests.swift */; };
 		7A823CCF7FE013BF9A938CEC /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA3B980F9DC497508BF20F /* CalculatorView.swift */; };
+		955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8369516055491812ACE28B /* NativeMath.swift */; };
 		9E48A231ADA34565098E16E3 /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */; };
 		CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA2EB930097591FD718B36E /* Theme.swift */; };
-		CDBEF8F81B89C79039677568 /* QalculateBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B8E2F421E91DAB9EADB9A737 /* QalculateBridge.mm */; };
 		E18CE26526031BDE9C881660 /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 7FB2D65EA88E94B08DCC0CCE /* Licenses */; };
 		F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */; };
 		F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1DE21F499047C13F71AB43 /* EngineTests.swift */; };
@@ -46,17 +45,14 @@
 		15E6F95C6B8AE3FF2595BE2A /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
 		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1DE21F499047C13F71AB43 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
+		4E8369516055491812ACE28B /* NativeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMath.swift; sourceTree = "<group>"; };
 		5ACB06FE3390097DC07152FE /* QalculateUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEditor.swift; sourceTree = "<group>"; };
 		763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModel.swift; sourceTree = "<group>"; };
 		7AA2EB930097591FD718B36E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		7FB2D65EA88E94B08DCC0CCE /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Licenses; path = App/Resources/Licenses; sourceTree = SOURCE_ROOT; };
-		9C5D9E5515213366A1DEDE2B /* QalculateBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QalculateBridge.h; sourceTree = "<group>"; };
 		A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QalculateApp.swift; sourceTree = "<group>"; };
 		AAFA3B980F9DC497508BF20F /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
-		ADD540F598C79065FB4D40C7 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
-		B6DB2653F0EBFF4370B0CDFE /* Definitions */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Definitions; path = App/Resources/Definitions; sourceTree = SOURCE_ROOT; };
-		B8E2F421E91DAB9EADB9A737 /* QalculateBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = QalculateBridge.mm; sourceTree = "<group>"; };
 		E77F93BFB627C63CE25AA4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF89DF39A6B0A30D16DEB493 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		F320996124E5AA1161F3F736 /* MathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathView.swift; sourceTree = "<group>"; };
@@ -77,7 +73,6 @@
 		43F4AC73E0A81CC2EDAE48DE = {
 			isa = PBXGroup;
 			children = (
-				B6DB2653F0EBFF4370B0CDFE /* Definitions */,
 				7FB2D65EA88E94B08DCC0CCE /* Licenses */,
 				15E6F95C6B8AE3FF2595BE2A /* Math */,
 				87B0755F93158DBDC054C9FD /* App */,
@@ -119,10 +114,8 @@
 		CE274E9BA72480EB7745E830 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				ADD540F598C79065FB4D40C7 /* BridgingHeader.h */,
 				763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */,
-				9C5D9E5515213366A1DEDE2B /* QalculateBridge.h */,
-				B8E2F421E91DAB9EADB9A737 /* QalculateBridge.mm */,
+				4E8369516055491812ACE28B /* NativeMath.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -242,7 +235,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				45779D0325710CE80AC14766 /* Assets.xcassets in Resources */,
-				4309C68C3EF7ED6905923BFA /* Definitions in Resources */,
 				E18CE26526031BDE9C881660 /* Licenses in Resources */,
 				41F0AF90205066F6B9AAB7E0 /* Math in Resources */,
 			);
@@ -276,8 +268,8 @@
 				7A823CCF7FE013BF9A938CEC /* CalculatorView.swift in Sources */,
 				9E48A231ADA34565098E16E3 /* ExpressionEditor.swift in Sources */,
 				1258738D7409C090653BD597 /* MathView.swift in Sources */,
+				955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */,
 				03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */,
-				CDBEF8F81B89C79039677568 /* QalculateBridge.mm in Sources */,
 				CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -321,11 +313,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Vendor/Engine/$(PLATFORM_NAME)/include",
-				);
-				INFOPLIST_KEY_CFBundleDisplayName = "Qalculate!";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fraction Lab";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -334,22 +322,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Vendor/Engine/$(PLATFORM_NAME)/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lqalculate",
-					"-lmpfr",
-					"-lgmp",
-					"-lxml2",
-					"-liconv",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.qalculate.ios;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = App/Engine/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -412,7 +387,7 @@
 				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -441,7 +416,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -461,7 +436,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -480,11 +455,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Vendor/Engine/$(PLATFORM_NAME)/include",
-				);
-				INFOPLIST_KEY_CFBundleDisplayName = "Qalculate!";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fraction Lab";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -493,22 +464,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Vendor/Engine/$(PLATFORM_NAME)/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lqalculate",
-					"-lmpfr",
-					"-lgmp",
-					"-lxml2",
-					"-liconv",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.qalculate.ios;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = App/Engine/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -520,7 +478,7 @@
 				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -549,7 +507,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -563,7 +521,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

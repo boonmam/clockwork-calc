@@ -1,27 +1,46 @@
-# Third-party components
+# Third-party components — version 0.2
 
-This independent iOS/iPadOS port uses the real Qalculate! calculation engine.
-It is not an official Qalculate! release. The combined application is licensed
-under GPL-3.0-or-later, selecting the later-version option where applicable.
+The current app uses an original Swift calculation engine and MIT-licensed
+KaTeX for offline mathematical display. It contains no libqalculate, GMP, MPFR,
+Qalculate definition XML, or Wikipedia-derived scientific datasets.
 
-| Component | Version | License | Source |
-|---|---|---|---|
-| libqalculate | 5.13.1 | GPL-2.0-or-later | https://github.com/Qalculate/libqalculate |
-| GMP | 6.3.0 | LGPL-3.0-or-later or GPL-2.0-or-later | https://gmplib.org/ |
-| MPFR | 4.2.2 | LGPL-3.0-or-later | https://www.mpfr.org/ |
-| KaTeX | 0.16.22 | MIT | https://github.com/KaTeX/KaTeX |
+| Component | Version | License | Origin |
+| --- | --- | --- | --- |
+| Original app, engine, unit table, icon, tests and build scripts | 0.2 | MIT | This repository; copyright 2026 boonmam |
+| KaTeX JavaScript, CSS and fonts | 0.16.22 | MIT | https://github.com/KaTeX/KaTeX/tree/v0.16.22 |
+| Foundation, SwiftUI, UIKit, WebKit, system math/runtime | iOS SDK | Apple platform SDK terms | Provided by iOS; no third-party copies bundled |
 
-Original copyright notices and complete license texts are retained in the source
-archives and `App/Resources/Licenses`. Qalculate definition XML files are copied
-unchanged from libqalculate's English templates. KaTeX's JavaScript, stylesheet,
-and fonts are included locally with its MIT license; no CDN is contacted.
+The KaTeX copyright and full MIT license are retained verbatim in
+`App/Resources/Math/LICENSE-KaTeX` and `App/Resources/Licenses/KaTeX-MIT.txt`.
+The original app's license is in `LICENSE` and the bundled `App-MIT.txt`.
+Both notices are accessible inside the app under About → License notices.
+`Scripts/vendor-math.sh` verifies the upstream npm archive with a pinned SHA-512
+before refreshing the renderer. No npm development dependencies are bundled.
 
-`Scripts/build-engine.sh` downloads checksum-pinned upstream source archives and
-builds static libraries for arm64 iOS and arm64 Simulator. The engine sources are
-unmodified; configuration disables external commands and shell-based plotting.
-The `Scripts/vendor-math.sh` script verifies and refreshes the KaTeX assets.
+## Replacement provenance
 
-The bundled scientific datasets have separate Wikipedia-derived data notices
-(CC BY-SA and GFDL) preserved verbatim in `datasets.xml` and `planets.xml`.
-Their listed source-article URLs and attribution remain intact; the application's
-GPL license does not replace those data licenses.
+`App/Engine/NativeMath.swift` was written for this project from ordinary
+mathematical identities and parsing techniques. It does not translate or copy
+libqalculate/GMP/MPFR implementations. The small unit table was independently
+written from conventional SI and international unit definitions. No upstream
+function descriptions, definitions, datasets, or graphics were retained.
+The existing original SwiftUI shell and newly written engine are MIT-licensed.
+The display name is now Fraction Lab to distinguish it from Qalculate.
+
+## Historical versions
+
+Commits through `bdb3e05` describe the earlier GPL-based prototype and retain
+their original licensing. This change does not relicense third-party code or
+rewrite Git history. Do not ship builds, dependency archives, or resources from
+those historical versions as part of version 0.2. The old ignored `Vendor/Engine`
+and `.build/engine` folders, if present in a developer's checkout, are unused.
+Build from a clean export/clone to verify there is no dependency on those files.
+
+## Distribution scope
+
+The replacement removes the identified copyleft dependencies from the current
+application. Retain the MIT notices when distributing it. This is a technical
+inventory and provenance record, not an Apple approval or a legal opinion.
+Apple signing, privacy disclosures, branding availability, and App Review remain
+separate release requirements. Repository and build-target identifiers retain
+`qalculate-ios` / `Qalculate` for continuity; they do not imply upstream affiliation.
