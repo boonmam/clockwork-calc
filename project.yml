@@ -1,0 +1,70 @@
+name: Qalculate
+options:
+  bundleIdPrefix: com.boonmam
+  deploymentTarget:
+    iOS: '17.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    ARCHS: arm64
+    TARGETED_DEVICE_FAMILY: '1,2'
+    CLANG_CXX_LANGUAGE_STANDARD: c++17
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: '0.1.0'
+    CURRENT_PROJECT_VERSION: '1'
+targets:
+  Qalculate:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+        excludes: [Resources]
+      - path: App/Resources/Math
+        type: folder
+        buildPhase: resources
+      - path: App/Resources/Definitions
+        type: folder
+        buildPhase: resources
+      - path: App/Resources/Assets.xcassets
+      - path: App/Resources/Licenses
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        PRODUCT_BUNDLE_IDENTIFIER: com.boonmam.qalculate.ios
+        SWIFT_OBJC_BRIDGING_HEADER: App/Engine/BridgingHeader.h
+        HEADER_SEARCH_PATHS: ['$(inherited)', '$(SRCROOT)/Vendor/Engine/$(PLATFORM_NAME)/include']
+        LIBRARY_SEARCH_PATHS: ['$(inherited)', '$(SRCROOT)/Vendor/Engine/$(PLATFORM_NAME)/lib']
+        OTHER_LDFLAGS: ['$(inherited)', '-lqalculate', '-lmpfr', '-lgmp', '-lxml2', '-liconv']
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Qalculate!
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        SUPPORTS_MACCATALYST: NO
+  QalculateTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests/EngineTests.swift, Tests/ModelTests.swift]
+    dependencies: [{target: Qalculate}]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  QalculateUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [Tests/UITests.swift]
+    dependencies: [{target: Qalculate}]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Qalculate:
+    build:
+      targets:
+        Qalculate: all
+    test:
+      targets: [QalculateTests, QalculateUITests]

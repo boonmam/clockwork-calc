@@ -1,0 +1,19 @@
+name: Build iOS port
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: brew install xcodegen pkgconf
+      - name: Build checksum-pinned native dependencies and app
+        run: Scripts/build-app.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Qalculate-unsigned-iOS-app
+          path: .build/DeviceData/Build/Products/Debug-iphoneos/Qalculate.app
