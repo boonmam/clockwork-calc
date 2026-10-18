@@ -1,68 +1,115 @@
-# Fraction Lab for iPhone and iPad
+# Fraction Lab — offline calculator and CAS for iPhone and iPad
 
-An offline SwiftUI calculator with an **original MIT-licensed Swift engine**,
-dark mode, history, and textbook-style stacked fractions. Version 0.2 replaces
-the earlier Qalculate-based prototype; it no longer contains or links Qalculate,
-GMP, MPFR, or their definition datasets. It is not an official Qalculate product.
-The repository and Xcode target names remain unchanged for continuity.
+A SwiftUI calculator with stacked fractions, dark mode, history, a matrix-entry
+grid, and an offline computer algebra system. **Calculator** mode uses the
+original MIT-licensed Swift engine. **CAS** mode uses Nerdamer 2.0.0 (Apache-2.0)
+with its embedded decimal.js 10.6.0 (MIT). KaTeX (MIT) renders equations.
+No Qalculate, GMP, MPFR, or Qalculate datasets are included.
 
-## Supported calculations
+## CAS mode
 
-- Exact reduced fractions within signed 64-bit numerator/denominator limits.
-  Overflow falls back to approximately 15 significant digits, visibly marked
-  approximate. Decimal input is exact when its fraction fits the supported range.
-- Arithmetic, parentheses, unary signs, right-associative powers, implicit
-  multiplication (`2(3+4)`, `5 ft`), scientific notation; constants `pi`, `π`, `e`, `i`.
-- Real scientific functions: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `ln`,
-  `log` (base 10), `exp`, `sqrt`, `abs`, `floor`, `ceil`. RAD/DEG controls angles.
-- Complex arithmetic, powers, square roots and absolute values. Other functions
-  require real arguments; complex output is currently marked approximate.
-- Dimension-checked units and compound conversions, including `5 ft + 3 in to cm`
-  and `60 km/h to m/s`. Unit names are case-sensitive; supported units:
-  `m cm mm km in ft yd mi kg g mg lb oz s ms min h day K L mL Hz N Pa J W`.
-  Kelvin is supported; affine Celsius/Fahrenheit conversions are not.
-- Symbolic `diff(expression, x)` with sum/product/quotient/chain rules, constant
-  numeric powers, `sin cos tan ln exp sqrt`. Derivatives use the selected angle
-  mode. Other names act as symbolic constants; domains/singularities are not tracked.
-- `solve(equation, x)` for real-coefficient, dimensionless linear/quadratic
-  polynomials, including complex quadratic roots. A root set cannot be reused
-  as a scalar expression; copy an individual root to calculate with it.
-- Local history (last 100 results), selection-aware editing, copy/recall, iPad
-  sidebar, portrait/landscape, dark/light/system appearance.
-- Offline KaTeX (MIT) renders interpreted input and results. Entry is linear
-  text notation, not a visual fraction editor.
+Select **CAS** above the expression area. It uses radians and interprets names as
+symbols, not units. Use `*` explicitly between a symbol and parentheses.
+All computations run locally in a fresh, terminable Web Worker. Nothing is sent
+to a server; no runtime code downloads, API keys, Node installation, or CDN are
+needed on the device.
 
-Examples:
+| Operation | Example |
+| --- | --- |
+| Combine symbolic terms | `x+x` |
+| Expand | `expand((x+1)^3)` |
+| Factor | `factor(x^2-1)` |
+| Simplify | `simplify((x^2-1)/(x-1))` |
+| Substitute | `subst(x^2+1,x,3)` |
+| Differentiate | `diff(sin(x^2),x)` |
+| Symbolic antiderivative | `integrate(x^2*sin(x),x)` |
+| Definite integral, exact when available | `integrate(x^2,x,0,1)` |
+| Numerical quadrature | `nint(exp(-x^2),x,0,1)` |
+| Limit | `limit(sin(x)/x,x,0)` |
+| Solve an equation | `solve(x^3-1,x)` |
+| Solve a linear system | `linsolve([x+y=3,x-y=1],[x,y])` |
+| Matrix | `matrix([1,2],[3,4])` |
+| Matrix multiplication | `matrix([1,2],[3,4])*matrix([1,0],[0,1])` |
+| Determinant | `determinant(matrix([1,2],[3,4]))` |
+| Inverse | `invert(matrix([1,2],[3,4]))` |
+| Transpose | `transpose(matrix([1,2],[3,4]))` |
+| Row reduction | `rref(matrix([1,2,3],[2,4,6]))` |
+| Rank | `rank(matrix([1,2],[2,4]))` |
+| Identity | `imatrix(3)` |
+
+The Examples menu includes a matrix-entry grid for up to **8 × 8** entries.
+Matrix cells can contain fractions or symbols. Results can be copied or inserted
+back into another expression. Matrix addition/subtraction, scalar multiplication,
+and integer powers are also supported. Matrix `/` is element-wise division; use
+multiplication by `invert(...)` for inverse multiplication.
+
+CAS also exposes `sqrt sin cos tan asin acos atan sinh cosh tanh exp log log10
+abs floor ceil numeric vector dot cross gcd lcm partfrac coeffs`. Here `log`
+(and alias `ln`) means natural logarithm. `det`, `inv`, and `integral` alias
+`determinant`, `invert`, and `integrate`. Decimal mode requests numeric evaluation;
+symbolic terms remain symbolic. Exact CAS rational integers are not restricted
+to the native engine's 64-bit range, but memory, input, output, and time limits
+still apply. Numerical quadrature uses Double arithmetic.
+
+### Integration and solver behavior
+
+- An indefinite integral returns one antiderivative; **add an arbitrary C**.
+  If no closed form is found, the integral remains visibly unevaluated and a
+  warning explains that result.
+- Definite integration supports **finite, continuous, real intervals**. It checks
+  rational denominator roots and samples the integrand, then uses adaptive
+  Simpson quadrature (absolute error target 1e-9). When an antiderivative is
+  available, endpoint evaluation is cross-checked against the numerical result.
+  Otherwise the numerical answer is explicitly marked approximate.
+- Improper integrals, infinite bounds, known poles, nonfinite samples, and failed
+  convergence are rejected. Screening is not a proof of continuity or an error
+  guarantee; specially constructed oscillations/discontinuities can defeat
+  finite sampling. Domain restrictions must still be checked.
+- General `solve` may be incomplete. Partial or unresolved sets are flagged;
+  candidates must satisfy the original equation. `linsolve` handles up to eight
+  linear equations/variables. Its solution dictionaries are display/copy results,
+  not scalar expressions for re-entry.
+- Symbolic simplification and matrix pivoting can require domain assumptions.
+  Preserve original restrictions and check special parameter values.
+- `nint`, bounded `integrate`, `linsolve`, and `rank` are outermost operations.
+  Other supported CAS functions can be nested. Arbitrary scripts, assignments,
+  user function definitions, and network access are not exposed.
+
+CAS limits: 4096 UTF-8 input bytes, 512 tokens, 32 nesting levels, 128-digit numeric
+literals, explicit powers of magnitude at most 1000, matrix dimensions up to 8,
+20,000 output text characters, 50,000 quadrature samples, and a **five-second
+native deadline** including worker startup. Cancel is available during CAS work.
+Each calculation has independent state; timeout/cancellation discards its worker.
+
+## Calculator mode
+
+The original Swift calculator remains available for degree-mode trigonometry
+and dimension-checked units. It supports exact fractions within signed 64-bit
+numerator/denominator limits; overflow becomes approximately 15-digit arithmetic
+with an approximation indicator. Scientific functions, complex arithmetic,
+elementary derivatives, and linear/quadratic solving remain available.
 
 ```text
 1/2 + 1/3
 0.1 + 0.2
 5 ft + 3 in to cm
 60 km/h to m/s
-solve(x^2 = 9, x)
-diff(x^3, x)
 sqrt(-1)
-(1+i)/(1-i)
 ```
 
-## Scope changes from the prototype
+Supported unit names (case-sensitive): `m cm mm km in ft yd mi kg g mg lb oz s ms
+min h day K L mL Hz N Pa J W`. No Celsius/Fahrenheit offsets or live currency
+rates. Calculator `ln` is natural log; `log` is base ten. Calculator expressions
+have 256-token and 48-level nesting limits. Use CAS mode for matrices and integrals.
 
-This is a smaller independent calculator, not a replacement for every Qalculate
-feature. Arbitrary precision, matrices, integration, broad symbolic simplification,
-higher-order equation solving, currency rates, external datasets, custom functions,
-and graphing are not supported. Unsupported expressions fail explicitly.
-Input is limited to 4096 UTF-8 bytes, 256 tokens, 48 parser nesting levels, and a
-bounded evaluation operation count. Numeric overflow/nonfinite results produce
-errors. Historical saved results remain readable but may not be recalculable.
+History keeps the last 100 results locally and remembers CAS mode when recalled.
+Older history remains readable. Entry uses linear notation; results use textbook
+notation. Graph plotting is not included.
 
-## Build
+## Build and run
 
-Requirements: Apple Silicon Mac, Xcode with an iOS SDK/Simulator runtime, and
-Homebrew `xcodegen`. Deployment target: iOS/iPadOS 17+. No external calculation
-libraries, downloads, C/C++ compiler setup, or package resolution are needed.
-The build script cleans previous generated products before rebuilding, so old
-prototype resources cannot survive an incremental build. It audits the device
-app after building.
+Requirements: Apple Silicon Mac, Xcode with iOS SDK and Simulator runtime, and
+Homebrew `xcodegen`. Deployment target: iOS/iPadOS 17+.
 
 ```sh
 brew install xcodegen
@@ -70,37 +117,45 @@ Scripts/build-app.sh
 open Qalculate.xcodeproj
 ```
 
-Select the **Qalculate** scheme and an iPhone or iPad simulator, then Run. The app
-appears as **Fraction Lab**. `project.yml` is the source of Xcode project settings.
-Run `xcodegen generate` after changing it. `Scripts/vendor-math.sh` optionally
-refreshes the committed checksum-pinned KaTeX assets; normal builds are offline.
+Select scheme **Qalculate** and an iPhone/iPad simulator. The app's display name
+is **Fraction Lab**; repository and build-target names remain for continuity.
+The script cleans old products, builds simulator/device apps, and audits the
+packaged device resources and dependencies. For a physical device, choose your
+Apple development team under Signing & Capabilities and Run. No App Store or
+TestFlight submission has been made.
 
-For a physical device, select your Apple team under Signing & Capabilities,
-connect the device, and Run. Signing credentials and provisioning profiles are
-not included. App Store/TestFlight submission has not been performed.
+`project.yml` generates the Xcode project. Bundled assets are committed, so
+ordinary builds need no package downloads. Optional maintenance scripts verify
+pinned archive hashes before refreshing dependencies:
 
-## Tests and dependency audit
+```sh
+Scripts/vendor-math.sh
+python3 Scripts/vendor-cas.py
+```
+
+## Tests
 
 ```sh
 xcodebuild -project Qalculate.xcodeproj -scheme Qalculate \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -derivedDataPath .build/Tests CODE_SIGNING_ALLOWED=NO test
-python3 Scripts/audit-distribution.py .build/DeviceData/Build/Products/Debug-iphoneos/Qalculate.app
+node Tests/cas-adapter.test.cjs
+python3 Scripts/audit-distribution.py
 ```
 
-The audit checks source/project dependency removal, bundled notices and assets,
-and (when given an app) resources and executable symbols/linkage. It is a technical
-check of the shipped payload, not a general license scanner or legal opinion.
-See [validation](VALIDATION.md) and [third-party inventory](THIRD_PARTY.md).
+Node is only needed for the extra adapter checks, not the app or Xcode tests.
+See [validation](VALIDATION.md) and [dependency inventory](THIRD_PARTY.md).
 
 ## License
 
-Current original code is MIT-licensed; the only vendored runtime component,
-KaTeX, is also MIT-licensed with its notices preserved. See `LICENSE` and
-`THIRD_PARTY.md`. Earlier GPL-based commits retain their original licensing.
+Original app/adapter code is MIT-licensed. Nerdamer is Apache-2.0; its embedded
+decimal.js and KaTeX are MIT. Complete notices are bundled and accessible under
+About → License notices. Historical GPL prototype commits retain their original
+licenses; none of that engine or dataset code is in this version. This remains
+an independent app, not an official Qalculate release.
 
-## Screenshots
+## Preview
 
-| iPhone | iPad |
+| Definite integral on iPhone | Matrix inverse on iPad |
 | --- | --- |
-| ![Fraction Lab on iPhone](Screenshots/iphone.png) | ![Fraction Lab on iPad](Screenshots/ipad.png) |
+| ![CAS integral](Screenshots/iphone-cas-integral.png) | ![CAS matrix inverse](Screenshots/ipad-cas-matrix.png) |

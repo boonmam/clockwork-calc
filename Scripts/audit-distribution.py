@@ -28,10 +28,18 @@ def resources(base):
     notices = base / 'Licenses'
     check(notices.exists(), f'Missing license directory: {base}')
     if notices.exists():
-        check({p.name for p in notices.iterdir()} == {'App-MIT.txt', 'KaTeX-MIT.txt'}, f'Unexpected license inventory: {base}')
-        for name in ['App-MIT.txt', 'KaTeX-MIT.txt']:
+        check({p.name for p in notices.iterdir()} == {'App-MIT.txt', 'KaTeX-MIT.txt', 'Nerdamer-Apache-2.0.txt', 'Decimal-MIT.txt'}, f'Unexpected license inventory: {base}')
+        for name in ['App-MIT.txt', 'KaTeX-MIT.txt', 'Decimal-MIT.txt']:
             file = notices / name
             check(file.exists() and 'Permission is hereby granted' in file.read_text(), f'Missing MIT notice: {file}')
+    cas_manifest = json.loads((root / 'ThirdParty/CAS.sha256.json').read_text())
+    for name, digest in cas_manifest.items():
+        path = base / name
+        check(path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() == digest, f'Modified/missing CAS dependency or license: {path}')
+    cas = base / 'CAS'
+    check(cas.exists(), f'Missing CAS resources: {base}')
+    if cas.exists():
+        check({p.name for p in cas.iterdir()} == {'nerdamer.js', 'bundle.js.LICENSE.txt', 'adapter.js', 'host.html'}, f'Unexpected CAS asset inventory: {base}')
     math = base / 'Math'
     check(math.exists(), f'Missing renderer: {base}')
     if math.exists():
@@ -66,4 +74,4 @@ if errors:
     for error in errors:
         print('FAIL:', error, file=sys.stderr)
     sys.exit(1)
-print('PASS: known dependency boundary, MIT notices, and pinned renderer assets' + ('; built payload/linkage' if len(sys.argv) > 1 else ''))
+print('PASS: known dependency boundary, license notices, and pinned CAS/renderer assets' + ('; built payload/linkage' if len(sys.argv) > 1 else ''))

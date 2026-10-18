@@ -7,10 +7,17 @@
 .label { font: 11px -apple-system; text-transform: uppercase; letter-spacing: 1.6px; opacity: .55; margin-bottom: 14px; }
 .math { overflow-x: auto; overflow-y: hidden; padding: 8px 0 20px; }
 #result { font-size: 1.35em; color: #087f70; } .katex-display { margin: 0; text-align: left; }
+.section { min-width: 0; }
+@media(max-height:300px) {
+  body { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; padding:12px; font-size:16px; }
+  .label { margin-bottom:8px; }
+  .math { padding:6px 0 12px; }
+  #result { font-size:1.2em; }
+}
 @media(prefers-color-scheme:dark) { body { color: #e8f4f2; } #result { color: #7ce4cf; } }
 </style></head><body>
-<div class="label">Expression</div><div id="input" class="math"></div>
-<div class="label" id="resultLabel">Result</div><div id="result" class="math"></div>
+<div class="section"><div class="label">Expression</div><div id="input" class="math"></div></div>
+<div class="section"><div class="label" id="resultLabel">Result</div><div id="result" class="math"></div></div>
 <script>
 window.showCalculation = function(input, result, approximate) {
   for (const [id, value] of [['input', input], ['result', result]]) {

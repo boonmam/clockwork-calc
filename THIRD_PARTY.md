@@ -1,46 +1,50 @@
-# Third-party components — version 0.2
-
-The current app uses an original Swift calculation engine and MIT-licensed
-KaTeX for offline mathematical display. It contains no libqalculate, GMP, MPFR,
-Qalculate definition XML, or Wikipedia-derived scientific datasets.
+# Third-party components — version 0.3
 
 | Component | Version | License | Origin |
 | --- | --- | --- | --- |
-| Original app, engine, unit table, icon, tests and build scripts | 0.2 | MIT | This repository; copyright 2026 boonmam |
-| KaTeX JavaScript, CSS and fonts | 0.16.22 | MIT | https://github.com/KaTeX/KaTeX/tree/v0.16.22 |
-| Foundation, SwiftUI, UIKit, WebKit, system math/runtime | iOS SDK | Apple platform SDK terms | Provided by iOS; no third-party copies bundled |
+| Original Swift app/engine, CAS adapter, quadrature wrapper, icon and scripts | 0.3 | MIT | This repository; copyright 2026 boonmam |
+| Nerdamer complete browser bundle | 2.0.0 | Apache-2.0 | https://github.com/jiggzson/nerdamer / https://www.npmjs.com/package/nerdamer/v/2.0.0 |
+| decimal.js embedded in Nerdamer's browser bundle | 10.6.0 | MIT | https://github.com/MikeMcl/decimal.js |
+| KaTeX JavaScript, stylesheet and fonts | 0.16.22 | MIT | https://github.com/KaTeX/KaTeX/tree/v0.16.22 |
+| Apple system frameworks and Swift runtime | iOS SDK | Apple platform SDK terms | Provided by iOS |
 
-The KaTeX copyright and full MIT license are retained verbatim in
-`App/Resources/Math/LICENSE-KaTeX` and `App/Resources/Licenses/KaTeX-MIT.txt`.
-The original app's license is in `LICENSE` and the bundled `App-MIT.txt`.
-Both notices are accessible inside the app under About → License notices.
-`Scripts/vendor-math.sh` verifies the upstream npm archive with a pinned SHA-512
-before refreshing the renderer. No npm development dependencies are bundled.
+The Nerdamer browser bundle is **unmodified** from the checksum-pinned npm
+archive. The bundle's extracted `bundle.js.LICENSE.txt` identifies decimal.js
+10.6.0 and retains its copyright notice. Complete Apache-2.0 and decimal.js MIT
+license texts are in `App/Resources/Licenses`; no separate NOTICE file was
+present in the upstream Nerdamer 2.0.0 npm package. The app's MIT license does
+not replace the licenses of these third-party files.
 
-## Replacement provenance
+The original `adapter.js` and `host.html` files are separate from the vendor
+bundle. `Scripts/vendor-cas.py` verifies both upstream tarballs using pinned
+SHA-512 hashes and records SHA-256 hashes for vendored files and notices in
+`ThirdParty/CAS.sha256.json`. Only the complete browser bundle and notices ship;
+Node packages, development dependencies, and build tools do not ship in the app.
 
-`App/Engine/NativeMath.swift` was written for this project from ordinary
-mathematical identities and parsing techniques. It does not translate or copy
-libqalculate/GMP/MPFR implementations. The small unit table was independently
-written from conventional SI and international unit definitions. No upstream
-function descriptions, definitions, datasets, or graphics were retained.
-The existing original SwiftUI shell and newly written engine are MIT-licensed.
-The display name is now Fraction Lab to distinguish it from Qalculate.
+KaTeX notices remain in `Math/LICENSE-KaTeX` and `Licenses/KaTeX-MIT.txt`.
+`Scripts/vendor-math.sh` verifies its upstream archive's pinned SHA-512. The
+original app license is also bundled. All four full license texts can be read
+inside the app under About → License notices.
 
-## Historical versions
+CAS uses local WebKit workers with network access blocked by Content Security
+Policy. A fresh worker is created per calculation, and the app terminates it on
+completion, cancellation, or deadline. No remote service or downloaded runtime
+code is used. Apple system frameworks are linked through the SDK.
 
-Commits through `bdb3e05` describe the earlier GPL-based prototype and retain
-their original licensing. This change does not relicense third-party code or
-rewrite Git history. Do not ship builds, dependency archives, or resources from
-those historical versions as part of version 0.2. The old ignored `Vendor/Engine`
-and `.build/engine` folders, if present in a developer's checkout, are unused.
-Build from a clean export/clone to verify there is no dependency on those files.
+## Earlier engines and historical licenses
 
-## Distribution scope
+The current app contains no libqalculate, GMP, MPFR, Qalculate definition XML,
+or Wikipedia-derived scientific datasets. The original Swift engine was written
+from ordinary mathematical identities and parsing techniques, independently of
+those implementations. Its small unit table contains conventional conversion
+factors, not a copied Qalculate dataset.
 
-The replacement removes the identified copyleft dependencies from the current
-application. Retain the MIT notices when distributing it. This is a technical
-inventory and provenance record, not an Apple approval or a legal opinion.
-Apple signing, privacy disclosures, branding availability, and App Review remain
-separate release requirements. Repository and build-target identifiers retain
-`qalculate-ios` / `Qalculate` for continuity; they do not imply upstream affiliation.
+Commits through `bdb3e05` retain the GPL-based prototype and its original notices.
+Version 0.2's original code is MIT. Version 0.3 adds the permissively licensed CAS
+above; it does not relicense any upstream code or rewrite Git history. Old ignored
+`Vendor/Engine` and `.build/engine` files are unused and not part of current builds.
+The build script cleans old products to prevent stale resources from being shipped.
+
+The inventory and packaged-payload audit identify known dependencies and notices;
+they are not an Apple approval or a legal opinion. Signing, branding availability,
+privacy disclosures, and App Review remain separate release steps.

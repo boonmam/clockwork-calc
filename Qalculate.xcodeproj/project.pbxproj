@@ -12,11 +12,15 @@
 		41F0AF90205066F6B9AAB7E0 /* Math in Resources */ = {isa = PBXBuildFile; fileRef = 15E6F95C6B8AE3FF2595BE2A /* Math */; };
 		45779D0325710CE80AC14766 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77F93BFB627C63CE25AA4DD /* Assets.xcassets */; };
 		517D006235930BFCEF664ECF /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */; };
+		63C1756EE93389462F1FE735 /* CASRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */; };
 		788191F3941766299A40BAAD /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF89DF39A6B0A30D16DEB493 /* UITests.swift */; };
 		7A823CCF7FE013BF9A938CEC /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA3B980F9DC497508BF20F /* CalculatorView.swift */; };
+		8928623FD9146D74330A4816 /* CASTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */; };
 		955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8369516055491812ACE28B /* NativeMath.swift */; };
 		9E48A231ADA34565098E16E3 /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */; };
+		C1C52A4712697F983B7D3FA4 /* MatrixEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */; };
 		CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA2EB930097591FD718B36E /* Theme.swift */; };
+		CE4E2977ED67F6227388D243 /* CAS in Resources */ = {isa = PBXBuildFile; fileRef = 05A1AD53801CAF949BEE3F5B /* CAS */; };
 		E18CE26526031BDE9C881660 /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 7FB2D65EA88E94B08DCC0CCE /* Licenses */; };
 		F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */; };
 		F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1DE21F499047C13F71AB43 /* EngineTests.swift */; };
@@ -40,22 +44,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		05A1AD53801CAF949BEE3F5B /* CAS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CAS; path = App/Resources/CAS; sourceTree = SOURCE_ROOT; };
 		06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		154E8A61D458EC89C09C9344 /* QalculateTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E6F95C6B8AE3FF2595BE2A /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
 		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1DE21F499047C13F71AB43 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
+		3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASRuntime.swift; sourceTree = "<group>"; };
 		4E8369516055491812ACE28B /* NativeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMath.swift; sourceTree = "<group>"; };
 		5ACB06FE3390097DC07152FE /* QalculateUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEditor.swift; sourceTree = "<group>"; };
 		763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModel.swift; sourceTree = "<group>"; };
 		7AA2EB930097591FD718B36E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		7FB2D65EA88E94B08DCC0CCE /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Licenses; path = App/Resources/Licenses; sourceTree = SOURCE_ROOT; };
+		90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixEditor.swift; sourceTree = "<group>"; };
 		A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QalculateApp.swift; sourceTree = "<group>"; };
 		AAFA3B980F9DC497508BF20F /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
 		E77F93BFB627C63CE25AA4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF89DF39A6B0A30D16DEB493 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		F320996124E5AA1161F3F736 /* MathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathView.swift; sourceTree = "<group>"; };
+		FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -65,6 +73,7 @@
 				AAFA3B980F9DC497508BF20F /* CalculatorView.swift */,
 				6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */,
 				F320996124E5AA1161F3F736 /* MathView.swift */,
+				90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */,
 				7AA2EB930097591FD718B36E /* Theme.swift */,
 			);
 			path = Views;
@@ -73,6 +82,7 @@
 		43F4AC73E0A81CC2EDAE48DE = {
 			isa = PBXGroup;
 			children = (
+				05A1AD53801CAF949BEE3F5B /* CAS */,
 				7FB2D65EA88E94B08DCC0CCE /* Licenses */,
 				15E6F95C6B8AE3FF2595BE2A /* Math */,
 				87B0755F93158DBDC054C9FD /* App */,
@@ -115,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */,
+				3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */,
 				4E8369516055491812ACE28B /* NativeMath.swift */,
 			);
 			path = Engine;
@@ -123,6 +134,7 @@
 		DEF887AE6146C80C7E6C5D91 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */,
 				1D1DE21F499047C13F71AB43 /* EngineTests.swift */,
 				06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */,
 				EF89DF39A6B0A30D16DEB493 /* UITests.swift */,
@@ -235,6 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45779D0325710CE80AC14766 /* Assets.xcassets in Resources */,
+				CE4E2977ED67F6227388D243 /* CAS in Resources */,
 				E18CE26526031BDE9C881660 /* Licenses in Resources */,
 				41F0AF90205066F6B9AAB7E0 /* Math in Resources */,
 			);
@@ -247,6 +260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8928623FD9146D74330A4816 /* CASTests.swift in Sources */,
 				F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */,
 				F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */,
 			);
@@ -264,10 +278,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63C1756EE93389462F1FE735 /* CASRuntime.swift in Sources */,
 				517D006235930BFCEF664ECF /* CalculatorModel.swift in Sources */,
 				7A823CCF7FE013BF9A938CEC /* CalculatorView.swift in Sources */,
 				9E48A231ADA34565098E16E3 /* ExpressionEditor.swift in Sources */,
 				1258738D7409C090653BD597 /* MathView.swift in Sources */,
+				C1C52A4712697F983B7D3FA4 /* MatrixEditor.swift in Sources */,
 				955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */,
 				03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */,
 				CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */,
@@ -416,7 +432,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -436,7 +452,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -507,7 +523,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -521,7 +537,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

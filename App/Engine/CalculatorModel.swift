@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
 
+enum CalculationMode: String, Codable { case calculator, cas }
+
 struct Calculation: Codable, Identifiable, Equatable {
     let id: UUID
     let date: Date
@@ -10,12 +12,14 @@ struct Calculation: Codable, Identifiable, Equatable {
     let inputLatex: String
     let approximate: Bool
     let warnings: [String]
+    var mode: CalculationMode? = nil
 }
 
 actor CalculatorEngine {
     private let math = NativeMath()
-    func evaluate(_ expression: String, exact: Bool, degrees: Bool) throws -> Calculation {
-        try math.evaluate(expression, exact: exact, degrees: degrees)
+    func evaluate(_ expression: String, exact: Bool, degrees: Bool, mode: CalculationMode = .calculator) async throws -> Calculation {
+        if mode == .cas { return try await CASRuntime.evaluate(expression, exact: exact) }
+        return try math.evaluate(expression, exact: exact, degrees: degrees)
     }
 }
 struct CalculationError: LocalizedError { let message: String; var errorDescription: String? { message } }
@@ -29,6 +33,8 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     @Published var busy = false
     @AppStorage("exactResults") var exact = true
     @AppStorage("angleDegrees") var degrees = false
+    @AppStorage("calculationMode") var mode: CalculationMode = .calculator
+    private var calculationTask: Task<Void, Never>?
     private let engine = CalculatorEngine()
     private let historyURL: URL
 
@@ -58,24 +64,27 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     func clear() { expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
     func recall(_ item: Calculation) {
         expression = item.expression; selection = NSRange(location: (expression as NSString).length, length: 0)
-        result = item; error = nil
+        result = item; mode = item.mode ?? .calculator; error = nil
     }
     func calculate() {
         let input = expression.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, !busy else { return }
         busy = true; error = nil
-        let exact = exact, degrees = degrees
-        Task {
+        let exact = exact, degrees = degrees, mode = mode
+        calculationTask = Task {
             do {
-                let calculation = try await engine.evaluate(input, exact: exact, degrees: degrees)
+                let calculation = try await engine.evaluate(input, exact: exact, degrees: degrees, mode: mode)
                 result = calculation
                 history.insert(calculation, at: 0); history = Array(history.prefix(100))
                 persist()
-            } catch { self.error = error.localizedDescription }
+            } catch is CancellationError { self.error = "Calculation cancelled." }
+            catch { self.error = error.localizedDescription }
             busy = false
         }
     }
-    func example(_ expression: String) {
+    func cancelCalculation() { calculationTask?.cancel() }
+    func example(_ expression: String, mode: CalculationMode? = nil) {
+        if let mode { self.mode = mode }
         self.expression = expression; selection = NSRange(location: (expression as NSString).length, length: 0); calculate()
     }
     func deleteHistory(at offsets: IndexSet) { history.remove(atOffsets: offsets); persist() }

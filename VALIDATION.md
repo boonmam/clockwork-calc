@@ -1,42 +1,46 @@
-# Version 0.2 validation — original Swift engine
+# Version 0.3 validation — offline CAS and matrices
 
-Validated 2026-10-17 using Xcode 26.6 and the iOS 26.5 SDK/runtime.
+Validated 2026-10-17/18 with Xcode 26.6 and the iOS 26.5 SDK/runtime.
 
 | Check | Result |
 | --- | --- |
-| iPhone 17 Pro simulator | 24 tests passed: 19 engine/licensing, 3 model, 2 UI |
-| iPad Pro 11-inch (M5) simulator | Same 24 tests passed |
-| Clean-export arm64 device Release build, signing disabled | Passed |
-| Source and packaged-device-app dependency audit | Passed |
+| iPhone 17 Pro simulator | 36 tests passed: 10 CAS, 19 native engine/licensing, 3 model, 4 UI |
+| iPad Pro 11-inch (M5) simulator | Same 36 tests passed |
+| Offline CAS adapter checks under Node | 45 checks passed |
+| Clean-export arm64 device Release build (unsigned) | Passed |
+| Packaged-app dependency, license, and asset audit | Passed |
 
-The device build used a fresh staging copy containing only current non-ignored
-source files. It contained no `Vendor/Engine`, no prior build products, and no
-upstream calculation sources. It required no external dependency compilation or
-package downloads. The Release binary links Apple system frameworks/runtimes;
-no Qalculate, GMP or MPFR references were found by the audit. The bundled
-resources contain the MIT notices and checksum-verified KaTeX assets, and no
-legacy definition dataset directory.
+The CAS integration tests use the actual WebKit worker and packaged Nerdamer
+bundle. They cover symbolic algebra, matrix inverse/product/determinant and
+row reduction, linear systems, cubic roots, symbolic/definite/numerical integrals,
+differentiation of an antiderivative, limits, unresolved integrals, decimal
+matrices, singular/malformed matrices, poles, invalid scripts, and stored modes.
+A deliberately infinite worker verifies the native deadline; cancellation and a
+subsequent successful calculation verify recovery. The UI tests exercise CAS
+entry, rendered matrix/integral results, the matrix grid, fraction display, and
+landscape controls. Screenshot inspection prompted a compact side-by-side
+expression/result layout to prevent an integral fraction being clipped on iPhone.
 
-Tests cover exact fractions (including an independently reduced arithmetic grid),
-integer precision beyond Double's exact range, precedence, implicit multiplication,
-scientific notation, bounded overflow, complex arithmetic, compound unit conversion,
-result re-entry, elementary derivatives and degree scaling, linear/quadratic roots,
-invalid/unsupported expressions, depth/token limits, extreme exponents, bundled
-license notices, editor selection, Unicode deletion, and history persistence.
-The UI tests verify visibly rendered stacked fractions and reachable landscape
-controls. Screenshots in `Screenshots/` are exported from these test attachments.
+The adapter checks also exercise reversed integration bounds, oscillatory
+quadrature, symbolic determinants, matrix powers/transposes, rank, singularities
+between sample points, nonlinear-system rejection, and input limits.
 
-Latest local evidence (ignored, not source artifacts):
+Evidence stays in ignored `.build/` paths:
 
-- `.build/Permissive-iPhone-final.xcresult`
-- `.build/Permissive-iPad-final.xcresult`
-- `.build/Permissive-numeric-final.xcresult` (22 engine/model tests after the final decimal approximation-label fix)
-- `.build/permissive-device-final.log`
-- `.build/permissive-build-script.log` (clean migration build and payload audit)
-- `.build/PermissiveDevice/Build/Products/Release-iphoneos/Qalculate.app`
+- `CAS-iPhone-final.xcresult`
+- `CAS-iPad-final.xcresult`
+- `CAS-layout.xcresult` (iPhone UI recheck after compact equation layout fix)
+- `CAS-guard.xcresult` (CAS tests after explicit system-syntax guard)
+- `cas-device.log` and `CASDevice/Build/Products/Release-iphoneos/Qalculate.app`
 
-No physical device or App Store/TestFlight deployment was tested. iOS/iPadOS 17
-is the deployment target; runtime validation used 26.5. The audit verifies known
-component removal and notices; it does not guarantee App Store approval or
-substitute for a legal review of a future release's full distribution terms.
-Earlier validation results apply to the historical GPL-based prototype only.
+Screenshots are exported from XCTest attachments. Physical device execution and
+App Store/TestFlight deployment have not been tested. The deployment target is
+17+, while runtime validation used 26.5. These tests establish the listed cases,
+not completeness or correctness for all possible CAS expressions. Numerical
+integration requires finite continuous real intervals; the sampling checks are
+not a proof of convergence. General solving can return incomplete results.
+
+The device build used a clean export of the staged source, excluding all ignored
+legacy libraries and prior build products. The payload audit verified the exact
+Nerdamer/decimal.js/KaTeX assets and notices and found no legacy calculation
+library linkage or datasets.

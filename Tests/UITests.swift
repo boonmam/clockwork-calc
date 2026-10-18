@@ -24,3 +24,41 @@ final class UITests: XCTestCase {
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); attachment.lifetime = .keepAlways; add(attachment)
     }
 }
+
+extension UITests {
+    func testCASMatrixAndIntegral() {
+        let app = XCUIApplication(); app.launch()
+        app.segmentedControls["calculationMode"].buttons["CAS"].tap()
+        let editor = app.textViews["expressionEditor"]
+        editor.tap(); editor.typeText("invert(matrix([1,2],[3,4]))\n")
+        let copy = app.buttons["copyResult"]
+        let matrix = NSPredicate(format: "value CONTAINS %@", "matrix([-2, 1]")
+        expectation(for: matrix, evaluatedWith: copy)
+        waitForExpectations(timeout: 15)
+        let rendered = app.webViews.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Expression")).firstMatch
+        XCTAssertTrue(rendered.waitForExistence(timeout: 10))
+        let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); screenshot.name = "CAS matrix"; screenshot.lifetime = .keepAlways; add(screenshot)
+        app.buttons["key_AC"].tap()
+        editor.tap(); editor.typeText("integrate(x^2,x,0,1)\n")
+        expectation(for: NSPredicate(format: "value == %@", "1/3"), evaluatedWith: copy)
+        waitForExpectations(timeout: 15)
+        let integral = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); integral.name = "CAS integral"; integral.lifetime = .keepAlways; add(integral)
+        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+    }
+}
+
+extension UITests {
+    func testMatrixEntryGrid() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["Examples"].tap()
+        app.buttons["Insert a matrix…"].tap()
+        XCTAssertTrue(app.textFields["Row 1, column 1"].waitForExistence(timeout: 5))
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = "Matrix editor"; attachment.lifetime = .keepAlways; add(attachment)
+        app.buttons["insertMatrix"].tap()
+        app.buttons["key_="].tap()
+        expectation(for: NSPredicate(format: "value == %@", "matrix([0, 0], [0, 0])"), evaluatedWith: app.buttons["copyResult"])
+        waitForExpectations(timeout: 15)
+        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+    }
+}

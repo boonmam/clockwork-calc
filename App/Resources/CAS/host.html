@@ -1,0 +1,19 @@
+<!doctype html><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; worker-src blob:; connect-src 'none'">
+<script>
+let activeWorker = null;
+window.cancelCalculation = function () { if (activeWorker) activeWorker.terminate(); activeWorker = null; };
+window.calculateCAS = function (source, adapter, input, exact) {
+    window.cancelCalculation();
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(new Blob([source, '\n', adapter], {type:'text/javascript'}));
+        const worker = new Worker(url);
+        URL.revokeObjectURL(url);
+        activeWorker = worker;
+        const finish = () => { worker.terminate(); if (activeWorker === worker) activeWorker = null; };
+        worker.onmessage = event => { finish(); resolve(event.data); };
+        worker.onerror = event => { finish(); reject(new Error(event.message || 'CAS worker failed.')); };
+        worker.postMessage({input, exact});
+    });
+};
+</script>
