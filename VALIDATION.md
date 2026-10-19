@@ -1,4 +1,35 @@
-# Version 0.4 validation — improper-integral analysis
+# Version 0.5 validation — engineering notation
+
+Validated 2026-10-19 with Xcode 26.6 and the iOS 26.5 runtime.
+
+- Full 48-test suites passed on iPhone 17 Pro and iPad Pro 11-inch (M5).
+- After final formatting refinements, all 8 notation tests and the engineering
+  UI test passed on both devices: 50 distinct tests covered across these runs.
+- Clean-export unsigned arm64 device Release build and packaged dependency/license
+  audit passed. No third-party dependencies changed.
+
+Notation checks cover powers of three, zero, negative numbers, boundary scales,
+very small/large values, preservation of decimal digits without Double conversion,
+SI prefixes and fallback outside their range, scientific TeX conversion, identifier
+and subscript preservation, expression precedence, complex values, units, CAS
+matrices and symbolic coefficients, canonical result reuse, old history decoding,
+notation recall, and migration of the old Exact/Decimal preference.
+
+UI tests select both new options and inspect the formatted values. Exported
+screenshots were visually checked, including the micro symbol and the longer
+format menu label on iPhone. Copy/Ans/Use result intentionally retain canonical
+numeric expressions rather than display-only SI symbols.
+
+Evidence in ignored `.build/`:
+
+- `Engineering-iPhone.xcresult` and `Engineering-iPad.xcresult`: full suites.
+- `Engineering-iPhone-final.xcresult` and `Engineering-iPad-final.xcresult`:
+  final notation and UI checks.
+- `engineering-device.log` and `EngineeringDevice/Build/Products/Release-iphoneos/Qalculate.app`.
+
+Physical-device execution and App Store/TestFlight distribution remain untested.
+
+## Previous version 0.4 validation — improper-integral analysis
 
 Validated 2026-10-19 with Xcode 26.6 and the iOS 26.5 SDK/runtime.
 

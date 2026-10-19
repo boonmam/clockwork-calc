@@ -10,7 +10,7 @@ struct MathView: View {
             if !ready {
                 VStack(alignment: .leading, spacing: 20) {
                     Text(calculation.expression).font(.system(.callout, design: .monospaced))
-                    Text(calculation.text).font(.title2).foregroundStyle(Color.calculatorAccent)
+                    Text(calculation.presentedText).font(.title2).foregroundStyle(Color.calculatorAccent)
                     if !failed { ProgressView("Formatting equation…").font(.caption) }
                 }.padding(20)
             }
@@ -30,7 +30,7 @@ private struct MathWebView: UIViewRepresentable {
         let view = WKWebView(frame: .zero, configuration: config)
         view.isOpaque = false; view.backgroundColor = .clear; view.scrollView.backgroundColor = .clear
         view.navigationDelegate = context.coordinator
-        view.accessibilityLabel = "\(calculation.expression) equals \(calculation.text)"
+        view.accessibilityLabel = "\(calculation.expression) equals \(calculation.presentedText)"
         view.accessibilityIdentifier = "formattedEquation"
         if let url = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "Math") {
             view.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
@@ -39,7 +39,7 @@ private struct MathWebView: UIViewRepresentable {
     }
     func updateUIView(_ view: WKWebView, context: Context) {
         context.coordinator.parent = self
-        view.accessibilityLabel = "\(calculation.expression) equals \(calculation.text)"
+        view.accessibilityLabel = "\(calculation.expression) equals \(calculation.presentedText)"
         if context.coordinator.loaded { context.coordinator.render(view) }
     }
     final class Coordinator: NSObject, WKNavigationDelegate {

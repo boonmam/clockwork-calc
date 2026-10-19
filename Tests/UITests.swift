@@ -82,3 +82,31 @@ extension UITests {
         app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
     }
 }
+
+extension UITests {
+    func testEngineeringNotationOptions() {
+        let app = XCUIApplication(); app.launch()
+        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        let format = app.buttons["resultNotation"]
+        XCTAssertTrue(format.waitForExistence(timeout: 5))
+        format.tap(); app.buttons["Engineering"].tap()
+        let editor = app.textViews["expressionEditor"]
+        editor.tap(); editor.typeText("4700\n")
+        expectation(for: NSPredicate(format: "value == %@", "4700"), evaluatedWith: app.buttons["copyResult"])
+        waitForExpectations(timeout: 10)
+        XCTAssertTrue(app.webViews["formattedEquation"].label.contains("4.7 × 10^3"))
+        format.tap(); app.buttons["Engineering (SI symbols)"].tap()
+        app.buttons["key_="].tap()
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "4.7 k"), evaluatedWith: app.webViews["formattedEquation"])
+        waitForExpectations(timeout: 10)
+        let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        screenshot.name = "Symbolic engineering"; screenshot.lifetime = .keepAlways; add(screenshot)
+        app.buttons["key_AC"].tap()
+        editor.tap(); editor.typeText("0.0000022\n")
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "2.2 µ"), evaluatedWith: app.webViews["formattedEquation"])
+        waitForExpectations(timeout: 10)
+        let micro = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        micro.name = "Micro engineering"; micro.lifetime = .keepAlways; add(micro)
+        format.tap(); app.buttons["Exact"].tap()
+    }
+}

@@ -6,6 +6,30 @@ original MIT-licensed Swift engine. **CAS** mode uses Nerdamer 2.0.0 (Apache-2.0
 with its embedded decimal.js 10.6.0 (MIT). KaTeX (MIT) renders equations.
 No Qalculate, GMP, MPFR, or Qalculate datasets are included.
 
+## Result notation
+
+Choose **Result format** above the expression area. The selection applies to the
+next calculation in both Calculator and CAS modes:
+
+| Format | 4700 | 0.0000022 |
+| --- | --- | --- |
+| Exact | 4700 | 11/5000000 |
+| Decimal | 4700 | 2.2 × 10⁻⁶ |
+| Engineering | 4.7 × 10³ | 2.2 × 10⁻⁶ |
+| Engineering (SI symbols) | 4.7 k | 2.2 µ |
+
+Engineering exponents are multiples of three. SI symbols cover q (10⁻³⁰) through
+Q (10³⁰), with engineering powers of ten outside that range. Symbols are display
+scale factors, not new variables or an expansion of the unit parser. These modes
+use decimal evaluation and format numeric coefficients, complex components, and
+matrix entries; symbolic variables remain symbolic. Decimal shifting adds no
+rounding beyond the engine's existing numeric precision.
+
+Copy, Ans, and Use result retain the canonical numeric expression so a displayed
+prefix cannot be mistaken for a variable or unit. History preserves the display
+and restores the chosen notation when recalled. Existing history remains readable,
+and the old Exact/Decimal preference migrates automatically.
+
 ## CAS mode
 
 Select **CAS** above the expression area. It uses radians and interprets names as
@@ -179,3 +203,7 @@ an independent app, not an official Qalculate release.
 | Improper integral on iPhone | Improper integral on iPad |
 | --- | --- |
 | ![Improper integral on iPhone](Screenshots/iphone-improper-integral.png) | ![Improper integral on iPad](Screenshots/ipad-improper-integral.png) |
+
+| Engineering SI symbols on iPhone | Engineering SI symbols on iPad |
+| --- | --- |
+| ![Engineering on iPhone](Screenshots/iphone-engineering.png) | ![Engineering on iPad](Screenshots/ipad-engineering.png) |

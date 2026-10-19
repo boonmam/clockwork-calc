@@ -15,12 +15,14 @@
 		63C1756EE93389462F1FE735 /* CASRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */; };
 		788191F3941766299A40BAAD /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF89DF39A6B0A30D16DEB493 /* UITests.swift */; };
 		7A823CCF7FE013BF9A938CEC /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA3B980F9DC497508BF20F /* CalculatorView.swift */; };
+		7FA3F7D8042A362075AAFAE9 /* ResultNotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314677CCEBBA737D64BB71BD /* ResultNotation.swift */; };
 		8928623FD9146D74330A4816 /* CASTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */; };
 		955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8369516055491812ACE28B /* NativeMath.swift */; };
 		9E48A231ADA34565098E16E3 /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */; };
 		C1C52A4712697F983B7D3FA4 /* MatrixEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */; };
 		CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA2EB930097591FD718B36E /* Theme.swift */; };
 		CE4E2977ED67F6227388D243 /* CAS in Resources */ = {isa = PBXBuildFile; fileRef = 05A1AD53801CAF949BEE3F5B /* CAS */; };
+		CE53CB1A3B8C6E8682C6B042 /* NotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9D63FF8115E6DD0CD987D2 /* NotationTests.swift */; };
 		E18CE26526031BDE9C881660 /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 7FB2D65EA88E94B08DCC0CCE /* Licenses */; };
 		F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */; };
 		F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1DE21F499047C13F71AB43 /* EngineTests.swift */; };
@@ -50,6 +52,7 @@
 		15E6F95C6B8AE3FF2595BE2A /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
 		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1DE21F499047C13F71AB43 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
+		314677CCEBBA737D64BB71BD /* ResultNotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultNotation.swift; sourceTree = "<group>"; };
 		3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASRuntime.swift; sourceTree = "<group>"; };
 		4E8369516055491812ACE28B /* NativeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMath.swift; sourceTree = "<group>"; };
 		5ACB06FE3390097DC07152FE /* QalculateUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +66,7 @@
 		E77F93BFB627C63CE25AA4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF89DF39A6B0A30D16DEB493 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		F320996124E5AA1161F3F736 /* MathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathView.swift; sourceTree = "<group>"; };
+		FB9D63FF8115E6DD0CD987D2 /* NotationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotationTests.swift; sourceTree = "<group>"; };
 		FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +131,7 @@
 				763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */,
 				3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */,
 				4E8369516055491812ACE28B /* NativeMath.swift */,
+				314677CCEBBA737D64BB71BD /* ResultNotation.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -137,6 +142,7 @@
 				FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */,
 				1D1DE21F499047C13F71AB43 /* EngineTests.swift */,
 				06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */,
+				FB9D63FF8115E6DD0CD987D2 /* NotationTests.swift */,
 				EF89DF39A6B0A30D16DEB493 /* UITests.swift */,
 			);
 			path = Tests;
@@ -263,6 +269,7 @@
 				8928623FD9146D74330A4816 /* CASTests.swift in Sources */,
 				F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */,
 				F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */,
+				CE53CB1A3B8C6E8682C6B042 /* NotationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +293,7 @@
 				C1C52A4712697F983B7D3FA4 /* MatrixEditor.swift in Sources */,
 				955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */,
 				03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */,
+				7FA3F7D8042A362075AAFAE9 /* ResultNotation.swift in Sources */,
 				CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -432,7 +440,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -452,7 +460,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -523,7 +531,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -537,7 +545,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

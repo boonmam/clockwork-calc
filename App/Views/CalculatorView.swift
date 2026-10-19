@@ -33,9 +33,11 @@ struct CalculatorView: View {
                 Text("CAS").tag(CalculationMode.cas)
             }.pickerStyle(.segmented).disabled(model.busy).accessibilityIdentifier("calculationMode")
             HStack {
-                Picker("Result format", selection: $model.exact) {
-                    Text("Exact").tag(true); Text("Decimal").tag(false)
-                }.pickerStyle(.segmented).frame(maxWidth: 220)
+                Picker("Result format", selection: $model.notation) {
+                    ForEach(ResultNotation.allCases, id: \.self) { notation in
+                        Text(notation.title).tag(notation)
+                    }
+                }.pickerStyle(.menu).accessibilityIdentifier("resultNotation").disabled(model.busy)
                 Spacer(minLength: 12)
                 if model.mode == .cas {
                     Text("Radians · symbolic").font(.caption).foregroundStyle(.secondary)
@@ -173,7 +175,7 @@ struct HistoryView: View {
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(item.expression).font(.system(.subheadline, design: .monospaced)).foregroundStyle(.primary).lineLimit(2)
-                        Text(item.text).font(.headline).foregroundStyle(Color.calculatorAccent).lineLimit(2)
+                        Text(item.presentedText).font(.headline).foregroundStyle(Color.calculatorAccent).lineLimit(2)
                         Text(item.date, style: .time).font(.caption2).foregroundStyle(.secondary)
                     }.padding(.vertical, 5)
                 }.contextMenu {
@@ -207,7 +209,7 @@ struct AboutView: View {
                 Section("Writing expressions") {
                     Text("Use / for fractions, ^ for powers, and parentheses for grouping. Results and interpreted expressions use textbook notation.")
                     Text("Try: 5 ft + 3 in to cm\nsolve(x^2 = 9, x)\ndiff(x^3, x)").font(.system(.callout, design: .monospaced))
-                    Text("Exact/Decimal and RAD/DEG apply to your next calculation. Calculator expressions are bounded to 256 tokens. CAS uses radians, treats names as symbols rather than units, and has a five-second deadline.")
+                    Text("Result format and RAD/DEG apply to your next calculation. Engineering uses powers of ten in multiples of three (4.7 × 10³). Engineering (SI symbols) uses scale symbols (4.7 k), from q (10⁻³⁰) to Q (10³⁰), with powers of ten outside that range. These modes use decimal evaluation and format numeric coefficients, including matrix entries. SI symbols are display scale factors, not CAS variables. Copy, Ans, and Use result keep the unambiguous numeric value. Calculator expressions are bounded to 256 tokens. CAS uses radians, treats names as symbols rather than units, and has a five-second deadline.")
                 }
                 Section("Supported syntax") {
                     Text("sin, cos, tan, asin, acos, atan, sqrt, ln, log (base 10), exp, abs, floor, ceil; constants pi, e, i. Complex arguments are supported for arithmetic, powers, sqrt, and abs. Unit names are case-sensitive. See the README for the complete unit list.")

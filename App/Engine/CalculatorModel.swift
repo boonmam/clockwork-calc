@@ -8,15 +8,22 @@ struct Calculation: Codable, Identifiable, Equatable {
     let date: Date
     let expression: String
     let text: String
-    let latex: String
+    var latex: String
     let inputLatex: String
     let approximate: Bool
     let warnings: [String]
     var mode: CalculationMode? = nil
+    var notation: ResultNotation? = nil
+    var displayText: String? = nil
+    var presentedText: String { displayText ?? text }
 }
 
 actor CalculatorEngine {
     private let math = NativeMath()
+    func evaluate(_ expression: String, notation: ResultNotation, degrees: Bool, mode: CalculationMode = .calculator) async throws -> Calculation {
+        let result = try await evaluate(expression, exact: notation == .exact, degrees: degrees, mode: mode)
+        return EngineeringNotation.apply(result, notation: notation)
+    }
     func evaluate(_ expression: String, exact: Bool, degrees: Bool, mode: CalculationMode = .calculator) async throws -> Calculation {
         if mode == .cas { return try await CASRuntime.evaluate(expression, exact: exact) }
         return try math.evaluate(expression, exact: exact, degrees: degrees)
@@ -31,7 +38,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     @Published var history: [Calculation] = []
     @Published var error: String?
     @Published var busy = false
-    @AppStorage("exactResults") var exact = true
+    @AppStorage("resultNotation") var notation: ResultNotation = .exact
     @AppStorage("angleDegrees") var degrees = false
     @AppStorage("calculationMode") var mode: CalculationMode = .calculator
     private var calculationTask: Task<Void, Never>?
@@ -39,6 +46,10 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     private let historyURL: URL
 
     init(historyURL: URL? = nil) {
+        if UserDefaults.standard.object(forKey: "resultNotation") == nil,
+           let legacyExact = UserDefaults.standard.object(forKey: "exactResults") as? Bool {
+            notation = legacyExact ? .exact : .decimal
+        }
         self.historyURL = historyURL ?? URL.documentsDirectory.appending(path: "history.json")
         if let data = try? Data(contentsOf: self.historyURL),
            let saved = try? JSONDecoder().decode([Calculation].self, from: data) {
@@ -64,16 +75,18 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     func clear() { expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
     func recall(_ item: Calculation) {
         expression = item.expression; selection = NSRange(location: (expression as NSString).length, length: 0)
-        result = item; mode = item.mode ?? .calculator; error = nil
+        result = item; mode = item.mode ?? .calculator
+        if let savedNotation = item.notation { notation = savedNotation }
+        error = nil
     }
     func calculate() {
         let input = expression.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, !busy else { return }
         busy = true; error = nil
-        let exact = exact, degrees = degrees, mode = mode
+        let notation = notation, degrees = degrees, mode = mode
         calculationTask = Task {
             do {
-                let calculation = try await engine.evaluate(input, exact: exact, degrees: degrees, mode: mode)
+                let calculation = try await engine.evaluate(input, notation: notation, degrees: degrees, mode: mode)
                 result = calculation
                 history.insert(calculation, at: 0); history = Array(history.prefix(100))
                 persist()
