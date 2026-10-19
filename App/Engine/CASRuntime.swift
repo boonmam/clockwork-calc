@@ -24,11 +24,12 @@ import WebKit
         let bundle = Bundle.main
         guard let host = bundle.url(forResource: "host", withExtension: "html", subdirectory: "CAS"),
               let sourceURL = bundle.url(forResource: "nerdamer", withExtension: "js", subdirectory: "CAS"),
-              let adapterURL = bundle.url(forResource: "adapter", withExtension: "js", subdirectory: "CAS") else {
+              let adapterURL = bundle.url(forResource: "adapter", withExtension: "js", subdirectory: "CAS"),
+              let analysisURL = bundle.url(forResource: "improper", withExtension: "js", subdirectory: "CAS") else {
             throw CalculationError(message: "Bundled CAS resources are missing.")
         }
         source = try String(contentsOf: sourceURL, encoding: .utf8)
-        adapter = try scriptOverride ?? String(contentsOf: adapterURL, encoding: .utf8)
+        adapter = try scriptOverride ?? (String(contentsOf: analysisURL, encoding: .utf8) + "\n" + String(contentsOf: adapterURL, encoding: .utf8))
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
                 self.continuation = continuation

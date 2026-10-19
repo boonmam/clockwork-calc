@@ -8,6 +8,7 @@ struct CalculatorView: View {
     @State private var aboutPresented = false
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
+    @State private var notesPresented = false
     private var keys: [String] { ["sin", "cos", "tan", "√", "^", "(", ")", "π", "ln", "⌫", "7", "8", "9", "÷", "AC", "4", "5", "6", "×", "to", "1", "2", "3", "−", "Ans", "0", ".", ",", "+", "="].map { model.mode == .cas && $0 == "to" ? "x" : $0 } }
 
     var body: some View {
@@ -20,6 +21,9 @@ struct CalculatorView: View {
         }
         .sheet(isPresented: $historyPresented) { NavigationStack { HistoryView().navigationTitle("History").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { historyPresented = false } } } } }
         .sheet(isPresented: $aboutPresented) { AboutView() }
+        .alert("Calculation notes", isPresented: $notesPresented) { Button("Done", role: .cancel) {} } message: {
+            Text(model.result?.warnings.joined(separator: "\n\n") ?? "")
+        }
         .sheet(isPresented: $matrixPresented) { MatrixEditor { text in model.mode = .cas; model.insert(text) } }
     }
     private var calculatorContent: some View {
@@ -65,7 +69,9 @@ struct CalculatorView: View {
                 Label(error, systemImage: "exclamationmark.circle").font(.callout).foregroundStyle(.red)
                     .accessibilityIdentifier("calculationError").frame(maxWidth: .infinity, alignment: .leading)
             } else if let warning = model.result?.warnings.first {
-                Text(warning).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                Button { notesPresented = true } label: {
+                    Label(warning, systemImage: "info.circle").font(.caption).lineLimit(2)
+                }.buttonStyle(.plain).foregroundStyle(.secondary).accessibilityIdentifier("calculationNotes")
             }
             HStack(alignment: .center, spacing: 8) {
                 ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate)
@@ -117,6 +123,8 @@ struct CalculatorView: View {
                         Button("Expand polynomial") { model.example("expand((x+1)^3)", mode: .cas) }
                         Button("Factor polynomial") { model.example("factor(x^2-1)", mode: .cas) }
                         Button("Symbolic integral") { model.example("integrate(x^2*sin(x),x)", mode: .cas) }
+                        Button("Infinite interval") { model.example("integrate(exp(-x),x,0,Infinity)", mode: .cas) }
+                        Button("Singular endpoint") { model.example("integrate(1/sqrt(x),x,0,1)", mode: .cas) }
                         Button("Definite integral") { model.example("integrate(x^2,x,0,1)", mode: .cas) }
                         Button("Numerical integral") { model.example("nint(exp(-x^2),x,0,1)", mode: .cas) }
                         Button("Matrix inverse") { model.example("invert(matrix([1,2],[3,4]))", mode: .cas) }
@@ -209,7 +217,7 @@ struct AboutView: View {
                 }
                 Section("CAS syntax") {
                     Text("expand((x+1)^3)\nfactor(x^2-1)\nsimplify((x^2-1)/(x-1))\nintegrate(x^2,x)\nintegrate(x^2,x,0,1)\nnint(exp(-x^2),x,0,1)\ninvert(matrix([1,2],[3,4]))\nlinsolve([x+y=3,x-y=1],[x,y])").font(.system(.callout, design: .monospaced))
-                    Text("CAS log is natural log; use log10 for base ten. Integrals without bounds return one antiderivative: add C. Definite and numerical integration require finite, continuous, real intervals. Improper integrals are unsupported. Unevaluated integrals and partial solver results are reported explicitly.")
+                    Text("CAS log is natural log; use log10 for base ten. Integrals without bounds return one antiderivative: add C. Improper integrals use verified antiderivatives and separate one-sided limits for supported elementary expressions. Use Infinity or ∞ for an infinite bound. Each side of an interior singularity must converge independently. Divergent and unresolved cases are reported separately; unresolved does not mean divergent. Finite continuous integrals can use numerical quadrature. Unevaluated integrals and partial solver results are reported explicitly.")
                     Text("Matrices support arithmetic, powers, determinant, invert, transpose, rref, and rank. Use the Examples menu to insert a matrix of up to 8 × 8. Symbolic operations can require nonzero denominators; original domain restrictions still apply.")
                 }
                 Section("Open source") {

@@ -39,7 +39,7 @@ def resources(base):
     cas = base / 'CAS'
     check(cas.exists(), f'Missing CAS resources: {base}')
     if cas.exists():
-        check({p.name for p in cas.iterdir()} == {'nerdamer.js', 'bundle.js.LICENSE.txt', 'adapter.js', 'host.html'}, f'Unexpected CAS asset inventory: {base}')
+        check({p.name for p in cas.iterdir()} == {'nerdamer.js', 'bundle.js.LICENSE.txt', 'adapter.js', 'improper.js', 'host.html'}, f'Unexpected CAS asset inventory: {base}')
     math = base / 'Math'
     check(math.exists(), f'Missing renderer: {base}')
     if math.exists():

@@ -38,3 +38,37 @@ for(const s of ['invert(matrix([1,2],[2,4]))','matrix([1,2],[3])','matrix([1,2])
  'imatrix(2+2)','2^1000000','unknown(x)','x:=1','while(1)','x; x','[1,2)',
  'linsolve([x^2=1],[x])','solve([x+y=3,x-y=1],[x,y])','fetch(x)'])rejects(s);
 console.log(`${count} CAS adapter checks passed`);
+// Improper-integral results are established by analytic endpoint rules, not cutoffs.
+equal('integrate(exp(-x),x,0,infinity)','1');
+equal('integrate(exp(-x),x,0,∞)','1');
+equal('integrate(1/sqrt(x),x,0,1)','2');
+equal('integrate(1/sqrt(1-x),x,0,1)','2');
+equal('integrate(1/sqrt(abs(x)),x,-1,1)','4');
+equal('integrate(exp(x),x,-Infinity,0)','1');
+equal('integrate(1/(1+x^2),x,-Infinity,Infinity)','pi');
+equal('integrate(1/(1+x^2),x,Infinity,-Infinity)','-pi');
+equal('integrate(1/x^2,x,1,Infinity)','1');
+equal('integrate(x*exp(-x),x,0,Infinity)','1');
+equal('integrate(x^2*exp(-x),x,0,Infinity)','2');
+equal('integrate(log(x),x,0,1)','-1');
+equal('integrate(abs(x)*exp(-x^2),x,-Infinity,Infinity)','1');
+near('nint(exp(-x),x,0,Infinity)',1);
+for(const s of ['integrate(1/x,x,0,1)','integrate(1/x,x,-1,1)',
+ 'integrate(1/x^2,x,-1,1)','integrate(1/(x-0.1)^2,x,0,1)',
+ 'integrate(x/(1+x^2),x,-Infinity,Infinity)','integrate(exp(x),x,0,Infinity)',
+ 'integrate(1/x,x,1,Infinity)']){
+ assert.throws(()=>evaluate(s),/Divergent improper integral/,s);count++;
+}
+for(const s of ['integrate(exp(-x^2),x,0,Infinity)','integrate(sin(x),x,0,Infinity)',
+ 'integrate(1/(1+x^3),x,0,Infinity)']){
+ assert.throws(()=>evaluate(s),/Convergence unresolved/,s);count++;
+}
+assert.throws(()=>evaluate('integrate(1/sqrt(x),x,-1,1)'),/Real integral undefined/);count++;
+assert.ok(evaluate('integrate(1/sqrt(abs(x)),x,-1,1)').warnings.some(w=>w.includes('Split at 0')));count++;
+equal('integrate((x-1)/(x-1),x,0,2)','2');
+equal('integrate(exp(-2*x+3),x,0,Infinity)','(1/2)*e^3');
+equal('integrate(1/x^2,x,-Infinity,-1)','1');
+equal('integrate(x^(-3/2),x,1,Infinity)','2');
+assert.throws(()=>evaluate('integrate(1/(x^2-2),x,0,2)'),/Convergence unresolved/);count++;
+assert.ok(evaluate('integrate(exp(-x),x,0,inf)').inputLatex.includes('\\infty'));count++;
+console.log(`${count} total CAS adapter checks passed including improper integrals`);

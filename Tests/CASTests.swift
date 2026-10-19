@@ -103,3 +103,47 @@ extension CASTests {
         XCTAssertEqual(restored.mode, .cas)
     }
 }
+
+// Exercise the shipped analysis module through the real offline WebKit worker.
+extension CASTests {
+    func testConvergentImproperEndpoints() async throws {
+        for (input, expected) in [
+            ("integrate(exp(-x),x,0,Infinity)", "1"),
+            ("integrate(1/sqrt(x),x,0,1)", "2"),
+            ("integrate(exp(x),x,-Infinity,0)", "1"),
+            ("integrate(x^2*exp(-x),x,0,∞)", "2")
+        ] {
+            let result = try await cas(input)
+            XCTAssertEqual(result.text, expected, input)
+            XCTAssertFalse(result.approximate)
+            XCTAssertTrue(result.warnings.joined().contains("Convergent"))
+        }
+    }
+    func testSeparateComponentsAndReversedBounds() async throws {
+        let split = try await cas("integrate(1/sqrt(abs(x)),x,-1,1)")
+        XCTAssertEqual(split.text, "4")
+        XCTAssertTrue(split.warnings.joined().contains("Split at 0"))
+        let whole = try await cas("integrate(1/(1+x^2),x,-Infinity,Infinity)")
+        XCTAssertEqual(whole.text, "pi")
+        let reversed = try await cas("integrate(1/(1+x^2),x,Infinity,-Infinity)")
+        XCTAssertEqual(reversed.text, "-pi")
+        let numeric = try await cas("nint(exp(-x),x,0,Infinity)")
+        XCTAssertEqual(Double(numeric.text)!, 1, accuracy: 1e-10)
+        XCTAssertTrue(numeric.approximate)
+    }
+    func testDivergenceIsNotPrincipalValue() async {
+        for input in ["integrate(1/x,x,0,1)", "integrate(1/x,x,-1,1)",
+                      "integrate(1/(x-0.1),x,-1,1)",
+                      "integrate(x/(1+x^2),x,-Infinity,Infinity)"] {
+            do { _ = try await cas(input); XCTFail("Expected divergence: \(input)") }
+            catch { XCTAssertTrue(error.localizedDescription.contains("Divergent improper integral"), error.localizedDescription) }
+        }
+    }
+    func testUnresolvedConvergenceIsNotDivergence() async {
+        for input in ["integrate(exp(-x^2),x,0,Infinity)", "integrate(sin(x),x,0,Infinity)",
+                      "integrate(1/(1+x^3),x,0,Infinity)", "integrate(1/(x^2-2),x,0,2)"] {
+            do { _ = try await cas(input); XCTFail("Expected unresolved: \(input)") }
+            catch { XCTAssertTrue(error.localizedDescription.contains("Convergence unresolved"), error.localizedDescription) }
+        }
+    }
+}

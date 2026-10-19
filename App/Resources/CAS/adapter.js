@@ -21,7 +21,7 @@
         return {name:match[1], args:splitArguments(match[2])};
     }
     function validate(raw) {
-        let input=raw.replace(/π/g,'pi').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').trim();
+        let input=raw.replace(/∞/g,'Infinity').replace(/π/g,'pi').replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').trim();
         if (!input || input.length>4096) throw Error('CAS expressions must contain 1–4096 characters.');
         if (/[^A-Za-z0-9_+*/^().,=\[\]{}\s-]/.test(input)) throw Error('Use mathematical expressions, not scripts or assignments.');
         if (/__|\b(?:while|for|if|function|eval|import|constructor|prototype)\b/.test(input)) throw Error('Scripting is not supported.');
@@ -57,6 +57,18 @@
         if(args.length!==4)throw Error('Use integrate(f,x,a,b) or nint(f,x,a,b).');
         const [source,variable,lower,upper]=args;
         if(!/^[A-Za-z][A-Za-z0-9_]*$/.test(variable) || ['pi','e','i'].includes(variable))throw Error('Choose a plain integration variable, such as x.');
+        const improper=scope.FractionImproper || (typeof require==='function'?require('./improper.js'):null);
+        if(!improper)throw Error('Improper integral analysis is unavailable.');
+        let analysis;
+        try { analysis=improper.analyze(n,source,variable,lower,upper); }
+        catch(error) {
+            if(/^(Convergence unresolved:|Divergent improper integral:|Real integral undefined:)/.test(error.message))throw error;
+            throw Error('Convergence unresolved: the symbolic analysis could not complete ('+error.message+').');
+        }
+        if(analysis) {
+            if(numerical){analysis.value=n.numeric(analysis.value);analysis.approximate=true;}
+            return analysis;
+        }
         const f=n(source), a=realNumber(n,n(lower)), b=realNumber(n,n(upper));
         if(f.dataType!=='EXP' || f.variables().some(x=>x!==variable))throw Error('Definite integration requires a scalar with only its integration variable.');
         if(a===b)return {value:n('0'),approximate:false,warnings:[]};
@@ -68,13 +80,13 @@
             if(poles.partial || poles.unsolved)throw Error('Cannot certify denominator roots for this interval.');
             for(const root of poles.elements||[]) {
                 let x; try {x=realNumber(n,root);}catch(_){continue;}
-                if(x>=left&&x<=right)throw Error('The interval contains a pole. Improper integrals are not supported.');
+                if(x>=left&&x<=right)throw Error('Convergence unresolved: an unclassified singularity remains in the interval.');
             }
         }
         // Compiled by the CAS from the validated math expression, not from user JavaScript.
         const fn=f.buildFunction([variable]);
         let samples=0;
-        const at=x=>{if(++samples>50000)throw Error('Integration sample limit reached.');const y=Number(fn(x));if(!Number.isFinite(y))throw Error('Nonfinite integrand; improper integrals are not supported.');return y;};
+        const at=x=>{if(++samples>50000)throw Error('Integration sample limit reached.');const y=Number(fn(x));if(!Number.isFinite(y))throw Error('Convergence unresolved: a nonfinite sample was not classified by the domain analysis.');return y;};
         for(let i=0;i<=64;i++)at(left+(right-left)*i/64);
         const simpson=(lo,hi,fa,fm,fb)=>(hi-lo)*(fa+4*fm+fb)/6;
         const fa=at(left),fb=at(right),mid=(left+right)/2,fm=at(mid),whole=simpson(left,right,fa,fm,fb);
@@ -162,7 +174,8 @@
         try {
             inputLatex=n.convertToTeX(input);
             if(call && ['integrate','nint'].includes(call.name) && call.args.length===4) {
-                inputLatex='\\int_{'+n.convertToTeX(call.args[2])+'}^{'+n.convertToTeX(call.args[3])+'} '+n.convertToTeX(call.args[0])+'\\,d'+call.args[1];
+                const boundTex=s=>/^[+]?inf(?:inity)?$/i.test(s)?'\\infty':/^-inf(?:inity)?$/i.test(s)?'-\\infty':n.convertToTeX(s);
+                inputLatex='\\int_{'+boundTex(call.args[2])+'}^{'+boundTex(call.args[3])+'} '+n.convertToTeX(call.args[0])+'\\,d'+call.args[1];
             }
         } catch(_) {inputLatex='\\text{CAS calculation}';}
         return {text,latex,inputLatex,approximate,warnings};

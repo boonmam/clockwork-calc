@@ -24,6 +24,9 @@ needed on the device.
 | Differentiate | `diff(sin(x^2),x)` |
 | Symbolic antiderivative | `integrate(x^2*sin(x),x)` |
 | Definite integral, exact when available | `integrate(x^2,x,0,1)` |
+| Infinite interval → 1 | `integrate(exp(-x),x,0,Infinity)` |
+| Singular endpoint → 2 | `integrate(1/sqrt(x),x,0,1)` |
+| Interior singularity → 4 | `integrate(1/sqrt(abs(x)),x,-1,1)` |
 | Numerical quadrature | `nint(exp(-x^2),x,0,1)` |
 | Limit | `limit(sin(x)/x,x,0)` |
 | Solve an equation | `solve(x^3-1,x)` |
@@ -56,15 +59,32 @@ still apply. Numerical quadrature uses Double arithmetic.
 - An indefinite integral returns one antiderivative; **add an arbitrary C**.
   If no closed form is found, the integral remains visibly unevaluated and a
   warning explains that result.
-- Definite integration supports **finite, continuous, real intervals**. It checks
-  rational denominator roots and samples the integrand, then uses adaptive
-  Simpson quadrature (absolute error target 1e-9). When an antiderivative is
-  available, endpoint evaluation is cross-checked against the numerical result.
-  Otherwise the numerical answer is explicitly marked approximate.
-- Improper integrals, infinite bounds, known poles, nonfinite samples, and failed
-  convergence are rejected. Screening is not a proof of continuity or an error
-  guarantee; specially constructed oscillations/discontinuities can defeat
-  finite sampling. Domain restrictions must still be checked.
+- **Improper integrals** use a verified symbolic antiderivative and explicit
+  one-sided limits. Infinite bounds accept `Infinity`, `inf`, or `∞`, with an
+  optional minus sign. Interior singularities split the interval; every side
+  must converge independently. Tap the information label below a result for its
+  complete calculation notes. For example, `integrate(1/x,x,-1,1)` is divergent,
+  even though its Cauchy principal value is zero. Reversed bounds negate the result.
+- The original MIT analysis module certifies domain boundaries using linear and
+  quadratic factors and strictly positive even polynomials, with polynomial
+  analysis bounded to degree 16. It handles elementary endpoint limits,
+  rational tails, logarithmic endpoints, and polynomial-times-exponential decay.
+  It verifies antiderivatives by differentiation and does not use Nerdamer's
+  general `limit` routine for convergence decisions. Absolute values are resolved
+  separately on each component; restrictions are checked before simplification.
+- **Divergent** means an analyzed one-sided primitive limit is infinite.
+  **Convergence unresolved** means a required domain, antiderivative, or limit
+  rule is unavailable; it does not mean the integral diverges. For example,
+  `integrate(exp(-x^2),x,0,Infinity)` remains unresolved, despite its known value
+  `sqrt(pi)/2`. No infinite-tail cutoff or numerical guess is substituted.
+- Finite continuous real integrals use adaptive Simpson quadrature (absolute
+  error target 1e-9). When an antiderivative is available, endpoint evaluation is
+  cross-checked against the numerical result. Otherwise the answer is marked
+  approximate. Screening and finite sampling are not universal proofs of
+  continuity or error guarantees; unresolved domain analysis is rejected.
+  `nint` uses the same convergence analysis for improper integrals and reports
+  the convergent result numerically. It does not add general numerical improper
+  integration capabilities.
 - General `solve` may be incomplete. Partial or unresolved sets are flagged;
   candidates must satisfy the original equation. `linsolve` handles up to eight
   linear equations/variables. Its solution dictionaries are display/copy results,
@@ -156,6 +176,6 @@ an independent app, not an official Qalculate release.
 
 ## Preview
 
-| Definite integral on iPhone | Matrix inverse on iPad |
+| Improper integral on iPhone | Improper integral on iPad |
 | --- | --- |
-| ![CAS integral](Screenshots/iphone-cas-integral.png) | ![CAS matrix inverse](Screenshots/ipad-cas-matrix.png) |
+| ![Improper integral on iPhone](Screenshots/iphone-improper-integral.png) | ![Improper integral on iPad](Screenshots/ipad-improper-integral.png) |

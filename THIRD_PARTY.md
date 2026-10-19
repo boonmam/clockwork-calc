@@ -1,8 +1,8 @@
-# Third-party components — version 0.3
+# Third-party components — version 0.4
 
 | Component | Version | License | Origin |
 | --- | --- | --- | --- |
-| Original Swift app/engine, CAS adapter, quadrature wrapper, icon and scripts | 0.3 | MIT | This repository; copyright 2026 boonmam |
+| Original Swift app/engine, CAS adapter, quadrature and improper-limit analysis, icon and scripts | 0.4 | MIT | This repository; copyright 2026 boonmam |
 | Nerdamer complete browser bundle | 2.0.0 | Apache-2.0 | https://github.com/jiggzson/nerdamer / https://www.npmjs.com/package/nerdamer/v/2.0.0 |
 | decimal.js embedded in Nerdamer's browser bundle | 10.6.0 | MIT | https://github.com/MikeMcl/decimal.js |
 | KaTeX JavaScript, stylesheet and fonts | 0.16.22 | MIT | https://github.com/KaTeX/KaTeX/tree/v0.16.22 |
@@ -48,3 +48,7 @@ The build script cleans old products to prevent stale resources from being shipp
 The inventory and packaged-payload audit identify known dependencies and notices;
 they are not an Apple approval or a legal opinion. Signing, branding availability,
 privacy disclosures, and App Review remain separate release steps.
+
+Version 0.4 adds original MIT-licensed improper-integral analysis in
+`App/Resources/CAS/improper.js`. No new third-party dependency or vendor changes
+were introduced.

@@ -62,3 +62,23 @@ extension UITests {
         app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
     }
 }
+
+extension UITests {
+    func testImproperIntegral() {
+        let app = XCUIApplication(); app.launch()
+        app.segmentedControls["calculationMode"].buttons["CAS"].tap()
+        let editor = app.textViews["expressionEditor"]
+        editor.tap(); editor.typeText("integrate(exp(-x),x,0,Infinity)\n")
+        expectation(for: NSPredicate(format: "value == %@", "1"), evaluatedWith: app.buttons["copyResult"])
+        waitForExpectations(timeout: 15)
+        let rendered = app.webViews.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Expression")).firstMatch
+        XCTAssertTrue(rendered.waitForExistence(timeout: 10))
+        let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        screenshot.name = "Improper integral"; screenshot.lifetime = .keepAlways; add(screenshot)
+        app.buttons["calculationNotes"].tap()
+        XCTAssertTrue(app.alerts["Calculation notes"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.alerts.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "one-sided endpoint limits")).firstMatch.exists)
+        app.alerts.buttons["Done"].tap()
+        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+    }
+}
