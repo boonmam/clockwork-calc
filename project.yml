@@ -10,8 +10,8 @@ settings:
     TARGETED_DEVICE_FAMILY: '1,2'
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: '0.5.0'
-    CURRENT_PROJECT_VERSION: '5'
+    MARKETING_VERSION: '1.0.0'
+    CURRENT_PROJECT_VERSION: '6'
 targets:
   Qalculate:
     type: application
@@ -40,6 +40,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         SUPPORTS_MACCATALYST: NO
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
   QalculateTests:
     type: bundle.unit-test
     platform: iOS

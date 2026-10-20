@@ -222,8 +222,14 @@ struct AboutView: View {
                     Text("CAS log is natural log; use log10 for base ten. Integrals without bounds return one antiderivative: add C. Improper integrals use verified antiderivatives and separate one-sided limits for supported elementary expressions. Use Infinity or ∞ for an infinite bound. Each side of an interior singularity must converge independently. Divergent and unresolved cases are reported separately; unresolved does not mean divergent. Finite continuous integrals can use numerical quadrature. Unevaluated integrals and partial solver results are reported explicitly.")
                     Text("Matrices support arithmetic, powers, determinant, invert, transpose, rref, and rank. Use the Examples menu to insert a matrix of up to 8 × 8. Symbolic operations can require nonzero denominators; original domain restrictions still apply.")
                 }
+                Section("Support") {
+                    Link("Email support", destination: URL(string: "mailto:Boonmamccain@gmail.com")!)
+                    Text("Include your app version, device, and a short example. Avoid sending sensitive calculation history.")
+                }
+                Section("Privacy") {
+                    Text("Calculations run on your device. Fraction Lab has no accounts, advertising, tracking, or analytics and does not send your expressions or history to us. History and settings are stored locally and may be included in backups managed by your device. Copy writes a result to the system clipboard only when you tap Copy. Swipe to delete individual history entries.")
+                }
                 Section("Open source") {
-                    Link("Source repository", destination: URL(string: "https://github.com/boonmam/qalculate-ios")!)
                     Text("Original app and engine: MIT\nKaTeX renderer and fonts: MIT\nNerdamer 2.0: Apache-2.0\ndecimal.js 10.6: MIT")
                     Text("License notices are included below and in the source repository.")
                     NavigationLink("License notices") { ScrollView { Text(licenseNotices).font(.footnote).padding() }.navigationTitle("Licenses") }

@@ -2,6 +2,7 @@
 """Check this project's known dependency boundary, including an optional built .app."""
 import hashlib
 import json
+import plistlib
 from pathlib import Path
 import re
 import subprocess
@@ -51,12 +52,30 @@ def resources(base):
         license_file = notices / 'KaTeX-MIT.txt'
         check(license_file.exists() and license_file.read_bytes() == (math / 'LICENSE-KaTeX').read_bytes(), 'KaTeX notice mismatch')
 
+def privacy_manifest(path):
+    check(path.exists(), f'Missing privacy manifest: {path}')
+    if path.exists():
+        data = plistlib.loads(path.read_bytes())
+        check(data.get('NSPrivacyTracking') is False, 'Tracking declaration must remain false')
+        check(data.get('NSPrivacyCollectedDataTypes') == [], 'Unexpected collected-data declaration')
+        check(data.get('NSPrivacyAccessedAPITypes') == [{
+            'NSPrivacyAccessedAPIType': 'NSPrivacyAccessedAPICategoryUserDefaults',
+            'NSPrivacyAccessedAPITypeReasons': ['CA92.1']
+        }], 'Required-reason API declaration differs from reviewed UserDefaults usage')
+
+icon = (root / 'App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png').read_bytes()
+check(icon[:8] == b'\x89PNG\r\n\x1a\n' and icon[25] == 2,
+      'App Store icon must be an opaque RGB PNG without an alpha channel')
+check(int.from_bytes(icon[16:20], 'big') == 1024 and int.from_bytes(icon[20:24], 'big') == 1024,
+      'App Store icon must be 1024 by 1024')
+privacy_manifest(root / 'App/PrivacyInfo.xcprivacy')
 resources(root / 'App/Resources')
 if len(sys.argv) > 1:
     app = Path(sys.argv[1]).resolve()
     check(app.is_dir(), f'App not found: {app}')
     if app.is_dir():
         resources(app)
+        privacy_manifest(app / "PrivacyInfo.xcprivacy")
         import plistlib
         with (app / 'Info.plist').open('rb') as stream:
             info = plistlib.load(stream)

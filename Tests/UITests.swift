@@ -37,6 +37,9 @@ extension UITests {
         waitForExpectations(timeout: 15)
         let rendered = app.webViews.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "Expression")).firstMatch
         XCTAssertTrue(rendered.waitForExistence(timeout: 10))
+        // Accessibility can appear before WebKit's first composited frame.
+        XCTAssertTrue(rendered.isHittable)
+        Thread.sleep(forTimeInterval: 2)
         let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); screenshot.name = "CAS matrix"; screenshot.lifetime = .keepAlways; add(screenshot)
         app.buttons["key_AC"].tap()
         editor.tap(); editor.typeText("integrate(x^2,x,0,1)\n")

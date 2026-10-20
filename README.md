@@ -207,3 +207,11 @@ an independent app, not an official Qalculate release.
 | Engineering SI symbols on iPhone | Engineering SI symbols on iPad |
 | --- | --- |
 | ![Engineering on iPhone](Screenshots/iphone-engineering.png) | ![Engineering on iPad](Screenshots/ipad-engineering.png) |
+
+## Release preparation
+
+Version 1.0.0 (build 6) materials are in [Release](Release/RELEASE-CHECKLIST.md):
+listing copy, review notes, privacy/support pages, and native App Store screenshots.
+Support contact: Boonmamccain@gmail.com. `Scripts/archive-release.sh` builds an
+unsigned archive by default; configure `TEAM_ID` for signing. Distribution signing,
+working public HTTPS pages, and App Store Connect setup are still required.

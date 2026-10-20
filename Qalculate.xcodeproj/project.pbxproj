@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */; };
 		1258738D7409C090653BD597 /* MathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F320996124E5AA1161F3F736 /* MathView.swift */; };
+		2A7E62E6D2EF2F8CDC1F796B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */; };
 		41F0AF90205066F6B9AAB7E0 /* Math in Resources */ = {isa = PBXBuildFile; fileRef = 15E6F95C6B8AE3FF2595BE2A /* Math */; };
 		45779D0325710CE80AC14766 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77F93BFB627C63CE25AA4DD /* Assets.xcassets */; };
 		517D006235930BFCEF664ECF /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */; };
@@ -50,6 +51,7 @@
 		06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		154E8A61D458EC89C09C9344 /* QalculateTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E6F95C6B8AE3FF2595BE2A /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
+		163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1DE21F499047C13F71AB43 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		314677CCEBBA737D64BB71BD /* ResultNotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultNotation.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 		87B0755F93158DBDC054C9FD /* App */ = {
 			isa = PBXGroup;
 			children = (
+				163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */,
 				A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */,
 				CE274E9BA72480EB7745E830 /* Engine */,
 				0A12DCED73B85D89B15B4B15 /* Views */,
@@ -256,6 +259,7 @@
 				CE4E2977ED67F6227388D243 /* CAS in Resources */,
 				E18CE26526031BDE9C881660 /* Licenses in Resources */,
 				41F0AF90205066F6B9AAB7E0 /* Math in Resources */,
+				2A7E62E6D2EF2F8CDC1F796B /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +342,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Fraction Lab";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -440,7 +446,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -460,7 +466,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.5.0;
+				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -480,6 +486,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Fraction Lab";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -531,7 +539,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -545,7 +553,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.5.0;
+				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

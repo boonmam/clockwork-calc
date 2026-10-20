@@ -1,0 +1,20 @@
+{
+  "name": "Fraction Lab",
+  "subtitle": "Fractions, matrices & calculus",
+  "primary_category": "Utilities",
+  "secondary_category": "Education",
+  "locale": "en-US",
+  "version": "1.0.0",
+  "build": "6",
+  "bundle_id": "com.boonmam.qalculate.ios",
+  "keywords": "calculator,algebra,CAS,matrix,integral,fraction,scientific,engineering,units,offline",
+  "promotional_text": "Work with stacked fractions, symbolic algebra, matrices, and calculus offline. Switch between exact, decimal, and engineering notation on iPhone and iPad.",
+  "support_url": "https://mccainboonma.com/fraction-lab/support/",
+  "privacy_policy_url": "https://mccainboonma.com/fraction-lab/privacy/",
+  "support_email": "Boonmamccain@gmail.com",
+  "contact_status": "EMAIL_SELECTED_PUBLIC_PAGES_PENDING",
+  "price": "OWNER_SELECTION_REQUIRED",
+  "availability": "OWNER_SELECTION_REQUIRED",
+  "release_method": "Manual release after approval",
+  "copyright": "2026 boonmam"
+}

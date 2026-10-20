@@ -1,0 +1,15 @@
+Fraction Lab brings readable mathematics to iPhone and iPad. Enter an expression and see fractions, powers, matrices, and integrals in textbook notation.
+
+CALCULATE
+Work with exact fractions, scientific functions, complex arithmetic, and common unit conversions. Choose Exact, Decimal, Engineering, or Engineering with SI symbols such as k, M, and µ.
+
+EXPLORE ALGEBRA
+Use the offline computer algebra system to expand, factor, simplify, differentiate, and solve supported equations. Work with matrices up to 8 × 8, including inverses, determinants, and row reduction.
+
+INTEGRATE
+Find symbolic antiderivatives and evaluate definite integrals. Supported improper integrals use separate endpoint limits. Results clearly distinguish divergence from analysis the engine cannot resolve.
+
+KEEP YOUR WORK
+Recall recent calculations, copy results, and reuse answers. Dark, light, and system themes are included. Calculations run on your device with no account required.
+
+Scope: symbolic operations can require domain assumptions and equation solving may be incomplete. Improper-integral support covers a bounded elementary class. Currency exchange rates and graphing are not included.

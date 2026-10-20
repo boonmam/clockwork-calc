@@ -1,7 +1,9 @@
 import AppKit
 let size = NSSize(width: 1024, height: 1024)
-let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 1024, pixelsHigh: 1024, bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
-let context = NSGraphicsContext(bitmapImageRep: bitmap)!
+let canvas = CGContext(data: nil, width: 1024, height: 1024, bitsPerComponent: 8,
+                       bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(),
+                       bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)!
+let context = NSGraphicsContext(cgContext: canvas, flipped: false)
 NSGraphicsContext.saveGraphicsState(); NSGraphicsContext.current = context
 NSColor(calibratedRed: 0.035, green: 0.12, blue: 0.13, alpha: 1).setFill()
 NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
@@ -14,4 +16,5 @@ func center(_ value: String, y: CGFloat) {
 center("1", y: 520); center("2", y: 150)
 mint.setStroke(); let bar = NSBezierPath(); bar.move(to: NSPoint(x: 290, y: 505)); bar.line(to: NSPoint(x: 734, y: 505)); bar.lineWidth = 22; bar.lineCapStyle = .round; bar.stroke()
 NSGraphicsContext.restoreGraphicsState()
+let bitmap = NSBitmapImageRep(cgImage: canvas.makeImage()!)
 try bitmap.representation(using: .png, properties: [:])!.write(to: URL(fileURLWithPath: "App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png"))

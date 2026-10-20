@@ -1,3 +1,27 @@
+# Release candidate 1.0.0 (6)
+
+Prepared October 19, 2026 with Xcode 26.6 / iOS 26.5.
+
+- iPhone 17 Pro Max: full 50-test rerun passed. The first run during concurrent
+  simulator startup timed out in the CAS history test (both assertions in that
+  test failed); the complete rerun passed with fewer simulators running.
+- iPad Pro 13-inch (M5): full 50-test suite passed.
+- Ten native-size App Store JPEG screenshots exported and visually inspected.
+  The first iPad matrix capture preceded WebKit's composited frame; it was
+  recaptured after adding a presentation delay to the UI test.
+- Clean staged-source unsigned device archive passed dependency, privacy-manifest,
+  icon, license, and pinned asset audits. Icon is opaque 1024 × 1024 RGB.
+- Listing field lengths and screenshot sizes/alpha checks pass locally.
+
+Evidence: `.build/Release-iPhone-final.xcresult`, `.build/Release-iPad.xcresult`,
+`.build/Release-iPad-capture.xcresult`, and `.build/release-archive-final.log`.
+The archive is `.build/clean-release/.build/Release/FractionLab.xcarchive`.
+
+No signed distribution archive, App Store Connect validation/upload, TestFlight
+installation, physical-device testing, or public release is claimed. See
+`Release/RELEASE-CHECKLIST.md` for the account, hosting, and owner-selection steps.
+The source tree was unchanged in calculation behavior for this release preparation.
+
 # Version 0.5 validation — engineering notation
 
 Validated 2026-10-19 with Xcode 26.6 and the iOS 26.5 runtime.
