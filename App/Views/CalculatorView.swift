@@ -9,7 +9,7 @@ struct CalculatorView: View {
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
     @State private var notesPresented = false
-    private var keys: [String] { ["sin", "cos", "tan", "√", "^", "(", ")", "π", "ln", "⌫", "7", "8", "9", "÷", "AC", "4", "5", "6", "×", "to", "1", "2", "3", "−", "Ans", "0", ".", ",", "+", "="].map { model.mode == .cas && $0 == "to" ? "x" : $0 } }
+    private var keys: [String] { ["sin", "cos", "tan", "√", "⌫", "(", ")", "π", "ln", "^", "7", "8", "9", "÷", "AC", "4", "5", "6", "×", "to", "1", "2", "3", "−", "Ans", "0", ".", ",", "+", "="].map { model.mode == .cas && $0 == "to" ? "x" : $0 } }
 
     var body: some View {
         Group {
@@ -81,6 +81,11 @@ struct CalculatorView: View {
                     .overlay(alignment: .leading) {
                         if model.expression.isEmpty { Text("Enter an expression…").foregroundStyle(.tertiary).padding(.leading, 13).allowsHitTesting(false) }
                     }
+                Button("EE", action: model.insertExponent)
+                    .font(.system(.body, design: .monospaced).weight(.semibold))
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityLabel("Enter exponent, times ten to the power")
+                    .accessibilityIdentifier("key_EE")
                 if keyboardVisible {
                     Button { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } label: { Image(systemName: "keyboard.chevron.compact.down").font(.title2) }.accessibilityLabel("Hide keyboard")
                 }
@@ -207,7 +212,7 @@ struct AboutView: View {
                     Picker("Theme", selection: $appearance) { Text("Dark").tag("dark"); Text("Light").tag("light"); Text("System").tag("system") }
                 }
                 Section("Writing expressions") {
-                    Text("Use / for fractions, ^ for powers, and parentheses for grouping. Results and interpreted expressions use textbook notation.")
+                    Text("Use / for fractions, ^ for powers, and parentheses for grouping. EE enters a numeric exponent: 4.7 EE 3 means 4.7 × 10³. The upper-right keypad key deletes the character before the cursor. Results and interpreted expressions use textbook notation.")
                     Text("Try: 5 ft + 3 in to cm\nsolve(x^2 = 9, x)\ndiff(x^3, x)").font(.system(.callout, design: .monospaced))
                     Text("Result format and RAD/DEG apply to your next calculation. Engineering uses powers of ten in multiples of three (4.7 × 10³). Engineering (SI symbols) uses scale symbols (4.7 k), from q (10⁻³⁰) to Q (10³⁰), with powers of ten outside that range. These modes use decimal evaluation and format numeric coefficients, including matrix entries. SI symbols are display scale factors, not CAS variables. Copy, Ans, and Use result keep the unambiguous numeric value. Calculator expressions are bounded to 256 tokens. CAS uses radians, treats names as symbols rather than units, and has a five-second deadline.")
                 }

@@ -105,3 +105,19 @@ The device build used a clean export of staged source, excluding ignored legacy
 libraries and prior build products. The payload audit verified exact pinned
 Nerdamer/decimal.js/KaTeX assets and notices and found no legacy calculation
 library linkage or datasets. No additional third-party dependency was introduced.
+
+## Keypad update — 1.0.0 build 7 (2026-10-20)
+
+Moved delete to the top-right keypad position and added a persistent EE button
+beside the expression editor. Numeric EE entry retains scientific-notation
+precedence (`1/2e3` evaluates to `1/2000`).
+
+Targeted validation passed on iPhone 17 Pro Max and iPad Pro 13-inch (M5),
+iOS 26.5: four model tests and two UI tests per device, zero failures.
+Checks cover cursor/selection entry, positive and negative exponents, exact
+results, delete placement and landscape control reachability. The iPhone
+portrait screenshot was visually inspected. Results are in
+`.build/Keypad-iPhone-final.xcresult` and `.build/Keypad-iPad.xcresult`.
+
+The build 6 release archive and store screenshots predate this update and must
+be regenerated before submission.

@@ -215,3 +215,9 @@ listing copy, review notes, privacy/support pages, and native App Store screensh
 Support contact: Boonmamccain@gmail.com. `Scripts/archive-release.sh` builds an
 unsigned archive by default; configure `TEAM_ID` for signing. Distribution signing,
 working public HTTPS pages, and App Store Connect setup are still required.
+
+Build 7 keypad update: ⌫ is the upper-right key; EE sits beside the expression
+field and stays available with the keyboard open. For numeric mantissas it inserts
+`e` (for example `4.7e3`); at an empty operand it inserts `10^`. The configured
+personal development team is retained for installation on the owner’s iPhone.
+The packaged build 6 archive predates this keypad update; regenerate it before release.

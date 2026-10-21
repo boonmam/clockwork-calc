@@ -113,3 +113,26 @@ extension UITests {
         format.tap(); app.buttons["Exact"].tap()
     }
 }
+
+extension UITests {
+    func testExponentEntryAndUpperRightDelete() {
+        let app = XCUIApplication(); app.launch()
+        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["resultNotation"].tap(); app.buttons["Exact"].tap()
+        app.buttons["key_AC"].tap()
+        let delete = app.buttons["key_⌫"]
+        XCTAssertEqual(delete.frame.minY, app.buttons["key_sin"].frame.minY, accuracy: 1)
+        XCTAssertGreaterThan(delete.frame.minX, app.buttons["key_√"].frame.minX)
+        for key in ["4", ".", "7", "EE", "3", "="] { app.buttons["key_" + key].tap() }
+        expectation(for: NSPredicate(format: "value == %@", "4700"), evaluatedWith: app.buttons["copyResult"])
+        waitForExpectations(timeout: 10)
+        let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        screenshot.name = "Accessible EE and delete"; screenshot.lifetime = .keepAlways; add(screenshot)
+        delete.tap()
+        XCTAssertEqual(app.textViews["expressionEditor"].value as? String, "4.7e")
+        app.buttons["key_AC"].tap()
+        for key in ["2", "EE", "−", "3", "="] { app.buttons["key_" + key].tap() }
+        expectation(for: NSPredicate(format: "value == %@", "1/500"), evaluatedWith: app.buttons["copyResult"])
+        waitForExpectations(timeout: 10)
+    }
+}

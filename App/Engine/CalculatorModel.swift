@@ -64,6 +64,18 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         selection = NSRange(location: start + (text as NSString).length, length: 0)
         error = nil
     }
+    func insertExponent() {
+        let source = expression as NSString
+        let prefix = source.substring(to: min(selection.location, source.length))
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        // Keep a numeric mantissa and exponent in one token: 1/2 EE 3 means 1/2000.
+        if prefix.range(of: #"(?<![A-Za-z_0-9.])(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$"#,
+                        options: .regularExpression) != nil {
+            insert("e"); return
+        }
+        let followsValue = prefix.last.map { $0.isNumber || $0.isLetter || $0 == ")" || $0 == "]" } ?? false
+        insert(followsValue ? "*10^" : "10^")
+    }
     func backspace() {
         let source = expression as NSString
         let start = min(selection.location, source.length)
