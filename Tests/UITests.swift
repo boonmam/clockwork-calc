@@ -123,6 +123,10 @@ extension UITests {
         let delete = app.buttons["key_⌫"]
         XCTAssertEqual(delete.frame.minY, app.buttons["key_sin"].frame.minY, accuracy: 1)
         XCTAssertGreaterThan(delete.frame.minX, app.buttons["key_√"].frame.minX)
+        let exponent = app.buttons["key_EE"]
+        XCTAssertEqual(exponent.frame.minY, app.buttons["key_0"].frame.minY, accuracy: 1)
+        XCTAssertEqual(exponent.frame.width, app.buttons["key_0"].frame.width, accuracy: 1)
+        XCTAssertGreaterThan(exponent.frame.minX, app.buttons["key_."].frame.minX)
         for key in ["4", ".", "7", "EE", "3", "="] { app.buttons["key_" + key].tap() }
         expectation(for: NSPredicate(format: "value == %@", "4700"), evaluatedWith: app.buttons["copyResult"])
         waitForExpectations(timeout: 10)

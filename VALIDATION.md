@@ -121,3 +121,11 @@ portrait screenshot was visually inspected. Results are in
 
 The build 6 release archive and store screenshots predate this update and must
 be regenerated before submission.
+
+## Full-size EE key — build 8 (2026-10-20)
+
+EE now occupies the bottom-row keypad position beside the decimal point,
+replacing the comma key. Commas remain available through the text keyboard.
+The editor accessory was removed. Targeted iPhone UI tests passed for EE
+position and equal key width, positive/negative exponent evaluation, delete
+placement and landscape reachability (two tests, zero failures).
