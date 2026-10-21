@@ -9,7 +9,15 @@ struct CalculatorView: View {
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
     @State private var notesPresented = false
-    private var keys: [String] { ["sin", "cos", "tan", "√", "⌫", "(", ")", "π", "ln", "^", "7", "8", "9", "÷", "AC", "4", "5", "6", "×", "to", "1", "2", "3", "−", "Ans", "0", ".", "EE", "+", "="].map { model.mode == .cas && $0 == "to" ? "x" : $0 } }
+    private var keys: [String] {
+        ["sin", "cos", "tan", "AC", "⌫",
+         "ln", "√", "^", "(", ")",
+         "7", "8", "9", "EE", "÷",
+         "4", "5", "6", "π", "×",
+         "1", "2", "3", "Ans", "−",
+         "0", ".", "to", "+", "="]
+            .map { model.mode == .cas && $0 == "to" ? "x" : $0 }
+    }
 
     var body: some View {
         Group {
@@ -89,7 +97,7 @@ struct CalculatorView: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 5), spacing: 8) {
                     ForEach(keys, id: \.self) { key in
                         Button { press(key) } label: {
-                            Text(key).font(.system(size: key.count > 2 ? 18 : 23, weight: key == "=" ? .bold : .medium, design: .rounded))
+                            Text(key == "to" ? "Units" : key).font(.system(size: key.count > 2 || key == "to" ? 18 : 23, weight: key == "=" ? .bold : .medium, design: .rounded))
                                 .frame(maxWidth: .infinity).frame(height: 43)
                                 .foregroundStyle(key == "=" ? Color.calculatorAccentText : (isOperator(key) ? Color.calculatorAccent : Color.primary))
                                 .background(key == "=" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
@@ -144,7 +152,7 @@ struct CalculatorView: View {
     }
     private func isOperator(_ key: String) -> Bool { ["÷", "×", "−", "+", "^", "√", "to", "AC", "⌫", "EE"].contains(key) }
     private func accessibilityName(_ key: String) -> String {
-        ["EE":"Enter exponent, times ten to the power", "÷":"Divide", "×":"Multiply", "−":"Subtract", "+":"Add", "=":"Equals", "⌫":"Backspace", "AC":"Clear expression", "√":"Square root", "^":"Power", "Ans":"Last answer"][key] ?? key
+        ["to":"Convert units", "EE":"Enter exponent, times ten to the power", "÷":"Divide", "×":"Multiply", "−":"Subtract", "+":"Add", "=":"Equals", "⌫":"Backspace", "AC":"Clear expression", "√":"Square root", "^":"Power", "Ans":"Last answer"][key] ?? key
     }
     private func press(_ key: String) {
         switch key {
@@ -208,7 +216,7 @@ struct AboutView: View {
                     Picker("Theme", selection: $appearance) { Text("Dark").tag("dark"); Text("Light").tag("light"); Text("System").tag("system") }
                 }
                 Section("Writing expressions") {
-                    Text("Use / for fractions, ^ for powers, and parentheses for grouping. The bottom-row EE key enters a numeric exponent: 4.7 EE 3 means 4.7 × 10³. The upper-right keypad key deletes the character before the cursor. Results and interpreted expressions use textbook notation.")
+                    Text("Use / for fractions, ^ for powers, and parentheses for grouping. The EE key beside 9 enters a numeric exponent: 4.7 EE 3 means 4.7 × 10³. The upper-right keypad key deletes the character before the cursor. Results and interpreted expressions use textbook notation.")
                     Text("Try: 5 ft + 3 in to cm\nsolve(x^2 = 9, x)\ndiff(x^3, x)").font(.system(.callout, design: .monospaced))
                     Text("Result format and RAD/DEG apply to your next calculation. Engineering uses powers of ten in multiples of three (4.7 × 10³). Engineering (SI symbols) uses scale symbols (4.7 k), from q (10⁻³⁰) to Q (10³⁰), with powers of ten outside that range. These modes use decimal evaluation and format numeric coefficients, including matrix entries. SI symbols are display scale factors, not CAS variables. Copy, Ans, and Use result keep the unambiguous numeric value. Calculator expressions are bounded to 256 tokens. CAS uses radians, treats names as symbols rather than units, and has a five-second deadline.")
                 }

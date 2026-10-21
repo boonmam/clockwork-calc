@@ -129,3 +129,12 @@ replacing the comma key. Commas remain available through the text keyboard.
 The editor accessory was removed. Targeted iPhone UI tests passed for EE
 position and equal key width, positive/negative exponent evaluation, delete
 placement and landscape reachability (two tests, zero failures).
+
+## Regrouped keypad — build 9 (2026-10-20)
+
+Scientific functions occupy the first two rows; AC and delete share the top
+right. EE sits beside 9; division, multiplication and subtraction align down
+the right edge. The conversion key displays Units and remains x in CAS mode.
+Two targeted iPhone UI tests passed, covering placement, key width, exponent
+evaluation, conversion accessibility label and landscape reachability.
+The portrait screenshot was visually inspected. Results: `.build/Keypad9.xcresult`.

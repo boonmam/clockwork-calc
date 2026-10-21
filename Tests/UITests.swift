@@ -122,11 +122,14 @@ extension UITests {
         app.buttons["key_AC"].tap()
         let delete = app.buttons["key_⌫"]
         XCTAssertEqual(delete.frame.minY, app.buttons["key_sin"].frame.minY, accuracy: 1)
-        XCTAssertGreaterThan(delete.frame.minX, app.buttons["key_√"].frame.minX)
+        XCTAssertGreaterThan(delete.frame.minX, app.buttons["key_AC"].frame.minX)
         let exponent = app.buttons["key_EE"]
-        XCTAssertEqual(exponent.frame.minY, app.buttons["key_0"].frame.minY, accuracy: 1)
+        XCTAssertEqual(exponent.frame.minY, app.buttons["key_9"].frame.minY, accuracy: 1)
         XCTAssertEqual(exponent.frame.width, app.buttons["key_0"].frame.width, accuracy: 1)
-        XCTAssertGreaterThan(exponent.frame.minX, app.buttons["key_."].frame.minX)
+        XCTAssertGreaterThan(exponent.frame.minX, app.buttons["key_9"].frame.minX)
+        XCTAssertEqual(app.buttons["key_÷"].frame.minX, app.buttons["key_×"].frame.minX, accuracy: 1)
+        XCTAssertEqual(app.buttons["key_×"].frame.minX, app.buttons["key_−"].frame.minX, accuracy: 1)
+        XCTAssertEqual(app.buttons["key_to"].label, "Convert units")
         for key in ["4", ".", "7", "EE", "3", "="] { app.buttons["key_" + key].tap() }
         expectation(for: NSPredicate(format: "value == %@", "4700"), evaluatedWith: app.buttons["copyResult"])
         waitForExpectations(timeout: 10)

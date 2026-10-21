@@ -216,8 +216,9 @@ Support contact: Boonmamccain@gmail.com. `Scripts/archive-release.sh` builds an
 unsigned archive by default; configure `TEAM_ID` for signing. Distribution signing,
 working public HTTPS pages, and App Store Connect setup are still required.
 
-Build 8 keypad update: ⌫ is the upper-right key; EE is a full-size bottom-row
-key beside the decimal point. Commas are available through the text keyboard. For numeric mantissas it inserts
-`e` (for example `4.7e3`); at an empty operand it inserts `10^`. The configured
-personal development team is retained for installation on the owner’s iPhone.
-The packaged build 6 archive predates this keypad update; regenerate it before release.
+Build 9 keypad update groups scientific functions above the digits, puts AC
+beside the upper-right delete key, and places EE beside 9. Division, multiplication
+and subtraction run down the right edge; + and = sit together on the bottom row.
+The conversion key is labeled Units (x in CAS mode). Commas are available through
+the text keyboard. EE inserts numeric `e`, or `10^` at an empty operand.
+The packaged build 6 archive predates these updates; regenerate it before release.
