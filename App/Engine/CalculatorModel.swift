@@ -53,7 +53,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         self.historyURL = historyURL ?? URL.documentsDirectory.appending(path: "history.json")
         if let data = try? Data(contentsOf: self.historyURL),
            let saved = try? JSONDecoder().decode([Calculation].self, from: data) {
-            history = Array(saved.prefix(100)); result = history.first
+            history = Array(saved.prefix(100))
         }
     }
     func insert(_ text: String) {
@@ -84,7 +84,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         expression = source.replacingCharacters(in: range, with: "")
         selection = NSRange(location: range.location, length: 0)
     }
-    func clear() { expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
+    func clear() { result = nil; expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
     func recall(_ item: Calculation) {
         expression = item.expression; selection = NSRange(location: (expression as NSString).length, length: 0)
         result = item; mode = item.mode ?? .calculator

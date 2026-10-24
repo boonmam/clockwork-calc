@@ -63,13 +63,6 @@ struct CalculatorView: View {
                         Button { UIPasteboard.general.string = result.text } label: { Label("Copy", systemImage: "doc.on.doc") }
                             .accessibilityIdentifier("copyResult").accessibilityValue(result.text)
                     }.font(.caption).buttonStyle(.borderless).padding(12)
-                } else {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Image(systemName: "function").font(.system(size: 36)).foregroundStyle(Color.calculatorAccent)
-                        Text("More than numbers.").font(.title2.bold())
-                        Text("Fractions, algebra, units, and calculus.\nCalculated on your device.").foregroundStyle(.secondary)
-                        Button("Try ½ + ⅓") { model.example("1/2 + 1/3") }.buttonStyle(.bordered)
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading).padding(24)
                 }
             }
             .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20))

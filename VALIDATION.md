@@ -169,3 +169,12 @@ toolbar, which appears at the side on the unfolded Duo. The signed device build
 succeeded and was installed and launched on the physical Duo. The targeted
 EE/delete UI regression passed on the Duo simulator, including selecting
 Calculator from the new toolbar menu.
+
+## Blank calculation start — build 14 (2026-10-23)
+
+Removed the welcome/sample expression card. Launch loads history without showing
+an unrelated previous result beside an empty editor. AC clears the displayed
+result as well as the expression. Signed device build succeeded; the fraction
+entry/result UI test passed on the Duo simulator. Device installation is pending
+inspection of the user's reported failing calculation; that issue is not yet
+reproduced.
