@@ -233,7 +233,9 @@ private struct Parser {
         while !current.isEmpty {
             let explicit = ["=": 1, "+": 10, "-": 10, "*": 20, "/": 20, "^": 40][current]
             // Adjacent symbols or parentheses mean multiplication, e.g. 5 ft or 2(3+4).
-            let implicit = current != "to" && (current.first?.isLetter == true || current == "(")
+            let numberAfterSymbolOrGroup = Double(current) != nil &&
+                (tokens[index - 1].first?.isLetter == true || tokens[index - 1] == ")")
+            let implicit = current != "to" && (current.first?.isLetter == true || current == "(" || numberAfterSymbolOrGroup)
             guard let precedence = explicit ?? (implicit ? 20 : nil), precedence >= minimum else { break }
             let op = explicit == nil ? "*" : consume()
             left = .binary(op, left, try expression(precedence + (op == "^" ? 0 : 1)))

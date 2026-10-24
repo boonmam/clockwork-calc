@@ -94,7 +94,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     func calculate() {
         let input = expression.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, !busy else { return }
-        busy = true; error = nil
+        busy = true; error = nil; result = nil
         let notation = notation, degrees = degrees, mode = mode
         calculationTask = Task {
             do {

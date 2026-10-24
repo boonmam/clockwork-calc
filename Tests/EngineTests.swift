@@ -156,3 +156,18 @@ extension EngineTests {
         XCTAssertNil(bundle.url(forResource: "functions", withExtension: "xml", subdirectory: "Definitions"))
     }
 }
+
+extension EngineTests {
+    func testNumberAfterPiAndGroupedExpression() async throws {
+        for (input, explicit) in [("200/(1/2π150e−6*60)", "200/(1/2*pi*150e-6*60)"),
+                                  ("π150", "pi*150"), ("(2+3)4", "(2+3)*4")] {
+            let actual = try await engine.evaluate(input, exact: false, degrees: false)
+            let expected = try await engine.evaluate(explicit, exact: false, degrees: false)
+            XCTAssertEqual(actual.text, expected.text)
+        }
+        do {
+            _ = try await engine.evaluate("2 3", exact: false, degrees: false)
+            XCTFail("Separate numbers still require an operator")
+        } catch {}
+    }
+}

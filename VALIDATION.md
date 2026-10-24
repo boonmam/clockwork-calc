@@ -175,6 +175,11 @@ Calculator from the new toolbar menu.
 Removed the welcome/sample expression card. Launch loads history without showing
 an unrelated previous result beside an empty editor. AC clears the displayed
 result as well as the expression. Signed device build succeeded; the fraction
-entry/result UI test passed on the Duo simulator. Device installation is pending
-inspection of the user's reported failing calculation; that issue is not yet
-reproduced.
+entry/result UI test passed on the Duo simulator. Installed and launched on the physical Duo; Device Hub confirmed the empty
+calculator has no restored sample expression/result. Inspection revealed the
+reported input `200/(1/2π150e−6*60)`. Fixed implicit multiplication before a
+number following a symbol or group, while keeping separate bare numbers invalid.
+All 20 EngineTests passed, including that exact input versus its explicit-product
+equivalent. Starting a calculation clears the old result so errors are not shown
+alongside an unrelated answer. Multiplication/division retain left-to-right
+precedence; parentheses are required to group a denominator product.
