@@ -35,10 +35,6 @@ struct CalculatorView: View {
     }
     private var calculationSettings: some View {
         VStack(spacing: 12) {
-            Picker("Calculation mode", selection: $model.mode) {
-                Text("Calculator").tag(CalculationMode.calculator)
-                Text("CAS").tag(CalculationMode.cas)
-            }.pickerStyle(.segmented).disabled(model.busy).accessibilityIdentifier("calculationMode")
             HStack {
                 Picker("Result format", selection: $model.notation) {
                     ForEach(ResultNotation.allCases, id: \.self) { notation in
@@ -57,6 +53,7 @@ struct CalculatorView: View {
     private var resultPanel: some View {
         VStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 0) {
+                expressionInput
                 if let result = model.result {
                     MathView(calculation: result).frame(minHeight: 120)
                     HStack {
@@ -92,13 +89,10 @@ struct CalculatorView: View {
             HStack(alignment: .center, spacing: 8) {
                 ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate)
                     .frame(height: keyboardVisible ? 90 : 64)
-                    .overlay(alignment: .leading) {
-                        if model.expression.isEmpty { Text("Enter an expression…").foregroundStyle(.tertiary).padding(.leading, 13).allowsHitTesting(false) }
-                    }
                 if keyboardVisible {
                     Button { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } label: { Image(systemName: "keyboard.chevron.compact.down").font(.title2) }.accessibilityLabel("Hide keyboard")
                 }
-            }.padding(.horizontal, 4).background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14))
+            }.padding(.horizontal, 4)
     }
     private func keypad(keyHeight: CGFloat) -> some View {
         Group {
@@ -135,7 +129,6 @@ struct CalculatorView: View {
                         .scrollBounceBehavior(.basedOnSize)
                         .accessibilityIdentifier("resultScroll")
                     }
-                    expressionInput
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 keypad(keyHeight: keyHeight)
@@ -158,6 +151,13 @@ struct CalculatorView: View {
                 Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History")
             }
             ToolbarItemGroup(placement: .topBarTrailing) {
+                Picker("Calculation mode", selection: $model.mode) {
+                    Text("Calculator").tag(CalculationMode.calculator)
+                    Text("CAS").tag(CalculationMode.cas)
+                }
+                .pickerStyle(.menu)
+                .disabled(model.busy)
+                .accessibilityIdentifier("calculationMode")
                 Menu {
                     Button("Fractions") { model.example("1/2 + 1/3", mode: .calculator) }
                     Section("Computer algebra") {

@@ -160,3 +160,12 @@ on the user's physical iPhone Duo running iOS 27.2. Physical display appearance
 was not independently captured. A full-suite attempt was interrupted; only the
 targeted checks above are claimed. App Store/TestFlight distribution remains
 unvalidated. The packaged build 6 release archive must be regenerated.
+
+## Integrated expression panel — build 13 (2026-10-23)
+
+Removed the separate expression bar and its placeholder, retaining the editable
+expression inside the result panel. Calculator/CAS now uses a menu in the system
+toolbar, which appears at the side on the unfolded Duo. The signed device build
+succeeded and was installed and launched on the physical Duo. The targeted
+EE/delete UI regression passed on the Duo simulator, including selecting
+Calculator from the new toolbar menu.

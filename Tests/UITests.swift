@@ -26,7 +26,8 @@ final class UITests: XCTestCase {
 extension UITests {
     func testCASMatrixAndIntegral() {
         let app = XCUIApplication(); app.launch()
-        app.segmentedControls["calculationMode"].buttons["CAS"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["CAS"].tap()
         let editor = app.textViews["expressionEditor"]
         editor.tap(); editor.typeText("invert(matrix([1,2],[3,4]))\n")
         let copy = app.buttons["copyResult"]
@@ -44,7 +45,8 @@ extension UITests {
         expectation(for: NSPredicate(format: "value == %@", "1/3"), evaluatedWith: copy)
         waitForExpectations(timeout: 15)
         let integral = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); integral.name = "CAS integral"; integral.lifetime = .keepAlways; add(integral)
-        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Calculator"].tap()
     }
 }
 
@@ -60,14 +62,16 @@ extension UITests {
         app.buttons["key_="].tap()
         expectation(for: NSPredicate(format: "value == %@", "matrix([0, 0], [0, 0])"), evaluatedWith: app.buttons["copyResult"])
         waitForExpectations(timeout: 15)
-        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Calculator"].tap()
     }
 }
 
 extension UITests {
     func testImproperIntegral() {
         let app = XCUIApplication(); app.launch()
-        app.segmentedControls["calculationMode"].buttons["CAS"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["CAS"].tap()
         let editor = app.textViews["expressionEditor"]
         editor.tap(); editor.typeText("integrate(exp(-x),x,0,Infinity)\n")
         expectation(for: NSPredicate(format: "value == %@", "1"), evaluatedWith: app.buttons["copyResult"])
@@ -80,14 +84,16 @@ extension UITests {
         XCTAssertTrue(app.alerts["Calculation notes"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.alerts.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "one-sided endpoint limits")).firstMatch.exists)
         app.alerts.buttons["Done"].tap()
-        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Calculator"].tap()
     }
 }
 
 extension UITests {
     func testEngineeringNotationOptions() {
         let app = XCUIApplication(); app.launch()
-        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Calculator"].tap()
         let format = app.buttons["resultNotation"]
         XCTAssertTrue(format.waitForExistence(timeout: 5))
         format.tap(); app.buttons["Engineering"].tap()
@@ -115,7 +121,8 @@ extension UITests {
 extension UITests {
     func testExponentEntryAndUpperRightDelete() {
         let app = XCUIApplication(); app.launch()
-        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Calculator"].tap()
         app.buttons["resultNotation"].tap(); app.buttons["Exact"].tap()
         app.buttons["key_AC"].tap()
         let delete = app.buttons["key_⌫"]
@@ -147,7 +154,8 @@ extension UITests {
     func testCalculationSurvivesWindowShapeChanges() {
         let app = XCUIApplication(); app.launch()
         defer { XCUIDevice.shared.orientation = .portrait }
-        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Calculator"].tap()
         let editor = app.textViews["expressionEditor"]
         app.buttons["key_AC"].tap()
         for key in ["7", "+", "8", "="] { app.buttons["key_" + key].tap() }
