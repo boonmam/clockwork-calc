@@ -222,3 +222,7 @@ and subtraction run down the right edge; + and = sit together on the bottom row.
 The conversion key is labeled Units (x in CAS mode). Commas are available through
 the text keyboard. EE inserts numeric `e`, or `10^` at an empty operand.
 The packaged build 6 archive predates these updates; regenerate it before release.
+
+Build 12 adds native Duo support using Xcode 27.1. The calculator stays fixed,
+with scrolling confined to the expression and result areas. Unfolded windows
+place the full keypad beside the editor/results. See [Duo validation](Release/duo/README.md).

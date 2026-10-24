@@ -3,7 +3,8 @@ import SwiftUI
 struct CalculatorView: View {
     @EnvironmentObject private var model: CalculatorModel
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @State private var columnVisibility: NavigationSplitViewVisibility = .detailOnly
+    @State private var compactColumn: NavigationSplitViewColumn = .detail
     @State private var historyPresented = false
     @State private var aboutPresented = false
     @State private var keyboardVisible = false
@@ -20,12 +21,10 @@ struct CalculatorView: View {
     }
 
     var body: some View {
-        Group {
-            if sizeClass == .regular {
-                NavigationSplitView {
-                    HistoryView().navigationTitle("History")
-                } detail: { NavigationStack { calculator } }
-            } else { NavigationStack { calculator } }
+        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
+            HistoryView().navigationTitle("History")
+        } detail: {
+            calculator
         }
         .sheet(isPresented: $historyPresented) { NavigationStack { HistoryView().navigationTitle("History").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { historyPresented = false } } } } }
         .sheet(isPresented: $aboutPresented) { AboutView() }
@@ -34,7 +33,7 @@ struct CalculatorView: View {
         }
         .sheet(isPresented: $matrixPresented) { MatrixEditor { text in model.mode = .cas; model.insert(text) } }
     }
-    private var calculatorContent: some View {
+    private var calculationSettings: some View {
         VStack(spacing: 12) {
             Picker("Calculation mode", selection: $model.mode) {
                 Text("Calculator").tag(CalculationMode.calculator)
@@ -53,6 +52,10 @@ struct CalculatorView: View {
                     Text("RAD").tag(false); Text("DEG").tag(true)
                 }.pickerStyle(.segmented).frame(width: 125) }
             }
+        }
+    }
+    private var resultPanel: some View {
+        VStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 0) {
                 if let result = model.result {
                     MathView(calculation: result).frame(minHeight: 120)
@@ -83,6 +86,9 @@ struct CalculatorView: View {
                     Label(warning, systemImage: "info.circle").font(.caption).lineLimit(2)
                 }.buttonStyle(.plain).foregroundStyle(.secondary).accessibilityIdentifier("calculationNotes")
             }
+        }
+    }
+    private var expressionInput: some View {
             HStack(alignment: .center, spacing: 8) {
                 ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate)
                     .frame(height: keyboardVisible ? 90 : 64)
@@ -93,12 +99,15 @@ struct CalculatorView: View {
                     Button { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } label: { Image(systemName: "keyboard.chevron.compact.down").font(.title2) }.accessibilityLabel("Hide keyboard")
                 }
             }.padding(.horizontal, 4).background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14))
+    }
+    private func keypad(keyHeight: CGFloat) -> some View {
+        Group {
             if !keyboardVisible {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 5), spacing: 8) {
                     ForEach(keys, id: \.self) { key in
                         Button { press(key) } label: {
                             Text(key == "to" ? "Units" : key).font(.system(size: key.count > 2 || key == "to" ? 18 : 23, weight: key == "=" ? .bold : .medium, design: .rounded))
-                                .frame(maxWidth: .infinity).frame(height: 43)
+                                .frame(maxWidth: .infinity).frame(height: keyHeight)
                                 .foregroundStyle(key == "=" ? Color.calculatorAccentText : (isOperator(key) ? Color.calculatorAccent : Color.primary))
                                 .background(key == "=" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
                         }.buttonStyle(.plain).accessibilityLabel(accessibilityName(key)).accessibilityIdentifier("key_\(key)")
@@ -108,23 +117,45 @@ struct CalculatorView: View {
             } else {
                 Button(action: model.calculate) { HStack { if model.busy { ProgressView() }; Text("Calculate").bold(); Image(systemName: "equal") }.frame(maxWidth: .infinity) }
                     .buttonStyle(.borderedProminent).disabled(model.busy).accessibilityIdentifier("calculateButton")
+            }        }
+    }
+    private func calculatorContent(size: CGSize) -> some View {
+        let wide = size.width >= 620 && size.height >= 316 && !keyboardVisible
+        let layout = wide ? AnyLayout(HStackLayout(alignment: .top, spacing: 20))
+                          : AnyLayout(VStackLayout(spacing: 12))
+        let keyHeight = wide ? min(72, max(44, (size.height - 52) / 6)) : 44
+        return VStack(spacing: 12) {
+            layout {
+                VStack(spacing: 12) {
+                    calculationSettings
+                    GeometryReader { resultSpace in
+                        ScrollView {
+                            resultPanel.frame(minHeight: resultSpace.size.height)
+                        }
+                        .scrollBounceBehavior(.basedOnSize)
+                        .accessibilityIdentifier("resultScroll")
+                    }
+                    expressionInput
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                keypad(keyHeight: keyHeight)
+                    .frame(width: wide ? min(420, (size.width - 52) * 0.49) : nil)
             }
         }
-        .padding(.horizontal, sizeClass == .regular ? 28 : 16).padding(.bottom, 12)
-        .frame(maxWidth: 850)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 16).padding(.bottom, 12)
+        .frame(maxWidth: 1200)
+        .frame(height: size.height)
+        .frame(maxWidth: .infinity)
         .background(Color(uiColor: .systemBackground))
     }
     private var calculator: some View {
-        Group {
-            if verticalSizeClass == .compact {
-                ScrollView { calculatorContent.frame(minHeight: 600) }.accessibilityIdentifier("landscapeCalculator")
-            } else { calculatorContent }
+        GeometryReader { geometry in
+            calculatorContent(size: geometry.size)
         }
         .navigationTitle("Fraction Lab").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
-                if sizeClass != .regular { Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History") }
+                Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History")
             }
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Menu {

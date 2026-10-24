@@ -138,3 +138,25 @@ the right edge. The conversion key displays Units and remains x in CAS mode.
 Two targeted iPhone UI tests passed, covering placement, key width, exponent
 evaluation, conversion accessibility label and landscape reachability.
 The portrait screenshot was visually inspected. Results: `.build/Keypad9.xcresult`.
+
+## Duo layout — build 12 (2026-10-23)
+
+Built with Xcode 27.1 (27A9275) and the iOS 27.1 SDK. A persistent
+NavigationSplitView preserves the calculator hierarchy across window changes.
+The outer calculator does not scroll. Only the result panel and expression editor
+scroll internally. Wide windows place the editor/results beside the complete
+keypad; narrower windows stack them. Key targets remain at least 44 points tall.
+
+On the iOS 27.1 Duo simulator, the unfolded 951 × 669-point window passed
+`testWideKeypadFitsWithoutScrolling`: keypad keys were hittable, within the
+window, and at least 44 points high. The inner-display screenshot was visually
+inspected and is saved as `Release/duo/unfolded-keypad.png`. The folded layout
+was also visually inspected. Two further UI tests passed with zero failures:
+calculation state across rotation and EE entry/upper-right delete placement.
+Logs: `.build/duo-fixed-test.log` and `.build/duo-fixed-regression.log`.
+
+The signed build succeeded, and build 12 was installed and launched successfully
+on the user's physical iPhone Duo running iOS 27.2. Physical display appearance
+was not independently captured. A full-suite attempt was interrupted; only the
+targeted checks above are claimed. App Store/TestFlight distribution remains
+unvalidated. The packaged build 6 release archive must be regenerated.

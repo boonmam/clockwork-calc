@@ -18,8 +18,6 @@ final class UITests: XCTestCase {
         let app = XCUIApplication(); app.launch()
         XCUIDevice.shared.orientation = .landscapeLeft
         defer { XCUIDevice.shared.orientation = .portrait }
-        let scroll = app.scrollViews["landscapeCalculator"]
-        if scroll.waitForExistence(timeout: 3) { scroll.swipeUp() }
         XCTAssertTrue(app.buttons["key_="].isHittable)
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); attachment.lifetime = .keepAlways; add(attachment)
     }
@@ -141,5 +139,47 @@ extension UITests {
         for key in ["2", "EE", "−", "3", "="] { app.buttons["key_" + key].tap() }
         expectation(for: NSPredicate(format: "value == %@", "1/500"), evaluatedWith: app.buttons["copyResult"])
         waitForExpectations(timeout: 10)
+    }
+}
+
+
+extension UITests {
+    func testCalculationSurvivesWindowShapeChanges() {
+        let app = XCUIApplication(); app.launch()
+        defer { XCUIDevice.shared.orientation = .portrait }
+        app.segmentedControls["calculationMode"].buttons["Calculator"].tap()
+        let editor = app.textViews["expressionEditor"]
+        app.buttons["key_AC"].tap()
+        for key in ["7", "+", "8", "="] { app.buttons["key_" + key].tap() }
+        let copy = app.buttons["copyResult"]
+        expectation(for: NSPredicate(format: "value == %@", "15"), evaluatedWith: copy)
+        waitForExpectations(timeout: 10)
+        for orientation: UIDeviceOrientation in [.landscapeLeft, .portrait] {
+            XCUIDevice.shared.orientation = orientation
+            XCTAssertEqual(editor.value as? String, "7+8")
+            XCTAssertEqual(copy.value as? String, "15")
+            XCTAssertTrue(app.buttons["key_EE"].isHittable)
+            XCTAssertTrue(app.buttons["key_="].isHittable)
+        }
+    }
+}
+
+
+extension UITests {
+    func testWideKeypadFitsWithoutScrolling() throws {
+        let app = XCUIApplication(); app.launch()
+        let window = app.windows.firstMatch
+        guard window.frame.width >= 700 else { throw XCTSkip("Run with Duo unfolded or a wide window") }
+        let editor = app.textViews["expressionEditor"]
+        let equals = app.buttons["key_="]
+        XCTAssertGreaterThan(equals.frame.minX, editor.frame.maxX)
+        for key in ["sin", "cos", "tan", "AC", "⌫", "ln", "√", "^", "(", ")", "7", "8", "9", "EE", "÷", "4", "5", "6", "π", "×", "1", "2", "3", "Ans", "−", "0", ".", "+", "="] {
+            let button = app.buttons["key_" + key]
+            XCTAssertTrue(button.isHittable, key)
+            XCTAssertTrue(window.frame.contains(button.frame), key)
+            XCTAssertGreaterThanOrEqual(button.frame.height, 44, key)
+        }
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.name = "Duo full keypad without scrolling"; shot.lifetime = .keepAlways; add(shot)
     }
 }
