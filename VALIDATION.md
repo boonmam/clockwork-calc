@@ -183,3 +183,12 @@ All 20 EngineTests passed, including that exact input versus its explicit-produc
 equivalent. Starting a calculation clears the old result so errors are not shown
 alongside an unrelated answer. Multiplication/division retain left-to-right
 precedence; parentheses are required to group a denominator product.
+
+## Unit converter — build 15 (2026-10-24)
+
+Added a separate converter with 11 categories, From/To menus, unit swapping,
+copyable live results, and a fixed keypad. Uses Apple Foundation Measurement
+conversions without adding third-party libraries. Conversion tests passed for
+feet/centimeters, Celsius/Fahrenheit, and round trips for every listed unit.
+The Duo simulator UI test passed for entering converter mode, live conversion,
+swapping units, clearing, and reaching EE. Signed device build succeeded.

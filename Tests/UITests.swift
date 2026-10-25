@@ -191,3 +191,18 @@ extension UITests {
         shot.name = "Duo full keypad without scrolling"; shot.lifetime = .keepAlways; add(shot)
     }
 }
+
+extension UITests {
+    func testUnitConverterMode() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap()
+        app.buttons["Unit converter"].tap()
+        app.buttons["convertKey_5"].tap()
+        XCTAssertEqual(app.staticTexts["conversionResult"].label, "500")
+        app.buttons["swapUnits"].tap()
+        XCTAssertEqual(app.staticTexts["conversionResult"].label, "0.05")
+        XCTAssertTrue(app.buttons["convertKey_EE"].isHittable)
+        app.buttons["convertKey_AC"].tap()
+        XCTAssertEqual(app.staticTexts["conversionResult"].label, "0")
+    }
+}

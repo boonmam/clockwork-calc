@@ -171,3 +171,19 @@ extension EngineTests {
         } catch {}
     }
 }
+
+extension EngineTests {
+    func testConversionCategories() {
+        let length = ConversionCategory.all.first { $0.name == "Length" }!
+        XCTAssertEqual(length.convert(5, from: 5, to: 1), 152.4, accuracy: 0.000001)
+        let temperature = ConversionCategory.all.first { $0.name == "Temperature" }!
+        XCTAssertEqual(temperature.convert(0, from: 0, to: 1), 32, accuracy: 0.000001)
+        XCTAssertEqual(temperature.convert(-40, from: 1, to: 0), -40, accuracy: 0.000001)
+        for category in ConversionCategory.all {
+            for index in category.units.indices {
+                let converted = category.convert(12.5, from: 0, to: index)
+                XCTAssertEqual(category.convert(converted, from: index, to: 0), 12.5, accuracy: 0.000001)
+            }
+        }
+    }
+}

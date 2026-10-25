@@ -226,3 +226,10 @@ The packaged build 6 archive predates these updates; regenerate it before releas
 Build 12 adds native Duo support using Xcode 27.1. The calculator stays fixed,
 with scrolling confined to the expression and result areas. Unfolded windows
 place the full keypad beside the editor/results. See [Duo validation](Release/duo/README.md).
+
+Build 15 adds **Unit converter** to the Calculator/CAS mode menu. Choose a
+category and From/To units, enter a value, and read the live conversion. Swap
+reverses the selected units; AC clears the value. Supports length, area, volume,
+weight/mass, temperature, speed, time, energy, power, pressure, and angle using
+Apple Foundation measurement conversions. US and Imperial volume units are
+explicitly labeled. The keypad supports decimal values, signs, and EE exponents.

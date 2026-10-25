@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */; };
 		1258738D7409C090653BD597 /* MathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F320996124E5AA1161F3F736 /* MathView.swift */; };
+		1D66F5918FCE124ED8C04452 /* UnitConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61EB734BBD42B2E01443F7C /* UnitConverterView.swift */; };
 		2A7E62E6D2EF2F8CDC1F796B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */; };
 		41F0AF90205066F6B9AAB7E0 /* Math in Resources */ = {isa = PBXBuildFile; fileRef = 15E6F95C6B8AE3FF2595BE2A /* Math */; };
 		45779D0325710CE80AC14766 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77F93BFB627C63CE25AA4DD /* Assets.xcassets */; };
@@ -51,8 +52,8 @@
 		06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		154E8A61D458EC89C09C9344 /* QalculateTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E6F95C6B8AE3FF2595BE2A /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
-		163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1DE21F499047C13F71AB43 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		314677CCEBBA737D64BB71BD /* ResultNotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultNotation.swift; sourceTree = "<group>"; };
 		3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASRuntime.swift; sourceTree = "<group>"; };
@@ -65,6 +66,7 @@
 		90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixEditor.swift; sourceTree = "<group>"; };
 		A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QalculateApp.swift; sourceTree = "<group>"; };
 		AAFA3B980F9DC497508BF20F /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
+		D61EB734BBD42B2E01443F7C /* UnitConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConverterView.swift; sourceTree = "<group>"; };
 		E77F93BFB627C63CE25AA4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF89DF39A6B0A30D16DEB493 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		F320996124E5AA1161F3F736 /* MathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathView.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				F320996124E5AA1161F3F736 /* MathView.swift */,
 				90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */,
 				7AA2EB930097591FD718B36E /* Theme.swift */,
+				D61EB734BBD42B2E01443F7C /* UnitConverterView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					665A6C415F33DB13ABDCCCAE = {
+						DevelopmentTeam = BW8AVKUHR6;
 						ProvisioningStyle = Automatic;
 					};
 					82665AB714AC3C57B6584AFF = {
@@ -299,6 +303,7 @@
 				03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */,
 				7FA3F7D8042A362075AAFAE9 /* ResultNotation.swift in Sources */,
 				CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */,
+				1D66F5918FCE124ED8C04452 /* UnitConverterView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,7 +452,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -541,7 +546,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

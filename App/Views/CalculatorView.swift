@@ -10,6 +10,7 @@ struct CalculatorView: View {
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
     @State private var notesPresented = false
+    @State private var conversionMode = false
     private var keys: [String] {
         ["sin", "cos", "tan", "AC", "⌫",
          "ln", "√", "^", "(", ")",
@@ -136,7 +137,8 @@ struct CalculatorView: View {
     }
     private var calculator: some View {
         GeometryReader { geometry in
-            calculatorContent(size: geometry.size)
+            if conversionMode { UnitConverterView() }
+            else { calculatorContent(size: geometry.size) }
         }
         .navigationTitle("Fraction Lab").navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -144,9 +146,15 @@ struct CalculatorView: View {
                 Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History")
             }
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Picker("Calculation mode", selection: $model.mode) {
-                    Text("Calculator").tag(CalculationMode.calculator)
-                    Text("CAS").tag(CalculationMode.cas)
+                Picker("Calculation mode", selection: Binding<String>(
+                    get: { conversionMode ? "conversion" : model.mode.rawValue },
+                    set: { value in
+                        conversionMode = value == "conversion"
+                        if let mode = CalculationMode(rawValue: value) { model.mode = mode }
+                    })) {
+                    Text("Calculator").tag("calculator")
+                    Text("CAS").tag("cas")
+                    Text("Unit converter").tag("conversion")
                 }
                 .pickerStyle(.menu)
                 .disabled(model.busy)
