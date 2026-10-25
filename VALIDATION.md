@@ -192,3 +192,11 @@ conversions without adding third-party libraries. Conversion tests passed for
 feet/centimeters, Celsius/Fahrenheit, and round trips for every listed unit.
 The Duo simulator UI test passed for entering converter mode, live conversion,
 swapping units, clearing, and reaching EE. Signed device build succeeded.
+
+## Compact unit converter — build 16 (2026-10-24)
+
+Removed the converter ScrollView, condensed labels and actions into rows, and
+reduced value text and padding. Long values scale to one line. Short landscape
+windows use side-by-side controls and keypad. The Duo UI test passed with zero
+scroll views and category/unit menus, swap/copy controls, and bottom keys inside
+the window and hittable. Signed build succeeded and installed on the Duo.

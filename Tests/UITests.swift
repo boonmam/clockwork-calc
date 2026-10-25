@@ -197,6 +197,12 @@ extension UITests {
         let app = XCUIApplication(); app.launch()
         app.buttons["calculationMode"].tap()
         app.buttons["Unit converter"].tap()
+        XCTAssertEqual(app.scrollViews.count, 0)
+        for identifier in ["conversionCategory", "fromUnit", "toUnit", "swapUnits", "copyConversion", "convertKey_0", "convertKey_−"] {
+            let control = app.buttons[identifier]
+            XCTAssertTrue(control.isHittable, identifier)
+            XCTAssertTrue(app.windows.firstMatch.frame.contains(control.frame), identifier)
+        }
         app.buttons["convertKey_5"].tap()
         XCTAssertEqual(app.staticTexts["conversionResult"].label, "500")
         app.buttons["swapUnits"].tap()

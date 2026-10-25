@@ -46,29 +46,43 @@ struct UnitConverterView: View {
     }
     var body: some View {
         GeometryReader { space in
-            let wide = space.size.width >= 620
+            let wide = space.size.width >= 620 || (space.size.width >= 500 && space.size.height < 500)
             let layout = wide ? AnyLayout(HStackLayout(spacing: 20)) : AnyLayout(VStackLayout(spacing: 12))
             layout {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
                         Picker("Category", selection: $categoryIndex) {
                             ForEach(ConversionCategory.all.indices, id: \.self) { i in
                                 Text(ConversionCategory.all[i].name).tag(i)
                             }
                         }.accessibilityIdentifier("conversionCategory")
+                        Spacer(minLength: 0)
+                        Button { swap(&from, &to) } label: {
+                            Image(systemName: "arrow.up.arrow.down").frame(width: 44, height: 44)
+                        }.accessibilityLabel("Swap units").accessibilityIdentifier("swapUnits")
+                    }
+                    HStack {
                         Text("From").font(.caption).foregroundStyle(.secondary)
-                        Text(input).font(.system(size: 34, weight: .medium, design: .rounded)).textSelection(.enabled)
-                            .accessibilityIdentifier("conversionInput")
                         unitPicker("From unit", selection: $from)
-                        Button { swap(&from, &to) } label: { Label("Swap units", systemImage: "arrow.up.arrow.down") }
-                            .accessibilityIdentifier("swapUnits")
+                    }.frame(minHeight: 44)
+                    Text(input).font(.system(size: 28, weight: .medium, design: .rounded))
+                        .lineLimit(1).minimumScaleFactor(0.4).textSelection(.enabled)
+                        .accessibilityIdentifier("conversionInput")
+                    HStack {
                         Text("To").font(.caption).foregroundStyle(.secondary)
-                        Text(output).font(.system(size: 34, weight: .medium, design: .rounded)).foregroundStyle(Color.calculatorAccent).textSelection(.enabled)
-                            .accessibilityIdentifier("conversionResult")
                         unitPicker("To unit", selection: $to)
-                        Button { UIPasteboard.general.string = output } label: { Label("Copy result", systemImage: "doc.on.doc") }
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(16)
-                }.background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20))
+                    }.frame(minHeight: 44)
+                    HStack {
+                        Text(output).font(.system(size: 28, weight: .medium, design: .rounded))
+                            .lineLimit(1).minimumScaleFactor(0.4).foregroundStyle(Color.calculatorAccent).textSelection(.enabled)
+                            .accessibilityIdentifier("conversionResult")
+                        Spacer(minLength: 0)
+                        Button { UIPasteboard.general.string = output } label: {
+                            Image(systemName: "doc.on.doc").frame(width: 44, height: 44)
+                        }.accessibilityLabel("Copy result").accessibilityIdentifier("copyConversion")
+                    }
+                }.frame(maxWidth: .infinity, alignment: .leading).padding(12)
+                    .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20))
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
                     ForEach(["7", "8", "9", "⌫", "4", "5", "6", "AC", "1", "2", "3", "±", "0", ".", "EE", "−"], id: \.self) { key in
                         Button { press(key) } label: {
@@ -77,7 +91,7 @@ struct UnitConverterView: View {
                         }.buttonStyle(.plain).accessibilityIdentifier("convertKey_\(key)")
                     }
                 }.frame(width: wide ? min(400, space.size.width * 0.45) : nil)
-            }.padding(16)
+            }.padding(12).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onChange(of: categoryIndex) { _, _ in from = 0; to = 1 }
     }
