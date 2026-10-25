@@ -200,3 +200,9 @@ reduced value text and padding. Long values scale to one line. Short landscape
 windows use side-by-side controls and keypad. The Duo UI test passed with zero
 scroll views and category/unit menus, swap/copy controls, and bottom keys inside
 the window and hittable. Signed build succeeded and installed on the Duo.
+
+## Single-line unit selectors — build 17 (2026-10-24)
+
+Unit menus take the available row width, keep their text on one line, and scale
+long labels down when necessary. The wide layout allocates more width to the
+conversion panel. Signed device build succeeded.

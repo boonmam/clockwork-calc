@@ -62,14 +62,14 @@ struct UnitConverterView: View {
                         }.accessibilityLabel("Swap units").accessibilityIdentifier("swapUnits")
                     }
                     HStack {
-                        Text("From").font(.caption).foregroundStyle(.secondary)
+                        Text("From").font(.caption).foregroundStyle(.secondary).fixedSize()
                         unitPicker("From unit", selection: $from)
                     }.frame(minHeight: 44)
                     Text(input).font(.system(size: 28, weight: .medium, design: .rounded))
                         .lineLimit(1).minimumScaleFactor(0.4).textSelection(.enabled)
                         .accessibilityIdentifier("conversionInput")
                     HStack {
-                        Text("To").font(.caption).foregroundStyle(.secondary)
+                        Text("To").font(.caption).foregroundStyle(.secondary).fixedSize()
                         unitPicker("To unit", selection: $to)
                     }.frame(minHeight: 44)
                     HStack {
@@ -90,15 +90,21 @@ struct UnitConverterView: View {
                                 .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
                         }.buttonStyle(.plain).accessibilityIdentifier("convertKey_\(key)")
                     }
-                }.frame(width: wide ? min(400, space.size.width * 0.45) : nil)
+                }.frame(width: wide ? min(340, space.size.width * 0.38) : nil)
             }.padding(12).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onChange(of: categoryIndex) { _, _ in from = 0; to = 1 }
     }
     private func unitPicker(_ title: String, selection: Binding<Int>) -> some View {
         Picker(title, selection: selection) {
-            ForEach(category.units.indices, id: \.self) { i in Text(ConversionCategory.label(category.units[i])).tag(i) }
-        }.pickerStyle(.menu).accessibilityIdentifier(title == "From unit" ? "fromUnit" : "toUnit")
+            ForEach(category.units.indices, id: \.self) { i in
+                Text(ConversionCategory.label(category.units[i]))
+                    .lineLimit(1).minimumScaleFactor(0.6).tag(i)
+            }
+        }.pickerStyle(.menu)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .lineLimit(1).minimumScaleFactor(0.6)
+            .accessibilityIdentifier(title == "From unit" ? "fromUnit" : "toUnit")
     }
     private func press(_ key: String) {
         switch key {
