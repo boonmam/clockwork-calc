@@ -276,9 +276,29 @@ extension UITests {
         app.buttons["calculationMode"].tap()
         app.buttons["Quick Calc"].tap()
         app.buttons["Example"].tap()
-        XCTAssertEqual(app.staticTexts["quickAnswer"].label, "6 W")
-        XCTAssertTrue(app.buttons["quickFormula"].isHittable)
+        XCTAssertEqual(app.textFields["powerInput3"].placeholderValue, "6")
+        XCTAssertTrue(app.buttons["quickTabs"].isHittable)
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.lifetime = .keepAlways; add(attachment)
+    }
+}
+
+extension UITests {
+    func testCustomQuickTabPersists() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Quick Calc"].tap()
+        app.buttons["New calculation tab"].tap()
+        let name = "Test tab " + String(UUID().uuidString.prefix(6))
+        let nameField = app.textFields["tabName"]
+        nameField.tap(); nameField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 30) + name)
+        let formula = app.textFields["tabFormula"]
+        formula.tap(); formula.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 10) + "x*3")
+        app.buttons["saveQuickTab"].tap()
+        XCTAssertTrue(app.staticTexts["quickAnswer"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.staticTexts["quickAnswer"].label.trimmingCharacters(in: .whitespaces), "3")
+        app.terminate(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Quick Calc"].tap()
+        app.buttons["quickTabs"].tap(); app.buttons[name].tap()
+        XCTAssertEqual(app.staticTexts["quickAnswer"].label.trimmingCharacters(in: .whitespaces), "3")
     }
 }

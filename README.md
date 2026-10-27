@@ -269,3 +269,22 @@ add results to expression history. The new bundle identifier is
 `com.boonmam.clockworkcalc.ios`; installations with the previous identifier have
 separate storage. Existing release screenshots and archives predate this rename
 and must be regenerated before App Store submission.
+
+## Configurable Quick Calc tabs — build 24
+
+Open Quick Calc and use **+** to create a saved calculation tab. Set its name,
+formula, 1–4 input variables, labels, unit labels, and default values. Use the tab
+menu to switch worksheets and **…** to edit, duplicate, or delete one. Tabs save
+on-device and survive restarts. Formula fields use finite base-unit numbers;
+unit labels are descriptive, not automatic conversions, and trigonometry uses
+radians. Custom tabs evaluate one output expression rather than solving an
+arbitrary equation for an unknown variable. RC/capacitor starter tabs are editable.
+
+The built-in **Power** tab solves DC magnitudes for a passive resistive load.
+Enter any two of R, I, V, and P; the other fields show calculated values. Each
+field has µ/m/base/k/M units. Clear an entered field before selecting another
+input pair. Calculated values never become inputs automatically. Zero cases
+that cannot determine a unique positive finite resistance are explained rather
+than guessed. For example, 12 V and 0.5 A produce 24 Ω and 6 W. This implements
+the DC worksheet pattern from the requested reference; AC phasor and energy
+worksheets are not included.

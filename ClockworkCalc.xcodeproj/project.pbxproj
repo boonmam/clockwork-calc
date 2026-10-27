@@ -27,6 +27,7 @@
 		9FE9A1CFBAE3228BD8AD2BE3 /* ProgrammerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDAE0955175B6C1B36907D6 /* ProgrammerView.swift */; };
 		BE2FCD15E8FAA794CA8C2440 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC6F0AC6AB59B5B588D1DAF /* Theme.swift */; };
 		C22340D1A3AF79BAB455670E /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CFB0CE542EB43452525F29 /* ExpressionEditor.swift */; };
+		CFAA7F3BA001C8E92A8B21B9 /* QuickTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2506CFF4D7A86E969D9D8 /* QuickTabs.swift */; };
 		D48FEBC82307879FF8372DE3 /* NativeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E77DAA1309B1D593460B67 /* NativeMath.swift */; };
 		D57AA0A17C8316BBEE36EDF5 /* ClockworkCalcApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F8D0EB1D183C93B7A85EBD /* ClockworkCalcApp.swift */; };
 		D8BA76158B8584314CBAD822 /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B380089526AEFFD77804BA06 /* CalculatorModel.swift */; };
@@ -64,6 +65,7 @@
 		53F8D0EB1D183C93B7A85EBD /* ClockworkCalcApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockworkCalcApp.swift; sourceTree = "<group>"; };
 		54BD4C452CFCFF2321D3E59E /* ProgrammerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerTests.swift; sourceTree = "<group>"; };
 		6312B9E08B7B9AD6259A25FD /* MatrixEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixEditor.swift; sourceTree = "<group>"; };
+		72B2506CFF4D7A86E969D9D8 /* QuickTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickTabs.swift; sourceTree = "<group>"; };
 		81BEA353F086D2277AED9E54 /* MathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathView.swift; sourceTree = "<group>"; };
 		8CBD641AB9E1BDF9A27F4DFA /* ProgrammerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerModel.swift; sourceTree = "<group>"; };
 		9B2EB882692E98CD8A44701D /* ClockworkCalc.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ClockworkCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 				45E77DAA1309B1D593460B67 /* NativeMath.swift */,
 				8CBD641AB9E1BDF9A27F4DFA /* ProgrammerModel.swift */,
 				D3AD05CD660F96BA8C78E7C1 /* QuickCalc.swift */,
+				72B2506CFF4D7A86E969D9D8 /* QuickTabs.swift */,
 				AE6D2F66A057344AD28E2D7A /* ResultNotation.swift */,
 			);
 			path = Engine;
@@ -304,6 +307,7 @@
 				9FE9A1CFBAE3228BD8AD2BE3 /* ProgrammerView.swift in Sources */,
 				882256F2B0DFCB9408C7EF30 /* QuickCalc.swift in Sources */,
 				7F811C6D2B2A758A368CF0DC /* QuickCalcView.swift in Sources */,
+				CFAA7F3BA001C8E92A8B21B9 /* QuickTabs.swift in Sources */,
 				5789CC8C663150939801EA46 /* ResultNotation.swift in Sources */,
 				BE2FCD15E8FAA794CA8C2440 /* Theme.swift in Sources */,
 				7F1A4C78D3317CC32F53B0F5 /* UnitConverterView.swift in Sources */,
@@ -383,7 +387,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -529,7 +533,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

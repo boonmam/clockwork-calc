@@ -274,3 +274,18 @@ calculator keypad. A keyboard button explicitly enables the system keyboard.
 Duo UI regression passed: copy a result, clear, long-press the expression, choose
 native Paste, verify the pasted value, no keyboard, and a reachable equals key.
 Signed build succeeded and installed/launched on the physical Duo.
+
+## Configurable Quick Calc tabs — build 24 (2026-10-27)
+
+Added on-device saved tabs with names, formulas, input labels/units/defaults,
+edit/duplicate/delete controls, and an original-engine formula evaluator. Power
+now solves any two of R/I/V/P for a passive DC resistive load, with SI prefix
+selectors, input/calculated labels, and explicit degenerate/overflow errors.
+All QuickCalcTests passed including six input pairs, zeros/invalid values, custom
+formula evaluation, saving/restoring/deleting tabs, and invalid template rejection.
+Duo UI tests passed for creating a tab and reopening it after app restart, native
+paste without keyboard, and the Power example. Final visual-only change highlights
+computed values. Signed build and packaged dependency audit passed. Installed
+on the Duo and visually verified 12 V / 0.5 A produces 24 Ω / 6 W. Custom formula
+unit labels are descriptive; arbitrary inverse solving and AC phasors are not
+part of this update.
