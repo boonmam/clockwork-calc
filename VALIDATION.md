@@ -265,3 +265,12 @@ and the 6 W power example. Signed device build and distribution audit passed.
 Installed and launched on the Duo and copied its existing history into the new
 app container. Visually checked the name, paste control, and Quick Calc layout.
 Previous release screenshots and archives require regeneration before submission.
+
+## Native editing menu — build 23 (2026-10-27)
+
+Removed the dedicated Paste button. The expression UITextView keeps native
+selection and editing menus with an empty input view by default, retaining the
+calculator keypad. A keyboard button explicitly enables the system keyboard.
+Duo UI regression passed: copy a result, clear, long-press the expression, choose
+native Paste, verify the pasted value, no keyboard, and a reachable equals key.
+Signed build succeeded and installed/launched on the physical Duo.

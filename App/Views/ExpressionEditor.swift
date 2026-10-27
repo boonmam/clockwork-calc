@@ -9,6 +9,7 @@ struct ExpressionEditor: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
         view.delegate = context.coordinator
+        view.inputView = context.coordinator.keypadInputView
         view.font = .monospacedSystemFont(ofSize: 21, weight: .regular)
         view.backgroundColor = .clear; view.textColor = .label
         view.autocorrectionType = .no; view.autocapitalizationType = .none
@@ -21,6 +22,13 @@ struct ExpressionEditor: UIViewRepresentable {
     }
     func updateUIView(_ view: UITextView, context: Context) {
         context.coordinator.parent = self
+        let wantsKeyboard = keyboardVisible
+        if wantsKeyboard != context.coordinator.systemKeyboard {
+            context.coordinator.systemKeyboard = wantsKeyboard
+            view.inputView = wantsKeyboard ? nil : context.coordinator.keypadInputView
+            if wantsKeyboard { view.becomeFirstResponder() }
+            view.reloadInputViews()
+        }
         if view.text != text { view.text = text }
         let length = (text as NSString).length
         let safe = NSRange(location: min(selection.location, length), length: min(selection.length, max(0, length - selection.location)))
@@ -29,8 +37,10 @@ struct ExpressionEditor: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(self) }
     final class Coordinator: NSObject, UITextViewDelegate {
         var parent: ExpressionEditor
+        let keypadInputView = UIView(frame: .zero)
+        var systemKeyboard = false
         init(_ parent: ExpressionEditor) { self.parent = parent }
-        func textViewDidBeginEditing(_ view: UITextView) { parent.keyboardVisible = true }
+        func textViewDidBeginEditing(_ view: UITextView) { parent.keyboardVisible = systemKeyboard }
         func textViewDidEndEditing(_ view: UITextView) { parent.keyboardVisible = false }
         func textViewDidChange(_ view: UITextView) { parent.text = view.text; parent.selection = view.selectedRange }
         func textViewDidChangeSelection(_ view: UITextView) {

@@ -252,8 +252,9 @@ Build 20 removes the experimental Quick Calculator widget.
 
 After calculating, tap an operator to continue from the answer: `2+3 = ×4 =`
 returns 20. Editing the expression before tapping an operator continues that edit.
-The Paste button beside the expression inserts clipboard text without opening
-the system keyboard. Ans inserts the newest saved history answer, even after AC
+Long-press the expression and choose Paste from Apple’s standard editing menu
+to insert clipboard text without opening the system keyboard. The keyboard
+icon opens the full keyboard when needed. Ans inserts the newest saved history answer, even after AC
 or restarting the app.
 
 Choose **Quick Calc** from the mode menu for live electrical calculations:

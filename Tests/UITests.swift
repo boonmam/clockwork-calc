@@ -265,7 +265,10 @@ extension UITests {
         waitForExpectations(timeout: 10)
         copy.tap()
         app.buttons["key_AC"].tap()
-        app.buttons["pasteExpression"].tap()
+        app.textViews["expressionEditor"].press(forDuration: 1.2)
+        let paste = app.menuItems["Paste"].exists ? app.menuItems["Paste"] : app.buttons["Paste"]
+        XCTAssertTrue(paste.waitForExistence(timeout: 5))
+        paste.tap()
         expectation(for: NSPredicate(format: "value == %@", "5"), evaluatedWith: app.textViews["expressionEditor"])
         waitForExpectations(timeout: 5)
         XCTAssertEqual(app.keyboards.count, 0)

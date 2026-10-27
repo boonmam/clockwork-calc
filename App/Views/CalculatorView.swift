@@ -82,9 +82,9 @@ struct CalculatorView: View {
                 ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate)
                     .frame(height: keyboardVisible ? 90 : 64)
                 if !keyboardVisible {
-                    PasteButton(payloadType: String.self) { strings in
-                        if let text = strings.first { model.insert(text) }
-                    }.labelStyle(.iconOnly).accessibilityIdentifier("pasteExpression")
+                    Button { keyboardVisible = true } label: {
+                        Image(systemName: "keyboard")
+                    }.accessibilityLabel("Show keyboard")
                 }
                 if keyboardVisible {
                     Button { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } label: { Image(systemName: "keyboard.chevron.compact.down").font(.title2) }.accessibilityLabel("Hide keyboard")
