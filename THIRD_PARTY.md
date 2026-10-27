@@ -33,11 +33,10 @@ code is used. Apple system frameworks are linked through the SDK.
 
 ## Earlier engines and historical licenses
 
-The current app contains no libqalculate, GMP, MPFR, Qalculate definition XML,
-or Wikipedia-derived scientific datasets. The original Swift engine was written
+The current app contains no legacy native libraries or external scientific datasets. The original Swift engine was written
 from ordinary mathematical identities and parsing techniques, independently of
 those implementations. Its small unit table contains conventional conversion
-factors, not a copied Qalculate dataset.
+factors, not a copied dataset.
 
 Commits through `bdb3e05` retain the GPL-based prototype and its original notices.
 Version 0.2's original code is MIT. Version 0.3 adds the permissively licensed CAS

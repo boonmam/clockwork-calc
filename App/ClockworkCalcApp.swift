@@ -1,6 +1,6 @@
 import SwiftUI
 
-@main struct QalculateApp: App {
+@main struct ClockworkCalcApp: App {
     @AppStorage("appearance") private var appearance = "dark"
     @StateObject private var model = CalculatorModel()
     var body: some Scene {

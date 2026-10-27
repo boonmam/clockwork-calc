@@ -1,14 +1,14 @@
-# Fraction Lab — offline calculator and CAS for iPhone and iPad
+# Clockwork Calc — offline calculator and CAS for iPhone and iPad
 
 A SwiftUI calculator with stacked fractions, dark mode, history, a matrix-entry
 grid, and an offline computer algebra system. **Calculator** mode uses the
 original MIT-licensed Swift engine. **CAS** mode uses Nerdamer 2.0.0 (Apache-2.0)
 with its embedded decimal.js 10.6.0 (MIT). KaTeX (MIT) renders equations.
-No Qalculate, GMP, MPFR, or Qalculate datasets are included.
+The calculator uses an original Swift engine.
 
 ## Coming soon to the App Store
 
-Fraction Lab will be released on the App Store soon for iPhone and iPad.
+Clockwork Calc will be released on the App Store soon for iPhone and iPad.
 Read the [engineering post](https://mccainboonma.com/posts/engineering/2026-10-27-fraction-lab.html)
 for the development story, architecture, and feature overview.
 
@@ -164,11 +164,11 @@ Homebrew `xcodegen`. Deployment target: iOS/iPadOS 17+.
 ```sh
 brew install xcodegen
 Scripts/build-app.sh
-open Qalculate.xcodeproj
+open ClockworkCalc.xcodeproj
 ```
 
-Select scheme **Qalculate** and an iPhone/iPad simulator. The app's display name
-is **Fraction Lab**; repository and build-target names remain for continuity.
+Select scheme **ClockworkCalc** and an iPhone/iPad simulator. The app's display name
+is **Clockwork Calc**; repository and build-target names remain for continuity.
 The script cleans old products, builds simulator/device apps, and audits the
 packaged device resources and dependencies. For a physical device, choose your
 Apple development team under Signing & Capabilities and Run. No App Store or
@@ -186,7 +186,7 @@ python3 Scripts/vendor-cas.py
 ## Tests
 
 ```sh
-xcodebuild -project Qalculate.xcodeproj -scheme Qalculate \
+xcodebuild -project ClockworkCalc.xcodeproj -scheme ClockworkCalc \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -derivedDataPath .build/Tests CODE_SIGNING_ALLOWED=NO test
 node Tests/cas-adapter.test.cjs
@@ -202,7 +202,7 @@ Original app/adapter code is MIT-licensed. Nerdamer is Apache-2.0; its embedded
 decimal.js and KaTeX are MIT. Complete notices are bundled and accessible under
 About → License notices. Historical GPL prototype commits retain their original
 licenses; none of that engine or dataset code is in this version. This remains
-an independent app, not an official Qalculate release.
+an independent calculator app.
 
 ## Preview
 
@@ -247,3 +247,24 @@ the mode menu sits above History in the side toolbar; other phones retain the
 existing top mode selector.
 
 Build 20 removes the experimental Quick Calculator widget.
+
+## Clockwork Calc — build 22
+
+After calculating, tap an operator to continue from the answer: `2+3 = ×4 =`
+returns 20. Editing the expression before tapping an operator continues that edit.
+The Paste button beside the expression inserts clipboard text without opening
+the system keyboard. Ans inserts the newest saved history answer, even after AC
+or restarting the app.
+
+Choose **Quick Calc** from the mode menu for live electrical calculations:
+- DC/instantaneous power: voltage × current, in watts.
+- First-order RC cutoff: 1/(2πRC), in hertz.
+- Ideal capacitor sinusoidal RMS current: 2πfCV, in amperes.
+- Instantaneous capacitor current: C × dV/dt, in amperes.
+
+Fields use the indicated SI units; `100e-9` means 100 nF. Example fills sample
+values; Clear empties them. Quick Calc is a separate live worksheet and does not
+add results to expression history. The new bundle identifier is
+`com.boonmam.clockworkcalc.ios`; installations with the previous identifier have
+separate storage. Existing release screenshots and archives predate this rename
+and must be regenerated before App Store submission.

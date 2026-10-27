@@ -1,5 +1,5 @@
 import XCTest
-@testable import Qalculate
+@testable import ClockworkCalc
 
 final class NotationTests: XCTestCase {
     func testEngineeringScalingAndBoundaries() {

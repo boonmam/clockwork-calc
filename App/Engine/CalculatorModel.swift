@@ -56,6 +56,17 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
             history = Array(saved.prefix(100))
         }
     }
+    func insertOperator(_ operation: String) {
+        if let result, expression.trimmingCharacters(in: .whitespacesAndNewlines) == result.expression {
+            expression = "(" + result.text + ")"
+            selection = NSRange(location: (expression as NSString).length, length: 0)
+        }
+        insert(operation)
+    }
+    func insertLastAnswer() {
+        guard let answer = history.first else { error = "No previous answer yet."; return }
+        insert("(" + answer.text + ")")
+    }
     func insert(_ text: String) {
         let source = expression as NSString
         let start = min(selection.location, source.length)

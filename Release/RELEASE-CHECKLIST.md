@@ -1,4 +1,4 @@
-# Fraction Lab 1.0.0 (6) release candidate
+# Clockwork Calc 1.0.0 (6) release candidate
 
 This folder is a preparation package, not evidence of an App Store upload or approval.
 
@@ -13,7 +13,7 @@ This folder is a preparation package, not evidence of an App Store upload or app
 - Draft support/privacy pages targeting `/fraction-lab/support/` and
   `/fraction-lab/privacy/` on mccainboonma.com. Publish only after the contact address works.
 - Reproducible archive helper: `Scripts/archive-release.sh`.
-- Third-party notices remain bundled; no GPL Qalculate code is distributed.
+- Third-party notices remain bundled; no GPL ClockworkCalc code is distributed.
 
 ## Account and publication steps still required
 
@@ -29,7 +29,7 @@ This folder is a preparation package, not evidence of an App Store upload or app
    currently exposes an Apple Development identity only; no distribution identity
    or provisioning profile was found. Team membership and cloud signing were not
    verified. Do not infer a Team ID from a certificate's person identifier.
-4. Create/check the App Store Connect app record for `com.boonmam.qalculate.ios`.
+4. Create/check the App Store Connect app record for `com.boonmam.clockworkcalc.ios`.
    Confirm the name is available, seller/copyright identity, pricing, countries,
    agreements, and any applicable business/trader details. Metadata placeholders
    in `app-store-metadata.json` are deliberate unresolved owner choices.

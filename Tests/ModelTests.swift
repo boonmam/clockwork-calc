@@ -1,5 +1,5 @@
 import XCTest
-@testable import Qalculate
+@testable import ClockworkCalc
 
 @MainActor final class ModelTests: XCTestCase {
     func testEditingAtSelection() {
@@ -39,5 +39,24 @@ import XCTest
         let restored = CalculatorModel(historyURL: url)
         XCTAssertEqual(restored.history.count, 1)
         XCTAssertEqual(restored.history.first?.expression, "2+2")
+    }
+}
+
+extension ModelTests {
+    func testAnswerChainingAndHistoryAns() async throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let model = CalculatorModel(historyURL: url)
+        model.expression = "2+3"; model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        model.insertOperator("*"); model.insert("4"); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertEqual(model.result?.text, "20")
+        model.clear(); model.insertLastAnswer()
+        XCTAssertEqual(model.expression, "(20)")
+        let restored = CalculatorModel(historyURL: url)
+        restored.insertLastAnswer(); XCTAssertEqual(restored.expression, "(20)")
+        restored.clear(); restored.insert("7+"); restored.insertOperator("-")
+        XCTAssertEqual(restored.expression, "7+-")
     }
 }

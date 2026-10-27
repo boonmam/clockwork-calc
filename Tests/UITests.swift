@@ -254,3 +254,28 @@ extension UITests {
         }
     }
 }
+
+extension UITests {
+    func testQuickCalcAndPasteWithoutKeyboard() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["key_AC"].tap()
+        for key in ["2", "+", "3", "="] { app.buttons["key_" + key].tap() }
+        let copy = app.buttons["copyResult"]
+        expectation(for: NSPredicate(format: "value == %@", "5"), evaluatedWith: copy)
+        waitForExpectations(timeout: 10)
+        copy.tap()
+        app.buttons["key_AC"].tap()
+        app.buttons["pasteExpression"].tap()
+        expectation(for: NSPredicate(format: "value == %@", "5"), evaluatedWith: app.textViews["expressionEditor"])
+        waitForExpectations(timeout: 5)
+        XCTAssertEqual(app.keyboards.count, 0)
+        XCTAssertTrue(app.buttons["key_="].isHittable)
+        app.buttons["calculationMode"].tap()
+        app.buttons["Quick Calc"].tap()
+        app.buttons["Example"].tap()
+        XCTAssertEqual(app.staticTexts["quickAnswer"].label, "6 W")
+        XCTAssertTrue(app.buttons["quickFormula"].isHittable)
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.lifetime = .keepAlways; add(attachment)
+    }
+}

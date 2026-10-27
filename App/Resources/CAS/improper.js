@@ -1,4 +1,4 @@
-// Original Fraction Lab real improper-integral analysis. MIT, copyright 2026 boonmam.
+// Original Clockwork Calc real improper-integral analysis. MIT, copyright 2026 boonmam.
 // Only explicit analytic rules establish convergence. Unsupported rules return unresolved.
 (function(scope){
 'use strict';

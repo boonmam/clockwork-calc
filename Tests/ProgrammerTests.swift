@@ -1,5 +1,5 @@
 import XCTest
-@testable import Qalculate
+@testable import ClockworkCalc
 
 @MainActor final class ProgrammerTests: XCTestCase {
     private func enter(_ digits: String, into model: ProgrammerModel) { for digit in digits { model.digit(String(digit)) } }

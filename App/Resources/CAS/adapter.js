@@ -1,4 +1,4 @@
-// Original Fraction Lab adapter, Copyright 2026 boonmam, MIT.
+// Original Clockwork Calc adapter, Copyright 2026 boonmam, MIT.
 // The input is mathematical notation passed to Nerdamer's parser, never JavaScript eval.
 (function (scope) {
     'use strict';

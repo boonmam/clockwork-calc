@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "665A6C415F33DB13ABDCCCAE"
-               BuildableName = "Qalculate.app"
-               BlueprintName = "Qalculate"
-               ReferencedContainer = "container:Qalculate.xcodeproj">
+               BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+               BuildableName = "ClockworkCalc.app"
+               BlueprintName = "ClockworkCalc"
+               ReferencedContainer = "container:ClockworkCalc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "665A6C415F33DB13ABDCCCAE"
-            BuildableName = "Qalculate.app"
-            BlueprintName = "Qalculate"
-            ReferencedContainer = "container:Qalculate.xcodeproj">
+            BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+            BuildableName = "ClockworkCalc.app"
+            BlueprintName = "ClockworkCalc"
+            ReferencedContainer = "container:ClockworkCalc.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -44,10 +44,10 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "329C3A8321D73DB1A523F1D3"
-               BuildableName = "QalculateTests.xctest"
-               BlueprintName = "QalculateTests"
-               ReferencedContainer = "container:Qalculate.xcodeproj">
+               BlueprintIdentifier = "45858B1801E46D96A49038DD"
+               BuildableName = "ClockworkCalcTests.xctest"
+               BlueprintName = "ClockworkCalcTests"
+               ReferencedContainer = "container:ClockworkCalc.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -55,10 +55,10 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "82665AB714AC3C57B6584AFF"
-               BuildableName = "QalculateUITests.xctest"
-               BlueprintName = "QalculateUITests"
-               ReferencedContainer = "container:Qalculate.xcodeproj">
+               BlueprintIdentifier = "66D912EA11993055D3E3BA81"
+               BuildableName = "ClockworkCalcUITests.xctest"
+               BlueprintName = "ClockworkCalcUITests"
+               ReferencedContainer = "container:ClockworkCalc.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -79,10 +79,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "665A6C415F33DB13ABDCCCAE"
-            BuildableName = "Qalculate.app"
-            BlueprintName = "Qalculate"
-            ReferencedContainer = "container:Qalculate.xcodeproj">
+            BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+            BuildableName = "ClockworkCalc.app"
+            BlueprintName = "ClockworkCalc"
+            ReferencedContainer = "container:ClockworkCalc.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -96,10 +96,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "665A6C415F33DB13ABDCCCAE"
-            BuildableName = "Qalculate.app"
-            BlueprintName = "Qalculate"
-            ReferencedContainer = "container:Qalculate.xcodeproj">
+            BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+            BuildableName = "ClockworkCalc.app"
+            BlueprintName = "ClockworkCalc"
+            ReferencedContainer = "container:ClockworkCalc.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

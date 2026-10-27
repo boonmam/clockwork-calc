@@ -1,4 +1,4 @@
-Fraction Lab brings readable mathematics to iPhone and iPad. Enter an expression and see fractions, powers, matrices, and integrals in textbook notation.
+Clockwork Calc brings readable mathematics to iPhone and iPad. Enter an expression and see fractions, powers, matrices, and integrals in textbook notation.
 
 CALCULATE
 Work with exact fractions, scientific functions, complex arithmetic, and common unit conversions. Choose Exact, Decimal, Engineering, or Engineering with SI symbols such as k, M, and µ.

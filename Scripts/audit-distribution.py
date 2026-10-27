@@ -15,8 +15,8 @@ def check(condition, message):
     if not condition:
         errors.append(message)
 
-project = (root / 'project.yml').read_text() + (root / 'Qalculate.xcodeproj/project.pbxproj').read_text()
-for marker in ['-lqalculate', '-lgmp', '-lmpfr', 'Vendor/Engine', 'QalculateBridge', 'Resources/Definitions', 'SWIFT_OBJC_BRIDGING_HEADER']:
+project = (root / 'project.yml').read_text() + (root / 'ClockworkCalc.xcodeproj/project.pbxproj').read_text()
+for marker in ['-lgmp', '-lmpfr', 'Vendor/Engine', 'Resources/Definitions', 'SWIFT_OBJC_BRIDGING_HEADER']:
     check(marker not in project, f'Legacy build dependency: {marker}')
 check(not (root / 'Scripts/build-engine.sh').exists(), 'Legacy dependency downloader remains')
 check(not list((root / 'App').rglob('*.mm')), 'Unexpected Objective-C++ source')
@@ -79,13 +79,13 @@ if len(sys.argv) > 1:
         import plistlib
         with (app / 'Info.plist').open('rb') as stream:
             info = plistlib.load(stream)
-        check(info['CFBundleDisplayName'] == 'Fraction Lab', 'Outdated app branding')
+        check(info['CFBundleDisplayName'] == 'Clockwork Calc', 'Outdated app branding')
         binary = app / info['CFBundleExecutable']
         executables = [binary, *app.rglob('*.dylib')]
         for executable in executables:
             linkage = subprocess.check_output(['otool', '-L', str(executable)], text=True)
             symbols = subprocess.check_output(['nm', '-a', str(executable)], text=True, stderr=subprocess.DEVNULL)
-            check(not re.search(r'lib(qalculate|gmp|mpfr)', linkage, re.I), f'Legacy dynamic library linked: {executable}')
+            check(not re.search(r'lib(gmp|mpfr)', linkage, re.I), f'Legacy dynamic library linked: {executable}')
             check(not re.search(r'(__gmp|_mpfr_|_ZN\d*Calculator|_ZN\d*MathStructure)', symbols), f'Legacy engine symbols found: {executable}')
         print(f'Checked {len(executables)} executable/dylib payload(s)')
         check(not list(app.rglob('*.a')), 'Static library unexpectedly packaged as a resource')

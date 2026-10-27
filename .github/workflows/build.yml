@@ -16,8 +16,8 @@ jobs:
       - name: Build original Swift engine and offline CAS app
         run: Scripts/build-app.sh
       - name: Audit shipped dependencies and notices
-        run: python3 Scripts/audit-distribution.py .build/DeviceData/Build/Products/Debug-iphoneos/Qalculate.app
+        run: python3 Scripts/audit-distribution.py .build/DeviceData/Build/Products/Debug-iphoneos/ClockworkCalc.app
       - uses: actions/upload-artifact@v4
         with:
-          name: Qalculate-unsigned-iOS-app
-          path: .build/DeviceData/Build/Products/Debug-iphoneos/Qalculate.app
+          name: ClockworkCalc-unsigned-iOS-app
+          path: .build/DeviceData/Build/Products/Debug-iphoneos/ClockworkCalc.app

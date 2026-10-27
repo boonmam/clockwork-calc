@@ -1,5 +1,5 @@
 // Copyright (c) 2026 boonmam. MIT licensed.
-// Original implementation; no code or definition tables from Qalculate/GMP/MPFR.
+// Original Swift implementation of arithmetic and unit conversion.
 import Foundation
 
 private func mathError(_ message: String) -> CalculationError { CalculationError(message: message) }

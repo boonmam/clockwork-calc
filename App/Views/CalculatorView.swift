@@ -7,6 +7,7 @@ struct CalculatorView: View {
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
     @State private var notesPresented = false
+    @State private var quickCalcMode = false
     @State private var conversionMode = false
     @State private var programmerMode = false
     @State private var verticalToolbar = false
@@ -80,6 +81,11 @@ struct CalculatorView: View {
             HStack(alignment: .center, spacing: 8) {
                 ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate)
                     .frame(height: keyboardVisible ? 90 : 64)
+                if !keyboardVisible {
+                    PasteButton(payloadType: String.self) { strings in
+                        if let text = strings.first { model.insert(text) }
+                    }.labelStyle(.iconOnly).accessibilityIdentifier("pasteExpression")
+                }
                 if keyboardVisible {
                     Button { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } label: { Image(systemName: "keyboard.chevron.compact.down").font(.title2) }.accessibilityLabel("Hide keyboard")
                 }
@@ -134,7 +140,8 @@ struct CalculatorView: View {
     }
     private var calculator: some View {
         GeometryReader { geometry in
-            if programmerMode { ProgrammerView() }
+            if quickCalcMode { QuickCalcView() }
+            else if programmerMode { ProgrammerView() }
             else if conversionMode { UnitConverterView() }
             else { calculatorContent(size: geometry.size) }
         }
@@ -142,7 +149,7 @@ struct CalculatorView: View {
             if #available(iOS 27.1, *) { ToolbarEdgeReader() }
         }
         .onPreferenceChange(VerticalToolbarPreference.self) { verticalToolbar = $0 }
-        .navigationTitle("Fraction Lab").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Clockwork Calc").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if verticalToolbar {
                 ToolbarItem(placement: .topBarLeading) { sideModeMenu }
@@ -186,24 +193,27 @@ struct CalculatorView: View {
             Button("CAS") { selectMode("cas") }
             Button("Unit converter") { selectMode("conversion") }
             Button("Programmer") { selectMode("programmer") }
+            Button("Quick Calc") { selectMode("quick") }
         } label: { Image(systemName: "square.grid.2x2") }
             .accessibilityLabel("Calculation mode")
             .accessibilityIdentifier("calculationMode")
             .disabled(model.busy)
     }
     private func selectMode(_ value: String) {
+        quickCalcMode = value == "quick"
         programmerMode = value == "programmer"
         conversionMode = value == "conversion"
         if let mode = CalculationMode(rawValue: value) { model.mode = mode }
     }
     private var modePicker: some View {
         Picker("Calculation mode", selection: Binding<String>(
-            get: { programmerMode ? "programmer" : conversionMode ? "conversion" : model.mode.rawValue },
+            get: { quickCalcMode ? "quick" : programmerMode ? "programmer" : conversionMode ? "conversion" : model.mode.rawValue },
             set: selectMode)) {
                 Text("Calculator").tag("calculator")
                 Text("CAS").tag("cas")
                 Text("Unit converter").tag("conversion")
                 Text("Programmer").tag("programmer")
+                Text("Quick Calc").tag("quick")
             }.pickerStyle(.menu).disabled(model.busy).accessibilityIdentifier("calculationMode")
     }
     private func isOperator(_ key: String) -> Bool { ["÷", "×", "−", "+", "^", "√", "to", "AC", "⌫", "EE"].contains(key) }
@@ -216,12 +226,13 @@ struct CalculatorView: View {
         case "AC": model.clear()
         case "EE": model.insertExponent()
         case "⌫": model.backspace()
-        case "Ans": if let result = model.result { model.insert("(" + result.text + ")") }
+        case "Ans": model.insertLastAnswer()
         case "√": model.insert("sqrt(")
         case "sin", "cos", "tan", "ln": model.insert(key + "(")
-        case "÷": model.insert("/")
-        case "×": model.insert("*")
-        case "−": model.insert("-")
+        case "÷": model.insertOperator("/")
+        case "×": model.insertOperator("*")
+        case "−": model.insertOperator("-")
+        case "+", "^": model.insertOperator(key)
         case "to": model.insert(" to ")
         default: model.insert(key)
         }
@@ -264,8 +275,8 @@ struct AboutView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Fraction Lab for iPhone & iPad") {
-                    Text("Calculator mode uses our Swift engine; CAS mode uses offline Nerdamer 2.0. No Qalculate code or datasets are included.")
+                Section("Clockwork Calc for iPhone & iPad") {
+                    Text("Calculator mode uses our Swift engine; CAS mode uses offline Nerdamer 2.0. All calculations run on your device.")
                     Text("All calculations run offline. History stays on your device. Choose dark, light, or system appearance below.")
                 }
                 Section("Appearance") {
@@ -292,7 +303,7 @@ struct AboutView: View {
                     Text("Include your app version, device, and a short example. Avoid sending sensitive calculation history.")
                 }
                 Section("Privacy") {
-                    Text("Calculations run on your device. Fraction Lab has no accounts, advertising, tracking, or analytics and does not send your expressions or history to us. History and settings are stored locally and may be included in backups managed by your device. Copy writes a result to the system clipboard only when you tap Copy. Swipe to delete individual history entries.")
+                    Text("Calculations run on your device. Clockwork Calc has no accounts, advertising, tracking, or analytics and does not send your expressions or history to us. History and settings are stored locally and may be included in backups managed by your device. Copy writes a result to the system clipboard only when you tap Copy. Swipe to delete individual history entries.")
                 }
                 Section("Open source") {
                     Text("Original app and engine: MIT\nKaTeX renderer and fonts: MIT\nNerdamer 2.0: Apache-2.0\ndecimal.js 10.6: MIT")

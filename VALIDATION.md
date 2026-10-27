@@ -15,7 +15,7 @@ Prepared October 19, 2026 with Xcode 26.6 / iOS 26.5.
 
 Evidence: `.build/Release-iPhone-final.xcresult`, `.build/Release-iPad.xcresult`,
 `.build/Release-iPad-capture.xcresult`, and `.build/release-archive-final.log`.
-The archive is `.build/clean-release/.build/Release/FractionLab.xcarchive`.
+The archive is `.build/clean-release/.build/Release/ClockworkCalc.xcarchive`.
 
 No signed distribution archive, App Store Connect validation/upload, TestFlight
 installation, physical-device testing, or public release is claimed. See
@@ -49,7 +49,7 @@ Evidence in ignored `.build/`:
 - `Engineering-iPhone.xcresult` and `Engineering-iPad.xcresult`: full suites.
 - `Engineering-iPhone-final.xcresult` and `Engineering-iPad-final.xcresult`:
   final notation and UI checks.
-- `engineering-device.log` and `EngineeringDevice/Build/Products/Release-iphoneos/Qalculate.app`.
+- `engineering-device.log` and `EngineeringDevice/Build/Products/Release-iphoneos/ClockworkCalc.app`.
 
 Physical-device execution and App Store/TestFlight distribution remain untested.
 
@@ -92,7 +92,7 @@ Evidence stays in ignored `.build/` paths:
   after wrapping unclassified symbolic failures as unresolved.
 - `Improper-iPhone-UI.xcresult` and `Improper-iPad-UI.xcresult` — UI rechecks after
   making all calculation notes accessible by tapping the information label.
-- `improper-device.log` and `ImproperDevice/Build/Products/Release-iphoneos/Qalculate.app`.
+- `improper-device.log` and `ImproperDevice/Build/Products/Release-iphoneos/ClockworkCalc.app`.
 
 Physical device execution and App Store/TestFlight deployment have not been
 tested. The deployment target is iOS 17+, while runtime validation used 26.5.
@@ -251,3 +251,17 @@ passed across portrait/landscape changes on the Duo simulator. Physical folding
 while History is open still needs confirmation. Signed build succeeded, installed,
 and launched on the Duo; Device Hub shows separate Mode/History buttons and the
 full keypad on the outer display.
+
+## Clockwork Calc — build 22 (2026-10-27)
+
+Renamed app, project, scheme, module, bundle identifier, repository, and current
+source/documentation references. Preserved third-party license bytes. Added
+operator continuation from a completed result, Ans from persisted history,
+PasteButton without keyboard focus, and four electrical Quick Calc worksheets.
+ModelTests and QuickCalcTests passed on the Duo simulator, including chaining,
+history restoration, known formula values, invalid inputs and overflow. UI test
+passed for copy/clear/paste with no keyboard, reachable keypad, Quick Calc mode,
+and the 6 W power example. Signed device build and distribution audit passed.
+Installed and launched on the Duo and copied its existing history into the new
+app container. Visually checked the name, paste control, and Quick Calc layout.
+Previous release screenshots and archives require regeneration before submission.
