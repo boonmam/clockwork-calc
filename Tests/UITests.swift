@@ -236,3 +236,21 @@ extension UITests {
         shot.lifetime = .keepAlways; add(shot)
     }
 }
+
+extension UITests {
+    func testHistoryCanDismissAfterLayoutChange() {
+        let app = XCUIApplication(); app.launch()
+        defer { XCUIDevice.shared.orientation = .portrait }
+        for orientation: UIDeviceOrientation in [.landscapeLeft, .portrait] {
+            app.buttons["History"].tap()
+            XCUIDevice.shared.orientation = orientation
+            let done = app.buttons["Done"]
+            XCTAssertTrue(done.waitForExistence(timeout: 5))
+            XCTAssertTrue(done.isHittable)
+            done.tap()
+            XCTAssertTrue(app.buttons["key_="].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["key_="].isHittable)
+            XCTAssertTrue(app.buttons["key_EE"].isHittable)
+        }
+    }
+}

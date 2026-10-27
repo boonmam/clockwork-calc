@@ -240,3 +240,14 @@ Removed the experimental Quick Calculator extension, scratch engine, and its
 standalone tests at user request. Programmer mode and Duo sidebar are retained.
 Signed device build succeeded and installed on the physical Duo. Verified the
 built app contains no PlugIns directory or embedded widget extension.
+
+## History navigation and toolbar spacing — build 21 (2026-10-27)
+
+Replaced the duplicate history NavigationSplitView sidebar with one calculator
+NavigationStack. History is only presented as a sheet with Done, avoiding a
+sidebar becoming the root screen when the Duo closes. Added a fixed toolbar
+spacer between Mode and History on the Duo. The history dismissal UI regression
+passed across portrait/landscape changes on the Duo simulator. Physical folding
+while History is open still needs confirmation. Signed build succeeded, installed,
+and launched on the Duo; Device Hub shows separate Mode/History buttons and the
+full keypad on the outer display.

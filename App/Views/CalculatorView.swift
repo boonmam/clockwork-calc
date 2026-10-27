@@ -2,9 +2,6 @@ import SwiftUI
 
 struct CalculatorView: View {
     @EnvironmentObject private var model: CalculatorModel
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    @State private var columnVisibility: NavigationSplitViewVisibility = .detailOnly
-    @State private var compactColumn: NavigationSplitViewColumn = .detail
     @State private var historyPresented = false
     @State private var aboutPresented = false
     @State private var keyboardVisible = false
@@ -24,9 +21,7 @@ struct CalculatorView: View {
     }
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
-            HistoryView().navigationTitle("History")
-        } detail: {
+        NavigationStack {
             calculator
         }
         .sheet(isPresented: $historyPresented) { NavigationStack { HistoryView().navigationTitle("History").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { historyPresented = false } } } } }
@@ -149,8 +144,13 @@ struct CalculatorView: View {
         .onPreferenceChange(VerticalToolbarPreference.self) { verticalToolbar = $0 }
         .navigationTitle("Fraction Lab").navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItemGroup(placement: .topBarLeading) {
-                if verticalToolbar { sideModeMenu }
+            if verticalToolbar {
+                ToolbarItem(placement: .topBarLeading) { sideModeMenu }
+                if #available(iOS 26.0, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarLeading)
+                }
+            }
+            ToolbarItem(placement: .topBarLeading) {
                 Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History")
             }
             ToolbarItem(placement: .topBarTrailing) {
