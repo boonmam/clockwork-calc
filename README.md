@@ -6,6 +6,12 @@ original MIT-licensed Swift engine. **CAS** mode uses Nerdamer 2.0.0 (Apache-2.0
 with its embedded decimal.js 10.6.0 (MIT). KaTeX (MIT) renders equations.
 No Qalculate, GMP, MPFR, or Qalculate datasets are included.
 
+## Coming soon to the App Store
+
+Fraction Lab will be released on the App Store soon for iPhone and iPad.
+Read the [engineering post](https://mccainboonma.com/posts/engineering/2026-10-27-fraction-lab.html)
+for the development story, architecture, and feature overview.
+
 ## Result notation
 
 Choose **Result format** above the expression area. The selection applies to the
