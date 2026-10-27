@@ -233,3 +233,10 @@ not open the app. Extension-local defaults isolate scratch calculations from
 app history. Lock Screen layout, interaction, and genuinely locked-device
 execution have not yet been verified; user setup/testing is pending. No security
 settings were weakened.
+
+## Widget removal — build 20 (2026-10-27)
+
+Removed the experimental Quick Calculator extension, scratch engine, and its
+standalone tests at user request. Programmer mode and Duo sidebar are retained.
+Signed device build succeeded and installed on the physical Duo. Verified the
+built app contains no PlugIns directory or embedded widget extension.

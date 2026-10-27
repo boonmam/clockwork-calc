@@ -11,7 +11,7 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: '1.0.0'
-    CURRENT_PROJECT_VERSION: 19
+    CURRENT_PROJECT_VERSION: 20
 targets:
   Qalculate:
     type: application
@@ -29,9 +29,6 @@ targets:
       - path: App/Resources/Licenses
         type: folder
         buildPhase: resources
-    dependencies:
-      - target: FractionLabWidget
-        embed: true
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -46,23 +43,6 @@ targets:
         SUPPORTS_MACCATALYST: NO
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
-  FractionLabWidget:
-    type: app-extension
-    platform: iOS
-    sources: [Widget]
-    settings:
-      base:
-        DEVELOPMENT_TEAM: BW8AVKUHR6
-        PRODUCT_BUNDLE_IDENTIFIER: com.boonmam.qalculate.ios.widget
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Fraction Lab Calculator
-        APPLICATION_EXTENSION_API_ONLY: YES
-        SKIP_INSTALL: YES
-    info:
-      path: Widget/Info.plist
-      properties:
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
   QalculateTests:
     type: bundle.unit-test
     platform: iOS
