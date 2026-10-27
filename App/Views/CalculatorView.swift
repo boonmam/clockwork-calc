@@ -11,6 +11,8 @@ struct CalculatorView: View {
     @State private var matrixPresented = false
     @State private var notesPresented = false
     @State private var conversionMode = false
+    @State private var programmerMode = false
+    @State private var verticalToolbar = false
     private var keys: [String] {
         ["sin", "cos", "tan", "AC", "⌫",
          "ln", "√", "^", "(", ")",
@@ -137,28 +139,24 @@ struct CalculatorView: View {
     }
     private var calculator: some View {
         GeometryReader { geometry in
-            if conversionMode { UnitConverterView() }
+            if programmerMode { ProgrammerView() }
+            else if conversionMode { UnitConverterView() }
             else { calculatorContent(size: geometry.size) }
         }
+        .background {
+            if #available(iOS 27.1, *) { ToolbarEdgeReader() }
+        }
+        .onPreferenceChange(VerticalToolbarPreference.self) { verticalToolbar = $0 }
         .navigationTitle("Fraction Lab").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
+                if verticalToolbar { sideModeMenu }
                 Button { historyPresented = true } label: { Image(systemName: "clock.arrow.circlepath") }.accessibilityLabel("History")
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                if !verticalToolbar { modePicker }
+            }
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Picker("Calculation mode", selection: Binding<String>(
-                    get: { conversionMode ? "conversion" : model.mode.rawValue },
-                    set: { value in
-                        conversionMode = value == "conversion"
-                        if let mode = CalculationMode(rawValue: value) { model.mode = mode }
-                    })) {
-                    Text("Calculator").tag("calculator")
-                    Text("CAS").tag("cas")
-                    Text("Unit converter").tag("conversion")
-                }
-                .pickerStyle(.menu)
-                .disabled(model.busy)
-                .accessibilityIdentifier("calculationMode")
                 Menu {
                     Button("Fractions") { model.example("1/2 + 1/3", mode: .calculator) }
                     Section("Computer algebra") {
@@ -181,6 +179,32 @@ struct CalculatorView: View {
                 Button { aboutPresented = true } label: { Image(systemName: "info.circle") }.accessibilityLabel("About")
             }
         }
+    }
+    private var sideModeMenu: some View {
+        Menu {
+            Button("Calculator") { selectMode("calculator") }
+            Button("CAS") { selectMode("cas") }
+            Button("Unit converter") { selectMode("conversion") }
+            Button("Programmer") { selectMode("programmer") }
+        } label: { Image(systemName: "square.grid.2x2") }
+            .accessibilityLabel("Calculation mode")
+            .accessibilityIdentifier("calculationMode")
+            .disabled(model.busy)
+    }
+    private func selectMode(_ value: String) {
+        programmerMode = value == "programmer"
+        conversionMode = value == "conversion"
+        if let mode = CalculationMode(rawValue: value) { model.mode = mode }
+    }
+    private var modePicker: some View {
+        Picker("Calculation mode", selection: Binding<String>(
+            get: { programmerMode ? "programmer" : conversionMode ? "conversion" : model.mode.rawValue },
+            set: selectMode)) {
+                Text("Calculator").tag("calculator")
+                Text("CAS").tag("cas")
+                Text("Unit converter").tag("conversion")
+                Text("Programmer").tag("programmer")
+            }.pickerStyle(.menu).disabled(model.busy).accessibilityIdentifier("calculationMode")
     }
     private func isOperator(_ key: String) -> Bool { ["÷", "×", "−", "+", "^", "√", "to", "AC", "⌫", "EE"].contains(key) }
     private func accessibilityName(_ key: String) -> String {
@@ -278,4 +302,15 @@ struct AboutView: View {
             }.navigationTitle("About").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }
     }
+}
+
+private struct VerticalToolbarPreference: PreferenceKey {
+    static var defaultValue = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) { value = value || nextValue() }
+}
+
+@available(iOS 27.1, *)
+private struct ToolbarEdgeReader: View {
+    @Environment(\.toolbarVerticalEdge) private var edge
+    var body: some View { Color.clear.preference(key: VerticalToolbarPreference.self, value: edge != nil) }
 }

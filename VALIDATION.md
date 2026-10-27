@@ -206,3 +206,30 @@ the window and hittable. Signed build succeeded and installed on the Duo.
 Unit menus take the available row width, keep their text on one line, and scale
 long labels down when necessary. The wide layout allocates more width to the
 conversion panel. Signed device build succeeded.
+
+## Programmer and Duo mode menu — build 18 (2026-10-27)
+
+Five programmer unit tests passed, covering word widths, full UInt64 entry,
+overflow, bitwise operations, signed division/shifts, invalid digits and recovery.
+Duo and standard iPhone simulator programmer UI checks passed after correcting
+base-selector hit regions. Converter regression passed. Signed device build
+installed and launched. Device Hub inspection of build 19 confirms the mode
+button appears immediately above History in the Duo side toolbar.
+
+## Quick Calculator widget — build 19 (2026-10-27)
+
+Signed app and widget extension build succeeded; installed and launched on the
+physical Duo. Ten standalone Swift calculator checks passed: arithmetic,
+decimals, division-by-zero recovery, deletion, fresh entry, operator replacement,
+Codable continuation, and page cycling. Run with:
+
+```sh
+swiftc Widget/QuickCalculation.swift Tests/quick-widget-tests.swift -o /tmp/fraction-widget-tests
+/tmp/fraction-widget-tests
+```
+
+Widget actions explicitly use IntentAuthenticationPolicy.alwaysAllowed and do
+not open the app. Extension-local defaults isolate scratch calculations from
+app history. Lock Screen layout, interaction, and genuinely locked-device
+execution have not yet been verified; user setup/testing is pending. No security
+settings were weakened.

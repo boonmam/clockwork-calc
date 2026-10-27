@@ -233,3 +233,17 @@ reverses the selected units; AC clears the value. Supports length, area, volume,
 weight/mass, temperature, speed, time, energy, power, pressure, and angle using
 Apple Foundation measurement conversions. US and Imperial volume units are
 explicitly labeled. The keypad supports decimal values, signs, and EE exponents.
+
+Build 18 adds **Programmer** mode: HEX/DEC/OCT/BIN, 8/16/32/64-bit words, signed
+or unsigned display, integer arithmetic, AND/OR/XOR/NOT, and one-bit shifts.
+Arithmetic executes immediately and wraps to the selected word width. On Duo,
+the mode menu sits above History in the side toolbar; other phones retain the
+existing top mode selector.
+
+Build 19 adds the **Quick Calculator** widget, with separate scratch state and
+no access to app history. Add it through Lock Screen Customize → Add Widgets →
+Fraction Lab. Tap › to cycle digit/operator pages. A medium widget provides a
+larger keypad for Home Screen/Today View. It supports basic decimal arithmetic,
+not CAS, units, or programmer operations. Its App Intents allow execution while
+locked without opening the app; actual locked-device behavior remains pending
+physical verification. The full app still requires unlocking.

@@ -8,24 +8,30 @@
 
 /* Begin PBXBuildFile section */
 		03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */; };
+		0A581EF8C19F7EBBE5D3794F /* ProgrammerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE811D73BDC7C4A68AC12B09 /* ProgrammerTests.swift */; };
 		1258738D7409C090653BD597 /* MathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F320996124E5AA1161F3F736 /* MathView.swift */; };
 		1D66F5918FCE124ED8C04452 /* UnitConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61EB734BBD42B2E01443F7C /* UnitConverterView.swift */; };
 		2A7E62E6D2EF2F8CDC1F796B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */; };
+		34757D2A07D3057DFD0B4554 /* FractionLabWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3CC4DBC395C7048C00A24D7B /* FractionLabWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		41F0AF90205066F6B9AAB7E0 /* Math in Resources */ = {isa = PBXBuildFile; fileRef = 15E6F95C6B8AE3FF2595BE2A /* Math */; };
 		45779D0325710CE80AC14766 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77F93BFB627C63CE25AA4DD /* Assets.xcassets */; };
 		517D006235930BFCEF664ECF /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */; };
+		5FEE1431AA14104C03206F8E /* ProgrammerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C46A81836337C7C4EAC411C /* ProgrammerView.swift */; };
 		63C1756EE93389462F1FE735 /* CASRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */; };
 		788191F3941766299A40BAAD /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF89DF39A6B0A30D16DEB493 /* UITests.swift */; };
 		7A823CCF7FE013BF9A938CEC /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA3B980F9DC497508BF20F /* CalculatorView.swift */; };
 		7FA3F7D8042A362075AAFAE9 /* ResultNotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314677CCEBBA737D64BB71BD /* ResultNotation.swift */; };
 		8928623FD9146D74330A4816 /* CASTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA4D90FB8B9E163C830A6B4 /* CASTests.swift */; };
 		955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8369516055491812ACE28B /* NativeMath.swift */; };
+		95AC806922C3B00CCB620671 /* QuickCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5A7CAF50D2DAAF58D846ED /* QuickCalculation.swift */; };
+		9CFC018B4DBE979E8012EC08 /* ProgrammerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5941B48026AEF6B09E222CD1 /* ProgrammerModel.swift */; };
 		9E48A231ADA34565098E16E3 /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */; };
 		C1C52A4712697F983B7D3FA4 /* MatrixEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */; };
 		CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA2EB930097591FD718B36E /* Theme.swift */; };
 		CE4E2977ED67F6227388D243 /* CAS in Resources */ = {isa = PBXBuildFile; fileRef = 05A1AD53801CAF949BEE3F5B /* CAS */; };
 		CE53CB1A3B8C6E8682C6B042 /* NotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9D63FF8115E6DD0CD987D2 /* NotationTests.swift */; };
 		E18CE26526031BDE9C881660 /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 7FB2D65EA88E94B08DCC0CCE /* Licenses */; };
+		EE7E91ABA68A654C211FB2D5 /* FractionLabWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57E8066B7F0C688CCF9D742D /* FractionLabWidget.swift */; };
 		F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */; };
 		F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1DE21F499047C13F71AB43 /* EngineTests.swift */; };
 /* End PBXBuildFile section */
@@ -45,7 +51,28 @@
 			remoteGlobalIDString = 665A6C415F33DB13ABDCCCAE;
 			remoteInfo = Qalculate;
 		};
+		EA57DA639621EB28F79A4AE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6393F753811B97B4A1FA73D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F76FABEA61E8A15E2A6558A4;
+			remoteInfo = FractionLabWidget;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		58DD8F567813A3B8742EDE9A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				34757D2A07D3057DFD0B4554 /* FractionLabWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		05A1AD53801CAF949BEE3F5B /* CAS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CAS; path = App/Resources/CAS; sourceTree = SOURCE_ROOT; };
@@ -54,18 +81,25 @@
 		15E6F95C6B8AE3FF2595BE2A /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
 		163476C16D5F0C9F74AFD58E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1666FCD60D2C0BF990AEBC06 /* Qalculate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Qalculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C46A81836337C7C4EAC411C /* ProgrammerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerView.swift; sourceTree = "<group>"; };
 		1D1DE21F499047C13F71AB43 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		314677CCEBBA737D64BB71BD /* ResultNotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultNotation.swift; sourceTree = "<group>"; };
+		3CC4DBC395C7048C00A24D7B /* FractionLabWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FractionLabWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASRuntime.swift; sourceTree = "<group>"; };
 		4E8369516055491812ACE28B /* NativeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMath.swift; sourceTree = "<group>"; };
+		57E8066B7F0C688CCF9D742D /* FractionLabWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FractionLabWidget.swift; sourceTree = "<group>"; };
+		5941B48026AEF6B09E222CD1 /* ProgrammerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerModel.swift; sourceTree = "<group>"; };
 		5ACB06FE3390097DC07152FE /* QalculateUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = QalculateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEditor.swift; sourceTree = "<group>"; };
 		763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModel.swift; sourceTree = "<group>"; };
 		7AA2EB930097591FD718B36E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		7FB2D65EA88E94B08DCC0CCE /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Licenses; path = App/Resources/Licenses; sourceTree = SOURCE_ROOT; };
+		8D5A7CAF50D2DAAF58D846ED /* QuickCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCalculation.swift; sourceTree = "<group>"; };
 		90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixEditor.swift; sourceTree = "<group>"; };
 		A4B3DAC2F081CB576DC65553 /* QalculateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QalculateApp.swift; sourceTree = "<group>"; };
 		AAFA3B980F9DC497508BF20F /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
+		BE811D73BDC7C4A68AC12B09 /* ProgrammerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerTests.swift; sourceTree = "<group>"; };
+		CD84734EB27653F1BE873D42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D61EB734BBD42B2E01443F7C /* UnitConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConverterView.swift; sourceTree = "<group>"; };
 		E77F93BFB627C63CE25AA4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF89DF39A6B0A30D16DEB493 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
@@ -82,10 +116,21 @@
 				6798CFE65FEB0E8EC9FB766B /* ExpressionEditor.swift */,
 				F320996124E5AA1161F3F736 /* MathView.swift */,
 				90BB1824AB9C3381FB2B07C3 /* MatrixEditor.swift */,
+				1C46A81836337C7C4EAC411C /* ProgrammerView.swift */,
 				7AA2EB930097591FD718B36E /* Theme.swift */,
 				D61EB734BBD42B2E01443F7C /* UnitConverterView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		32CDADE4CF77DDA334C1A449 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				57E8066B7F0C688CCF9D742D /* FractionLabWidget.swift */,
+				CD84734EB27653F1BE873D42 /* Info.plist */,
+				8D5A7CAF50D2DAAF58D846ED /* QuickCalculation.swift */,
+			);
+			path = Widget;
 			sourceTree = "<group>";
 		};
 		43F4AC73E0A81CC2EDAE48DE = {
@@ -97,6 +142,7 @@
 				87B0755F93158DBDC054C9FD /* App */,
 				5B5ED494B1DF6E92E2D7CE63 /* Resources */,
 				DEF887AE6146C80C7E6C5D91 /* Tests */,
+				32CDADE4CF77DDA334C1A449 /* Widget */,
 				84FEC9A51CB14C05EB6EC488 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +159,7 @@
 		84FEC9A51CB14C05EB6EC488 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				3CC4DBC395C7048C00A24D7B /* FractionLabWidget.appex */,
 				1666FCD60D2C0BF990AEBC06 /* Qalculate.app */,
 				154E8A61D458EC89C09C9344 /* QalculateTests.xctest */,
 				5ACB06FE3390097DC07152FE /* QalculateUITests.xctest */,
@@ -137,6 +184,7 @@
 				763D3031BBC17DFF8BEA9561 /* CalculatorModel.swift */,
 				3CFF0FD41566B26D65D7EEBB /* CASRuntime.swift */,
 				4E8369516055491812ACE28B /* NativeMath.swift */,
+				5941B48026AEF6B09E222CD1 /* ProgrammerModel.swift */,
 				314677CCEBBA737D64BB71BD /* ResultNotation.swift */,
 			);
 			path = Engine;
@@ -149,6 +197,7 @@
 				1D1DE21F499047C13F71AB43 /* EngineTests.swift */,
 				06B1DF2E72124C9B7E2FDF1A /* ModelTests.swift */,
 				FB9D63FF8115E6DD0CD987D2 /* NotationTests.swift */,
+				BE811D73BDC7C4A68AC12B09 /* ProgrammerTests.swift */,
 				EF89DF39A6B0A30D16DEB493 /* UITests.swift */,
 			);
 			path = Tests;
@@ -181,10 +230,12 @@
 			buildPhases = (
 				AAB4DB6F128754F2B7F5C5DB /* Sources */,
 				739F8E1C25089AFEF1796199 /* Resources */,
+				58DD8F567813A3B8742EDE9A /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3533619EBCF2C3FB97A72E2A /* PBXTargetDependency */,
 			);
 			name = Qalculate;
 			packageProductDependencies = (
@@ -211,6 +262,23 @@
 			productReference = 5ACB06FE3390097DC07152FE /* QalculateUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		F76FABEA61E8A15E2A6558A4 /* FractionLabWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DEFCAAF3C92A67EC868A0269 /* Build configuration list for PBXNativeTarget "FractionLabWidget" */;
+			buildPhases = (
+				BF4C4E9470052112F609FE2C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FractionLabWidget;
+			packageProductDependencies = (
+			);
+			productName = FractionLabWidget;
+			productReference = 3CC4DBC395C7048C00A24D7B /* FractionLabWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -231,6 +299,10 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 665A6C415F33DB13ABDCCCAE;
 					};
+					F76FABEA61E8A15E2A6558A4 = {
+						DevelopmentTeam = BW8AVKUHR6;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 0AAFF409DCC77D89FF9BECCE /* Build configuration list for PBXProject "Qalculate" */;
@@ -248,6 +320,7 @@
 			projectRoot = "";
 			targets = (
 				665A6C415F33DB13ABDCCCAE /* Qalculate */,
+				F76FABEA61E8A15E2A6558A4 /* FractionLabWidget */,
 				329C3A8321D73DB1A523F1D3 /* QalculateTests */,
 				82665AB714AC3C57B6584AFF /* QalculateUITests */,
 			);
@@ -278,6 +351,7 @@
 				F8CB44E6B0EB275B7D3886C5 /* EngineTests.swift in Sources */,
 				F5EFEB62C197009E279438FE /* ModelTests.swift in Sources */,
 				CE53CB1A3B8C6E8682C6B042 /* NotationTests.swift in Sources */,
+				0A581EF8C19F7EBBE5D3794F /* ProgrammerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,10 +374,21 @@
 				1258738D7409C090653BD597 /* MathView.swift in Sources */,
 				C1C52A4712697F983B7D3FA4 /* MatrixEditor.swift in Sources */,
 				955B815291E3073FCC81BA5C /* NativeMath.swift in Sources */,
+				9CFC018B4DBE979E8012EC08 /* ProgrammerModel.swift in Sources */,
+				5FEE1431AA14104C03206F8E /* ProgrammerView.swift in Sources */,
 				03024D7FF3C5E22BDED8FD13 /* QalculateApp.swift in Sources */,
 				7FA3F7D8042A362075AAFAE9 /* ResultNotation.swift in Sources */,
 				CC4E27D31D0DF2A6FCB0EE34 /* Theme.swift in Sources */,
 				1D66F5918FCE124ED8C04452 /* UnitConverterView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF4C4E9470052112F609FE2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE7E91ABA68A654C211FB2D5 /* FractionLabWidget.swift in Sources */,
+				95AC806922C3B00CCB620671 /* QuickCalculation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +399,11 @@
 			isa = PBXTargetDependency;
 			target = 665A6C415F33DB13ABDCCCAE /* Qalculate */;
 			targetProxy = 40FDA80AD0E8A54FBDDD0E18 /* PBXContainerItemProxy */;
+		};
+		3533619EBCF2C3FB97A72E2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F76FABEA61E8A15E2A6558A4 /* FractionLabWidget */;
+			targetProxy = EA57DA639621EB28F79A4AE4 /* PBXContainerItemProxy */;
 		};
 		6A2AC8085D8472085B96207B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -452,7 +542,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -485,6 +575,26 @@
 			};
 			name = Debug;
 		};
+		C2B6FD79F80F316C293F353A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				DEVELOPMENT_TEAM = BW8AVKUHR6;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Fraction Lab Calculator";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.qalculate.ios.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C3611D70A7E86A3B2C576681 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -509,6 +619,26 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		D39DEF75D98CAD57DF930BF4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				DEVELOPMENT_TEAM = BW8AVKUHR6;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Fraction Lab Calculator";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.qalculate.ios.widget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		D7FDB8ECA08FA7E21B35DAC0 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -546,7 +676,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -589,6 +719,15 @@
 			buildConfigurations = (
 				449F4734FEDAC92995479B8B /* Debug */,
 				C3611D70A7E86A3B2C576681 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DEFCAAF3C92A67EC868A0269 /* Build configuration list for PBXNativeTarget "FractionLabWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D39DEF75D98CAD57DF930BF4 /* Debug */,
+				C2B6FD79F80F316C293F353A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

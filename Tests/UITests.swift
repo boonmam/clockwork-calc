@@ -212,3 +212,27 @@ extension UITests {
         XCTAssertEqual(app.staticTexts["conversionResult"].label, "0")
     }
 }
+
+extension UITests {
+    func testProgrammerModeAndToolbar() {
+        let app = XCUIApplication(); app.launch()
+        let mode = app.buttons["calculationMode"].firstMatch
+        XCTAssertTrue(mode.waitForExistence(timeout: 10))
+        mode.tap(); app.buttons["Programmer"].tap()
+        app.buttons["base_16"].tap()
+        app.buttons["programKey_F"].tap(); app.buttons["programKey_F"].tap()
+        XCTAssertEqual(app.buttons["base_10"].value as? String, "255")
+        app.buttons["programKey_AND"].tap(); app.buttons["programKey_F"].tap()
+        app.buttons["programKey_="].tap()
+        XCTAssertEqual(app.buttons["base_10"].value as? String, "15")
+        app.buttons["base_2"].tap()
+        XCTAssertFalse(app.buttons["programKey_2"].isEnabled)
+        for id in ["wordSize", "base_16", "base_2", "programKey_0", "programKey_+", "programKey_="] {
+            let button = app.buttons[id]
+            XCTAssertTrue(button.isHittable, id)
+            XCTAssertTrue(app.windows.firstMatch.frame.contains(button.frame), id)
+        }
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.lifetime = .keepAlways; add(shot)
+    }
+}
