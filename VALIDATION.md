@@ -310,3 +310,13 @@ from the passing test and visually verified the full Power keypad fits the
 unfolded Duo simulator. Signed device build and dependency audit passed. Device
 installation/launch succeeded; physical screen inspection was unavailable during
 a phone/VoIP call.
+
+## Quick Calc input menu — build 26 (2026-10-27)
+
+Moved the worksheet's Keyboard/Keypad selector into the … options menu under
+Input method. The selected method has a checkmark; persistence and Power's
+keypad default remain unchanged. Signed build succeeded and installed/launched
+on the Duo. The existing keypad/graph UI regression now selects both methods
+through Tab options rather than the removed segmented control.
+The updated Duo UI regression passed, including keyboard appearance/hiding and
+Power keypad calculations after using the options menu.

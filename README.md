@@ -301,8 +301,8 @@ it can miss very narrow features. This version supports explicit `y=f(x)` plots;
 implicit equations, inequalities, sliders, and polar/parametric plots are not
 included.
 
-Each Quick Calc tab has a saved **Keyboard / Keypad** setting, available above
-the worksheet and in Configure tab. Existing saved tabs retain their formulas.
+Each Quick Calc tab has a saved **Keyboard / Keypad** setting, available in the
+**…** options menu and in Configure tab. Existing saved tabs retain their formulas.
 Power defaults to Keypad; other tabs default to Keyboard. Tap an input field to
 choose it, then use the on-screen number pad. EE inserts an exponent; ± changes
 the exponent sign when entering one, otherwise the number sign. Next selects

@@ -15,16 +15,22 @@ struct QuickCalcView: View {
                 Spacer()
                 Button { editing = QuickTab() } label: { Image(systemName: "plus") }.accessibilityLabel("New calculation tab")
                 Menu {
+                    Section("Input method") {
+                        ForEach(QuickInputStyle.allCases, id: \.self) { style in
+                            Button {
+                                var updated = tab; updated.inputStyle = style
+                                do { try store.save(updated) } catch { store.error = error.localizedDescription }
+                            } label: {
+                                if tab.effectiveInputStyle == style { Label(style.rawValue, systemImage: "checkmark") }
+                                else { Text(style.rawValue) }
+                            }
+                        }
+                    }
                     Button("Edit tab") { editing = tab }
                     Button("Duplicate tab") { var copy = tab; copy.id = UUID(); copy.name += " copy"; editing = copy }
                     Button("Delete tab", role: .destructive) { deleteRequested = true }.disabled(store.tabs.count <= 1)
                 } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("Tab options")
             }
-            Picker("Input method", selection: Binding(get: { tab.effectiveInputStyle }, set: { style in
-                var updated = tab; updated.inputStyle = style
-                do { try store.save(updated) } catch { store.error = error.localizedDescription }
-            })) { ForEach(QuickInputStyle.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
-                .pickerStyle(.segmented).accessibilityIdentifier("quickInputMethod")
             if tab.isPower { PowerQuickView(style: tab.effectiveInputStyle).id(tab.id) }
             else { FormulaQuickView(tab: tab).id(tab.worksheetIdentity) }
             if let error = store.error { Text(error).font(.caption).foregroundStyle(.red) }

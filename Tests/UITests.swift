@@ -316,10 +316,10 @@ extension UITests {
         for key in ["0", ".", "5"] { app.buttons["numberPad_" + key].tap() }
         XCTAssertEqual(app.textFields["powerInput3"].placeholderValue, "6")
         XCTAssertTrue(app.buttons["numberPad_Next"].isHittable)
-        app.segmentedControls["quickInputMethod"].buttons["Keyboard"].tap()
+        app.buttons["Tab options"].tap(); app.buttons["Keyboard"].tap()
         app.textFields["powerInput2"].tap()
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
-        app.segmentedControls["quickInputMethod"].buttons["Keypad"].tap()
+        app.buttons["Tab options"].tap(); app.buttons["Keypad"].tap()
         XCTAssertEqual(app.keyboards.count, 0)
         app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
         let graph = app.otherElements["functionGraph"]
