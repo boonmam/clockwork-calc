@@ -11,7 +11,7 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: '1.0.0'
-    CURRENT_PROJECT_VERSION: 24
+    CURRENT_PROJECT_VERSION: 25
 targets:
   ClockworkCalc:
     type: application
@@ -46,7 +46,7 @@ targets:
   ClockworkCalcTests:
     type: bundle.unit-test
     platform: iOS
-    sources: [Tests/EngineTests.swift, Tests/ModelTests.swift, Tests/CASTests.swift, Tests/NotationTests.swift, Tests/ProgrammerTests.swift, Tests/QuickCalcTests.swift]
+    sources: [Tests/EngineTests.swift, Tests/ModelTests.swift, Tests/CASTests.swift, Tests/NotationTests.swift, Tests/ProgrammerTests.swift, Tests/QuickCalcTests.swift, Tests/GraphTests.swift]
     dependencies: [{target: ClockworkCalc}]
     settings:
       base:

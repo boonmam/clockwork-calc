@@ -20,8 +20,13 @@ struct QuickCalcView: View {
                     Button("Delete tab", role: .destructive) { deleteRequested = true }.disabled(store.tabs.count <= 1)
                 } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("Tab options")
             }
-            if tab.isPower { PowerQuickView().id(tab.id) }
-            else { FormulaQuickView(tab: tab).id(tab) }
+            Picker("Input method", selection: Binding(get: { tab.effectiveInputStyle }, set: { style in
+                var updated = tab; updated.inputStyle = style
+                do { try store.save(updated) } catch { store.error = error.localizedDescription }
+            })) { ForEach(QuickInputStyle.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                .pickerStyle(.segmented).accessibilityIdentifier("quickInputMethod")
+            if tab.isPower { PowerQuickView(style: tab.effectiveInputStyle).id(tab.id) }
+            else { FormulaQuickView(tab: tab).id(tab.worksheetIdentity) }
             if let error = store.error { Text(error).font(.caption).foregroundStyle(.red) }
         }
         .padding(.horizontal, 16).padding(.bottom, 12)
@@ -40,7 +45,8 @@ struct QuickCalcView: View {
 private struct FormulaQuickView: View {
     let tab: QuickTab
     @State private var values: [String]
-    @FocusState private var focused: Int?
+    @State private var focused: Int?
+    @State private var selection = NSRange(location: 0, length: 0)
     init(tab: QuickTab) { self.tab = tab; _values = State(initialValue: tab.inputs.map(\.defaultValue)) }
     private var result: Result<String, Error> { Result { try tab.evaluate(values) } }
     var body: some View {
@@ -49,9 +55,10 @@ private struct FormulaQuickView: View {
             ForEach(Array(tab.inputs.enumerated()), id: \.element.id) { index, field in
                 HStack {
                     Text(field.label + (field.unit.isEmpty ? "" : " (\(field.unit))")).font(.callout).frame(maxWidth: .infinity, alignment: .leading)
-                    TextField(field.symbol, text: $values[index]).textFieldStyle(.roundedBorder)
-                        .keyboardType(.numbersAndPunctuation).focused($focused, equals: index)
-                        .accessibilityIdentifier("quickInput\(index)")
+                    QuickNumberEntry(text: $values[index], active: $focused, selection: $selection, index: index,
+                                     style: tab.effectiveInputStyle, placeholder: field.symbol, label: field.label, identifier: "quickInput\(index)")
+                        .frame(height: 34)
+
                 }
             }
             switch result {
@@ -67,15 +74,26 @@ private struct FormulaQuickView: View {
                 if focused != nil { Button("Done") { focused = nil } }
                 if case .success(let answer) = result { Button("Copy") { UIPasteboard.general.string = answer + " " + tab.resultUnit } }
             }.buttonStyle(.bordered)
+            if tab.effectiveInputStyle == .keypad {
+                QuickNumberPad { key in
+                    let index = focused ?? 0
+                    if focused == nil { focused = index; selection = NSRange(location: values[index].utf16.count, length: 0) }
+                    if key == "Next" { focused = (index + 1) % values.count; selection = NSRange(location: 0, length: values[focused!].utf16.count) }
+                    else { NumberPadEditing.apply(key, text: &values[index], selection: &selection) }
+                }
+            }
             Spacer(minLength: 0)
         }
+        .onChange(of: tab.effectiveInputStyle) { _, _ in focused = nil; UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }
     }
 }
 
 private struct PowerQuickView: View {
+    let style: QuickInputStyle
     @State private var values = ["", "", "", ""]
     @State private var scales = [1.0, 1.0, 1.0, 1.0]
-    @FocusState private var focused: Int?
+    @State private var focused: Int?
+    @State private var selection = NSRange(location: 0, length: 0)
     private let labels = ["Resistance", "Current", "Voltage", "Power"]
     private let units = ["Ω", "A", "V", "W"]
     private let prefixes: [(String, Double)] = [("µ", 1e-6), ("m", 1e-3), ("", 1), ("k", 1e3), ("M", 1e6)]
@@ -103,10 +121,9 @@ private struct PowerQuickView: View {
                         Text(labels[index]).font(.callout)
                         Text(values[index].isEmpty && output(index) != nil ? "Calculated" : "Input").font(.caption2).foregroundStyle(.secondary)
                     }.frame(maxWidth: .infinity, alignment: .leading)
-                    TextField("", text: $values[index], prompt: Text(output(index) ?? "—").foregroundStyle(output(index) == nil ? Color.secondary : Color.calculatorAccent))
-                        .textFieldStyle(.roundedBorder).keyboardType(.numbersAndPunctuation)
-                        .focused($focused, equals: index).accessibilityLabel(labels[index])
-                        .accessibilityIdentifier("powerInput\(index)")
+                    QuickNumberEntry(text: $values[index], active: $focused, selection: $selection, index: index,
+                                     style: style, placeholder: output(index) ?? "—", label: labels[index], identifier: "powerInput\(index)", calculated: values[index].isEmpty && output(index) != nil)
+                        .frame(height: 32)
                     Picker("\(labels[index]) unit", selection: $scales[index]) {
                         ForEach(prefixes, id: \.1) { prefix in Text(prefix.0 + units[index]).tag(prefix.1) }
                     }.pickerStyle(.menu).frame(width: 74)
@@ -125,8 +142,17 @@ private struct PowerQuickView: View {
                     }
                 }
             }.buttonStyle(.bordered)
+            if style == .keypad {
+                QuickNumberPad { key in
+                    let index = focused ?? 0
+                    if focused == nil { focused = index; selection = NSRange(location: values[index].utf16.count, length: 0) }
+                    if key == "Next" { focused = (index + 1) % 4; selection = NSRange(location: 0, length: values[focused!].utf16.count) }
+                    else { NumberPadEditing.apply(key, text: &values[index], selection: &selection) }
+                }
+            }
             Spacer(minLength: 0)
         }
+        .onChange(of: style) { _, _ in focused = nil; UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }
     }
 }
 
@@ -140,6 +166,9 @@ private struct QuickTabEditor: View {
             Form {
                 Section("Tab") {
                     TextField("Name", text: $tab.name).accessibilityIdentifier("tabName")
+                    Picker("Input method", selection: Binding(get: { tab.effectiveInputStyle }, set: { tab.inputStyle = $0 })) {
+                        ForEach(QuickInputStyle.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    }
                     if !tab.isPower {
                         TextField("Formula, e.g. V*I", text: $tab.expression).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("tabFormula")
                         TextField("Result unit, e.g. W", text: $tab.resultUnit)

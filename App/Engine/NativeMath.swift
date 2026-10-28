@@ -277,6 +277,7 @@ private struct UnitDefinition {
 private final class Evaluator {
     let degrees: Bool
     var operations = 0
+    var variables: [String: Double] = [:]
     init(degrees: Bool) { self.degrees = degrees }
     func tick() throws {
         operations += 1
@@ -287,6 +288,7 @@ private final class Evaluator {
         switch expression {
         case .number(let text): return Quantity(value: Scalar(Double(text)!, fraction: Rational.literal(text)))
         case .symbol(let name):
+            if let value = variables[name] { return Quantity(value: Scalar(value)) }
             if let unit = UnitDefinition.all[name] { return unit.quantity }
             if name == "pi" || name == "π" { return Quantity(value: Scalar(.pi)) }
             if name == "e" { return Quantity(value: Scalar(M_E)) }
@@ -537,6 +539,42 @@ struct NativeMath {
             }
             return false
         default: return false
+        }
+    }
+}
+
+
+extension NativeMath {
+    /// Compile once for a plot; undefined or non-real samples break the curve.
+    func graphFunction(_ input: String) throws -> (Double) -> Double? {
+        var text = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        if text.hasPrefix("y=") { text = String(text.dropFirst(2)) }
+        else if text.hasPrefix("y =") { text = String(text.dropFirst(3)) }
+        guard text.count <= 500 else { throw mathError("Keep each function under 500 characters.") }
+        var parser = try Parser(text)
+        let (expression, target) = try parser.parse()
+        let functions = ["sin", "cos", "tan", "asin", "acos", "atan", "sqrt", "abs", "ln", "log", "exp", "floor", "ceil"]
+        func validate(_ e: Expression) throws {
+            switch e {
+            case .number: break
+            case .symbol(let name): guard ["x", "pi", "π", "e"].contains(name) else { throw mathError("Use x as the variable. Unknown name: \(name)") }
+            case .unary(let a): try validate(a)
+            case .binary(let op, let a, let b):
+                guard ["+", "-", "*", "/", "^"].contains(op) else { throw mathError("Enter y = f(x), such as y = sin(x).") }
+                try validate(a); try validate(b)
+            case .call(let name, let args):
+                guard functions.contains(name), args.count == 1 else { throw mathError("Unsupported graph function: \(name)") }
+                try args.forEach(validate)
+            }
+        }
+        guard target == nil else { throw mathError("Graph functions cannot contain unit conversions.") }
+        try validate(expression)
+        let evaluator = Evaluator(degrees: false)
+        return { x in
+            evaluator.operations = 0; evaluator.variables = ["x": x]
+            guard x.isFinite, let q = try? evaluator.evaluate(expression), q.isDimensionless,
+                  q.value.im == 0, q.value.re.isFinite else { return nil }
+            return q.value.re
         }
     }
 }

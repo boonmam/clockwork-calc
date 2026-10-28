@@ -8,6 +8,8 @@ struct QuickInput: Codable, Identifiable, Hashable {
     var unit = ""
     var defaultValue = "1"
 }
+enum QuickInputStyle: String, Codable, CaseIterable { case keyboard = "Keyboard", keypad = "Keypad" }
+
 struct QuickTab: Codable, Identifiable, Hashable {
     var id = UUID()
     var name = "My calculation"
@@ -16,6 +18,9 @@ struct QuickTab: Codable, Identifiable, Hashable {
     var inputs = [QuickInput()]
     var isPower = false
     var note = ""
+    var inputStyle: QuickInputStyle? = nil
+    var effectiveInputStyle: QuickInputStyle { inputStyle ?? (isPower ? .keypad : .keyboard) }
+    var worksheetIdentity: QuickTab { var identity = self; identity.inputStyle = nil; return identity }
 
     static var starters: [QuickTab] { [
         QuickTab(name: "Power", expression: "", inputs: [], isPower: true),

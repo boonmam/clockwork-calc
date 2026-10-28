@@ -289,3 +289,24 @@ computed values. Signed build and packaged dependency audit passed. Installed
 on the Duo and visually verified 12 V / 0.5 A produces 24 Ω / 6 W. Custom formula
 unit labels are descriptive; arbitrary inverse solving and AC phasors are not
 part of this update.
+
+## Graphing and per-tab input method — build 25 (2026-10-27)
+
+Added up to four persisted real y=f(x) curves, native grid/axes, pan, pinch/button
+zoom, reset, and tap inspection. The original math engine compiles each function
+once per sampling run. Sampling is bounded, runs off the main actor, and breaks
+at detected discontinuities/non-real points. Explicit functions only; narrow
+features and unsampled discontinuities can be missed.
+
+Added saved Keyboard/Keypad choice per Quick Calc tab with backward-compatible
+optional decoding. Power defaults to Keypad. Numeric entry supports native text
+selection, digits, decimal, EE, sign, clear, delete, and Next. Switching input
+methods preserves current formula values. QuickCalcTests and GraphTests passed;
+coverage includes function values/domains, 1/x gap handling, unsupported input,
+zoom bounds, selection/exponent editing, old tab decoding and saved choices.
+Duo UI test passed keypad Power entry with no system keyboard, switching methods,
+computed 6 W result, graph rendering/trace/zoom/reset. Inspected graph screenshot
+from the passing test and visually verified the full Power keypad fits the
+unfolded Duo simulator. Signed device build and dependency audit passed. Device
+installation/launch succeeded; physical screen inspection was unavailable during
+a phone/VoIP call.

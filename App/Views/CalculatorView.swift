@@ -7,6 +7,7 @@ struct CalculatorView: View {
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
     @State private var notesPresented = false
+    @State private var graphMode = false
     @State private var quickCalcMode = false
     @State private var conversionMode = false
     @State private var programmerMode = false
@@ -140,7 +141,8 @@ struct CalculatorView: View {
     }
     private var calculator: some View {
         GeometryReader { geometry in
-            if quickCalcMode { QuickCalcView() }
+            if graphMode { GraphingView() }
+            else if quickCalcMode { QuickCalcView() }
             else if programmerMode { ProgrammerView() }
             else if conversionMode { UnitConverterView() }
             else { calculatorContent(size: geometry.size) }
@@ -194,12 +196,14 @@ struct CalculatorView: View {
             Button("Unit converter") { selectMode("conversion") }
             Button("Programmer") { selectMode("programmer") }
             Button("Quick Calc") { selectMode("quick") }
+            Button("Graphing") { selectMode("graph") }
         } label: { Image(systemName: "square.grid.2x2") }
             .accessibilityLabel("Calculation mode")
             .accessibilityIdentifier("calculationMode")
             .disabled(model.busy)
     }
     private func selectMode(_ value: String) {
+        graphMode = value == "graph"
         quickCalcMode = value == "quick"
         programmerMode = value == "programmer"
         conversionMode = value == "conversion"
@@ -207,13 +211,14 @@ struct CalculatorView: View {
     }
     private var modePicker: some View {
         Picker("Calculation mode", selection: Binding<String>(
-            get: { quickCalcMode ? "quick" : programmerMode ? "programmer" : conversionMode ? "conversion" : model.mode.rawValue },
+            get: { graphMode ? "graph" : quickCalcMode ? "quick" : programmerMode ? "programmer" : conversionMode ? "conversion" : model.mode.rawValue },
             set: selectMode)) {
                 Text("Calculator").tag("calculator")
                 Text("CAS").tag("cas")
                 Text("Unit converter").tag("conversion")
                 Text("Programmer").tag("programmer")
                 Text("Quick Calc").tag("quick")
+                Text("Graphing").tag("graph")
             }.pickerStyle(.menu).disabled(model.busy).accessibilityIdentifier("calculationMode")
     }
     private func isOperator(_ key: String) -> Bool { ["÷", "×", "−", "+", "^", "√", "to", "AC", "⌫", "EE"].contains(key) }

@@ -288,3 +288,22 @@ that cannot determine a unique positive finite resistance are explained rather
 than guessed. For example, 12 V and 0.5 A produce 24 Ω and 6 W. This implements
 the DC worksheet pattern from the requested reference; AC phasor and energy
 worksheets are not included.
+
+## Graphing and numeric entry — build 25
+
+Choose **Graphing** from the mode menu. Enter up to four real functions of `x`,
+with an optional `y =` prefix. Examples: `sin(x)`, `x^2-2*x+1`, `1/x`, and
+`sqrt(x)`. Each curve has a color and visibility toggle; functions save on-device.
+Drag to pan, pinch or use +/− to zoom, Reset to restore the window, and tap the
+plot to inspect coordinates. Angles use radians. Graphing samples functions
+numerically and breaks curves at detected discontinuities or non-real values;
+it can miss very narrow features. This version supports explicit `y=f(x)` plots;
+implicit equations, inequalities, sliders, and polar/parametric plots are not
+included.
+
+Each Quick Calc tab has a saved **Keyboard / Keypad** setting, available above
+the worksheet and in Configure tab. Existing saved tabs retain their formulas.
+Power defaults to Keypad; other tabs default to Keyboard. Tap an input field to
+choose it, then use the on-screen number pad. EE inserts an exponent; ± changes
+the exponent sign when entering one, otherwise the number sign. Next selects
+the next field. The standard editing menu remains available in number fields.

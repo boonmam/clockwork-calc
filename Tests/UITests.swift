@@ -302,3 +302,37 @@ extension UITests {
         XCTAssertEqual(app.staticTexts["quickAnswer"].label.trimmingCharacters(in: .whitespaces), "3")
     }
 }
+
+extension UITests {
+    func testPowerKeypadAndGraphing() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Quick Calc"].tap()
+        app.buttons["Clear"].tap()
+        let voltage = app.textFields["powerInput2"]
+        voltage.tap()
+        XCTAssertEqual(app.keyboards.count, 0)
+        for key in ["1", "2"] { app.buttons["numberPad_" + key].tap() }
+        app.textFields["powerInput1"].tap()
+        for key in ["0", ".", "5"] { app.buttons["numberPad_" + key].tap() }
+        XCTAssertEqual(app.textFields["powerInput3"].placeholderValue, "6")
+        XCTAssertTrue(app.buttons["numberPad_Next"].isHittable)
+        app.segmentedControls["quickInputMethod"].buttons["Keyboard"].tap()
+        app.textFields["powerInput2"].tap()
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        app.segmentedControls["quickInputMethod"].buttons["Keypad"].tap()
+        XCTAssertEqual(app.keyboards.count, 0)
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        let graph = app.otherElements["functionGraph"]
+        XCTAssertTrue(graph.waitForExistence(timeout: 5))
+        expectation(for: NSPredicate(format: "value BEGINSWITH %@", "1 curves"), evaluatedWith: graph)
+        waitForExpectations(timeout: 10)
+        graph.tap()
+        XCTAssertTrue(app.staticTexts["graphPoint0"].waitForExistence(timeout: 5))
+        let before = graph.value as? String
+        app.buttons["Zoom in"].tap()
+        XCTAssertNotEqual(graph.value as? String, before)
+        app.buttons["graphReset"].tap()
+        XCTAssertEqual(graph.value as? String, before)
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); attachment.lifetime = .keepAlways; add(attachment)
+    }
+}
