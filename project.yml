@@ -1,4 +1,4 @@
-name: ClockworkCalc
+name: Clockwork Calc
 options:
   bundleIdPrefix: com.boonmam
   deploymentTarget:

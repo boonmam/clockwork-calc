@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+               BlueprintIdentifier = "E9C35D9273FEF90061D6CEAE"
                BuildableName = "ClockworkCalc.app"
                BlueprintName = "ClockworkCalc"
-               ReferencedContainer = "container:ClockworkCalc.xcodeproj">
+               ReferencedContainer = "container:Clockwork Calc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+            BlueprintIdentifier = "E9C35D9273FEF90061D6CEAE"
             BuildableName = "ClockworkCalc.app"
             BlueprintName = "ClockworkCalc"
-            ReferencedContainer = "container:ClockworkCalc.xcodeproj">
+            ReferencedContainer = "container:Clockwork Calc.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -44,10 +44,10 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "45858B1801E46D96A49038DD"
+               BlueprintIdentifier = "D25B46E8A584917ECE784ACB"
                BuildableName = "ClockworkCalcTests.xctest"
                BlueprintName = "ClockworkCalcTests"
-               ReferencedContainer = "container:ClockworkCalc.xcodeproj">
+               ReferencedContainer = "container:Clockwork Calc.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -55,10 +55,10 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "66D912EA11993055D3E3BA81"
+               BlueprintIdentifier = "C27D75EE1E21A97CDFFFD893"
                BuildableName = "ClockworkCalcUITests.xctest"
                BlueprintName = "ClockworkCalcUITests"
-               ReferencedContainer = "container:ClockworkCalc.xcodeproj">
+               ReferencedContainer = "container:Clockwork Calc.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -79,10 +79,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+            BlueprintIdentifier = "E9C35D9273FEF90061D6CEAE"
             BuildableName = "ClockworkCalc.app"
             BlueprintName = "ClockworkCalc"
-            ReferencedContainer = "container:ClockworkCalc.xcodeproj">
+            ReferencedContainer = "container:Clockwork Calc.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -96,10 +96,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "828818B5FC717F7431D23BA4"
+            BlueprintIdentifier = "E9C35D9273FEF90061D6CEAE"
             BuildableName = "ClockworkCalc.app"
             BlueprintName = "ClockworkCalc"
-            ReferencedContainer = "container:ClockworkCalc.xcodeproj">
+            ReferencedContainer = "container:Clockwork Calc.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

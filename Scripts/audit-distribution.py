@@ -15,7 +15,7 @@ def check(condition, message):
     if not condition:
         errors.append(message)
 
-project = (root / 'project.yml').read_text() + (root / 'ClockworkCalc.xcodeproj/project.pbxproj').read_text()
+project = (root / 'project.yml').read_text() + (root / 'Clockwork Calc.xcodeproj/project.pbxproj').read_text()
 for marker in ['-lgmp', '-lmpfr', 'Vendor/Engine', 'Resources/Definitions', 'SWIFT_OBJC_BRIDGING_HEADER']:
     check(marker not in project, f'Legacy build dependency: {marker}')
 check(not (root / 'Scripts/build-engine.sh').exists(), 'Legacy dependency downloader remains')

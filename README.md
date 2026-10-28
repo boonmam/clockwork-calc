@@ -164,11 +164,12 @@ Homebrew `xcodegen`. Deployment target: iOS/iPadOS 17+.
 ```sh
 brew install xcodegen
 Scripts/build-app.sh
-open ClockworkCalc.xcodeproj
+open "Clockwork Calc.xcodeproj"
 ```
 
 Select scheme **ClockworkCalc** and an iPhone/iPad simulator. The app's display name
-is **Clockwork Calc**; repository and build-target names remain for continuity.
+is **Clockwork Calc**. The Xcode project is **Clockwork Calc.xcodeproj** and the
+repository is [clockwork-calc](https://github.com/boonmam/clockwork-calc).
 The script cleans old products, builds simulator/device apps, and audits the
 packaged device resources and dependencies. For a physical device, choose your
 Apple development team under Signing & Capabilities and Run. No App Store or
@@ -186,7 +187,7 @@ python3 Scripts/vendor-cas.py
 ## Tests
 
 ```sh
-xcodebuild -project ClockworkCalc.xcodeproj -scheme ClockworkCalc \
+xcodebuild -project "Clockwork Calc.xcodeproj" -scheme ClockworkCalc \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -derivedDataPath .build/Tests CODE_SIGNING_ALLOWED=NO test
 node Tests/cas-adapter.test.cjs

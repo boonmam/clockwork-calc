@@ -7,7 +7,7 @@ xcodegen generate
 ARCHIVE="$ROOT/.build/Release/ClockworkCalc.xcarchive"
 SIGNING=(CODE_SIGNING_ALLOWED=NO)
 if [[ -n "${TEAM_ID:-}" ]]; then SIGNING=("DEVELOPMENT_TEAM=$TEAM_ID" CODE_SIGN_STYLE=Automatic); fi
-xcodebuild -project ClockworkCalc.xcodeproj -scheme ClockworkCalc -configuration Release \
+xcodebuild -project "Clockwork Calc.xcodeproj" -scheme ClockworkCalc -configuration Release \
   -destination 'generic/platform=iOS' -archivePath "$ARCHIVE" \
   -derivedDataPath "$ROOT/.build/Release/DerivedData" "${SIGNING[@]}" archive
 python3 Scripts/audit-distribution.py "$ARCHIVE/Products/Applications/ClockworkCalc.app"

@@ -1,0 +1,661 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		004722B65D96D58464C3CC19 /* CAS in Resources */ = {isa = PBXBuildFile; fileRef = 93D558A274D670FC0A5AED20 /* CAS */; };
+		048FEC22FD381B20BC835843 /* Math in Resources */ = {isa = PBXBuildFile; fileRef = 9E67AA4BD9DC5113108A434E /* Math */; };
+		0C9CF452730D0651F0A0F78D /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68A9E4E33D3875AF90043A3 /* UITests.swift */; };
+		18DD565FB8731D9EDC37A208 /* QuickNumberEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009DC67DF4C1BCDD63D279FA /* QuickNumberEntry.swift */; };
+		19B69E2DEC92B4CC5CF1E51A /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4970552808A51C19C69FE8 /* CalculatorView.swift */; };
+		1C6FF60B17C7FEEF8FD9E9C4 /* GraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4CDFA1DDBF942E00248CE8 /* GraphModel.swift */; };
+		1E3E789351F4F0B446730148 /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = AE7DD1A0C74316D97F1D66DC /* Licenses */; };
+		22C02175FC2937BE3B795F02 /* QuickCalcTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA609A78B9AEDA5B005237D /* QuickCalcTests.swift */; };
+		26E1EC67C2D913A19A8C26CC /* GraphingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEB58A08EC7E1CCBC35F365 /* GraphingView.swift */; };
+		36FDD6A2C9A00EDE99D075FC /* CASTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBEDD094FFE27FA82017A5A3 /* CASTests.swift */; };
+		39E7D10A996A02F83D933750 /* UnitConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D37BB5E035348B64852C0B1 /* UnitConverterView.swift */; };
+		3D5055CBCCDC82B3E0CB479B /* NotationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AF26DFCB2B52A35D387F09 /* NotationTests.swift */; };
+		4371602E5287207703B27DB8 /* ResultNotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA27CF7E02D3F786533FD97 /* ResultNotation.swift */; };
+		4B9CD9F0C8D43A79662790C3 /* MathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698C842B9EF716C0C9E34FBE /* MathView.swift */; };
+		54CD54AFD72047265C5A0E7D /* ProgrammerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346C861BA584C7684BBCC72E /* ProgrammerView.swift */; };
+		5753B6F53E6B9926C1C09A6C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F112DC229E6F0C04D29B4F2 /* Theme.swift */; };
+		5E0A55AF144035BBE6C62C98 /* QuickTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3623531EA2107DD2B8E76C55 /* QuickTabs.swift */; };
+		6DA29F3292BED2A30A28CF51 /* CASRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC01204310BAAB76F1015BE /* CASRuntime.swift */; };
+		7C646F54BD27DFA3835F6CAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A79FE196DB9645D997DBAA /* Assets.xcassets */; };
+		7DF454CCC2ABAD3C5CC4FA1F /* MatrixEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17DEDD686A753544A9C71DD2 /* MatrixEditor.swift */; };
+		8B6D448B3736FE6D36DC2DB2 /* CalculatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA9E9F104F59F18F7BBC7BEC /* CalculatorModel.swift */; };
+		932953EDBAF383855B5AE33C /* NativeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 413E755AB8D2C048F4B5DE6E /* NativeMath.swift */; };
+		A132ED0D4A8AA7206F006E96 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BFFA01AE11FF6087B9BD84 /* EngineTests.swift */; };
+		A374C484095BC98F618EBA35 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224463BF454A72775C49E7BC /* ModelTests.swift */; };
+		AD6D4841FAB898E849EA089D /* ProgrammerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC257A3D0BB993EF68C90938 /* ProgrammerModel.swift */; };
+		C306AD8DC14879705A704368 /* ClockworkCalcApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B6C2B176B036523A804DD /* ClockworkCalcApp.swift */; };
+		C48967EE4AC27896AAFBF1A7 /* ProgrammerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF8FED3AB0A02741E85A404 /* ProgrammerTests.swift */; };
+		CB8B21E3BDB728FA34D1A37D /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098DD6F3B3513E788E00F4B /* ExpressionEditor.swift */; };
+		CCB80C83DFF7892A752FD578 /* GraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBC761C03DE1AEA395F2A5E /* GraphTests.swift */; };
+		CFBF4F5ECBEB484CE229860D /* QuickCalc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4621360487B4259631151943 /* QuickCalc.swift */; };
+		E28A9F5A4CA880C1B970AE1B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 731C0C339B4AB64544CC658F /* PrivacyInfo.xcprivacy */; };
+		F3A197A2AD21DDF75000918E /* QuickCalcView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9ADFA9F7F2DF897B7983AF /* QuickCalcView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		50C29762A18CB2791CD1B3E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F60782021D2B2750DA58C3C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9C35D9273FEF90061D6CEAE;
+			remoteInfo = ClockworkCalc;
+		};
+		EF0C568C8BD89550603D711A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F60782021D2B2750DA58C3C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9C35D9273FEF90061D6CEAE;
+			remoteInfo = ClockworkCalc;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		009DC67DF4C1BCDD63D279FA /* QuickNumberEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNumberEntry.swift; sourceTree = "<group>"; };
+		17DEDD686A753544A9C71DD2 /* MatrixEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixEditor.swift; sourceTree = "<group>"; };
+		1D37BB5E035348B64852C0B1 /* UnitConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConverterView.swift; sourceTree = "<group>"; };
+		224463BF454A72775C49E7BC /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		2F112DC229E6F0C04D29B4F2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		346C861BA584C7684BBCC72E /* ProgrammerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerView.swift; sourceTree = "<group>"; };
+		3623531EA2107DD2B8E76C55 /* QuickTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickTabs.swift; sourceTree = "<group>"; };
+		3E9ADFA9F7F2DF897B7983AF /* QuickCalcView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCalcView.swift; sourceTree = "<group>"; };
+		4097A59B15772F3FEFB55E50 /* ClockworkCalc.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ClockworkCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4098DD6F3B3513E788E00F4B /* ExpressionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEditor.swift; sourceTree = "<group>"; };
+		413E755AB8D2C048F4B5DE6E /* NativeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeMath.swift; sourceTree = "<group>"; };
+		4621360487B4259631151943 /* QuickCalc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCalc.swift; sourceTree = "<group>"; };
+		50CECFF9DD07F97D46E98DE8 /* ClockworkCalcTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ClockworkCalcTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A4970552808A51C19C69FE8 /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
+		5BF8FED3AB0A02741E85A404 /* ProgrammerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerTests.swift; sourceTree = "<group>"; };
+		5EBC761C03DE1AEA395F2A5E /* GraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphTests.swift; sourceTree = "<group>"; };
+		5FA609A78B9AEDA5B005237D /* QuickCalcTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCalcTests.swift; sourceTree = "<group>"; };
+		698C842B9EF716C0C9E34FBE /* MathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathView.swift; sourceTree = "<group>"; };
+		6FC01204310BAAB76F1015BE /* CASRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASRuntime.swift; sourceTree = "<group>"; };
+		731C0C339B4AB64544CC658F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8B4CDFA1DDBF942E00248CE8 /* GraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphModel.swift; sourceTree = "<group>"; };
+		93D558A274D670FC0A5AED20 /* CAS */ = {isa = PBXFileReference; lastKnownFileType = folder; name = CAS; path = App/Resources/CAS; sourceTree = SOURCE_ROOT; };
+		9E67AA4BD9DC5113108A434E /* Math */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Math; path = App/Resources/Math; sourceTree = SOURCE_ROOT; };
+		A0AF26DFCB2B52A35D387F09 /* NotationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotationTests.swift; sourceTree = "<group>"; };
+		A68A9E4E33D3875AF90043A3 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
+		AE7DD1A0C74316D97F1D66DC /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Licenses; path = App/Resources/Licenses; sourceTree = SOURCE_ROOT; };
+		BA9E9F104F59F18F7BBC7BEC /* CalculatorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorModel.swift; sourceTree = "<group>"; };
+		CBEDD094FFE27FA82017A5A3 /* CASTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASTests.swift; sourceTree = "<group>"; };
+		CC257A3D0BB993EF68C90938 /* ProgrammerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerModel.swift; sourceTree = "<group>"; };
+		CDE36B5B182A5E9595A2B7E1 /* ClockworkCalcUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ClockworkCalcUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE2B6C2B176B036523A804DD /* ClockworkCalcApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockworkCalcApp.swift; sourceTree = "<group>"; };
+		CFEB58A08EC7E1CCBC35F365 /* GraphingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphingView.swift; sourceTree = "<group>"; };
+		E7A79FE196DB9645D997DBAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EDA27CF7E02D3F786533FD97 /* ResultNotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultNotation.swift; sourceTree = "<group>"; };
+		F9BFFA01AE11FF6087B9BD84 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		155D19BECA2D1F6E48B755D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4097A59B15772F3FEFB55E50 /* ClockworkCalc.app */,
+				50CECFF9DD07F97D46E98DE8 /* ClockworkCalcTests.xctest */,
+				CDE36B5B182A5E9595A2B7E1 /* ClockworkCalcUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1919375C727AA19D172E9148 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5A4970552808A51C19C69FE8 /* CalculatorView.swift */,
+				4098DD6F3B3513E788E00F4B /* ExpressionEditor.swift */,
+				CFEB58A08EC7E1CCBC35F365 /* GraphingView.swift */,
+				698C842B9EF716C0C9E34FBE /* MathView.swift */,
+				17DEDD686A753544A9C71DD2 /* MatrixEditor.swift */,
+				346C861BA584C7684BBCC72E /* ProgrammerView.swift */,
+				3E9ADFA9F7F2DF897B7983AF /* QuickCalcView.swift */,
+				009DC67DF4C1BCDD63D279FA /* QuickNumberEntry.swift */,
+				2F112DC229E6F0C04D29B4F2 /* Theme.swift */,
+				1D37BB5E035348B64852C0B1 /* UnitConverterView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		3066B7734DD10CD819B21BC6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E7A79FE196DB9645D997DBAA /* Assets.xcassets */,
+			);
+			name = Resources;
+			path = App/Resources;
+			sourceTree = "<group>";
+		};
+		4F0A7A33071C568AF50F56CC /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				BA9E9F104F59F18F7BBC7BEC /* CalculatorModel.swift */,
+				6FC01204310BAAB76F1015BE /* CASRuntime.swift */,
+				8B4CDFA1DDBF942E00248CE8 /* GraphModel.swift */,
+				413E755AB8D2C048F4B5DE6E /* NativeMath.swift */,
+				CC257A3D0BB993EF68C90938 /* ProgrammerModel.swift */,
+				4621360487B4259631151943 /* QuickCalc.swift */,
+				3623531EA2107DD2B8E76C55 /* QuickTabs.swift */,
+				EDA27CF7E02D3F786533FD97 /* ResultNotation.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		68B2AD07B59602F1FAD9E159 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CE2B6C2B176B036523A804DD /* ClockworkCalcApp.swift */,
+				731C0C339B4AB64544CC658F /* PrivacyInfo.xcprivacy */,
+				4F0A7A33071C568AF50F56CC /* Engine */,
+				1919375C727AA19D172E9148 /* Views */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		8079972FA5C3FF0D77D45449 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CBEDD094FFE27FA82017A5A3 /* CASTests.swift */,
+				F9BFFA01AE11FF6087B9BD84 /* EngineTests.swift */,
+				5EBC761C03DE1AEA395F2A5E /* GraphTests.swift */,
+				224463BF454A72775C49E7BC /* ModelTests.swift */,
+				A0AF26DFCB2B52A35D387F09 /* NotationTests.swift */,
+				5BF8FED3AB0A02741E85A404 /* ProgrammerTests.swift */,
+				5FA609A78B9AEDA5B005237D /* QuickCalcTests.swift */,
+				A68A9E4E33D3875AF90043A3 /* UITests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		A34ABF0D00D75E48D32517EB = {
+			isa = PBXGroup;
+			children = (
+				93D558A274D670FC0A5AED20 /* CAS */,
+				AE7DD1A0C74316D97F1D66DC /* Licenses */,
+				9E67AA4BD9DC5113108A434E /* Math */,
+				68B2AD07B59602F1FAD9E159 /* App */,
+				3066B7734DD10CD819B21BC6 /* Resources */,
+				8079972FA5C3FF0D77D45449 /* Tests */,
+				155D19BECA2D1F6E48B755D5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C27D75EE1E21A97CDFFFD893 /* ClockworkCalcUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B4E3DB8A87C6FD82743926F0 /* Build configuration list for PBXNativeTarget "ClockworkCalcUITests" */;
+			buildPhases = (
+				6C066F5BBB383A433E0EEC6F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				65B7295D8840586A8E6601F2 /* PBXTargetDependency */,
+			);
+			name = ClockworkCalcUITests;
+			packageProductDependencies = (
+			);
+			productName = ClockworkCalcUITests;
+			productReference = CDE36B5B182A5E9595A2B7E1 /* ClockworkCalcUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		D25B46E8A584917ECE784ACB /* ClockworkCalcTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B046A28B5CA7FC435F5D76D8 /* Build configuration list for PBXNativeTarget "ClockworkCalcTests" */;
+			buildPhases = (
+				968E445BB76FAFF1BEDA4FEB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				12F7F9EC9B8908E20F625EB7 /* PBXTargetDependency */,
+			);
+			name = ClockworkCalcTests;
+			packageProductDependencies = (
+			);
+			productName = ClockworkCalcTests;
+			productReference = 50CECFF9DD07F97D46E98DE8 /* ClockworkCalcTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E9C35D9273FEF90061D6CEAE /* ClockworkCalc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FB7791A22DF4697A2B17794 /* Build configuration list for PBXNativeTarget "ClockworkCalc" */;
+			buildPhases = (
+				09828464B0BAB7E8CA7F298C /* Sources */,
+				7985614E68556CB162E4BC17 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClockworkCalc;
+			packageProductDependencies = (
+			);
+			productName = ClockworkCalc;
+			productReference = 4097A59B15772F3FEFB55E50 /* ClockworkCalc.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9F60782021D2B2750DA58C3C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					C27D75EE1E21A97CDFFFD893 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = E9C35D9273FEF90061D6CEAE;
+					};
+					D25B46E8A584917ECE784ACB = {
+						ProvisioningStyle = Automatic;
+					};
+					E9C35D9273FEF90061D6CEAE = {
+						DevelopmentTeam = BW8AVKUHR6;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1930EA02BDC74169FB0018DF /* Build configuration list for PBXProject "Clockwork Calc" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A34ABF0D00D75E48D32517EB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 155D19BECA2D1F6E48B755D5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E9C35D9273FEF90061D6CEAE /* ClockworkCalc */,
+				D25B46E8A584917ECE784ACB /* ClockworkCalcTests */,
+				C27D75EE1E21A97CDFFFD893 /* ClockworkCalcUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7985614E68556CB162E4BC17 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C646F54BD27DFA3835F6CAF /* Assets.xcassets in Resources */,
+				004722B65D96D58464C3CC19 /* CAS in Resources */,
+				1E3E789351F4F0B446730148 /* Licenses in Resources */,
+				048FEC22FD381B20BC835843 /* Math in Resources */,
+				E28A9F5A4CA880C1B970AE1B /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		09828464B0BAB7E8CA7F298C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DA29F3292BED2A30A28CF51 /* CASRuntime.swift in Sources */,
+				8B6D448B3736FE6D36DC2DB2 /* CalculatorModel.swift in Sources */,
+				19B69E2DEC92B4CC5CF1E51A /* CalculatorView.swift in Sources */,
+				C306AD8DC14879705A704368 /* ClockworkCalcApp.swift in Sources */,
+				CB8B21E3BDB728FA34D1A37D /* ExpressionEditor.swift in Sources */,
+				1C6FF60B17C7FEEF8FD9E9C4 /* GraphModel.swift in Sources */,
+				26E1EC67C2D913A19A8C26CC /* GraphingView.swift in Sources */,
+				4B9CD9F0C8D43A79662790C3 /* MathView.swift in Sources */,
+				7DF454CCC2ABAD3C5CC4FA1F /* MatrixEditor.swift in Sources */,
+				932953EDBAF383855B5AE33C /* NativeMath.swift in Sources */,
+				AD6D4841FAB898E849EA089D /* ProgrammerModel.swift in Sources */,
+				54CD54AFD72047265C5A0E7D /* ProgrammerView.swift in Sources */,
+				CFBF4F5ECBEB484CE229860D /* QuickCalc.swift in Sources */,
+				F3A197A2AD21DDF75000918E /* QuickCalcView.swift in Sources */,
+				18DD565FB8731D9EDC37A208 /* QuickNumberEntry.swift in Sources */,
+				5E0A55AF144035BBE6C62C98 /* QuickTabs.swift in Sources */,
+				4371602E5287207703B27DB8 /* ResultNotation.swift in Sources */,
+				5753B6F53E6B9926C1C09A6C /* Theme.swift in Sources */,
+				39E7D10A996A02F83D933750 /* UnitConverterView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6C066F5BBB383A433E0EEC6F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C9CF452730D0651F0A0F78D /* UITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		968E445BB76FAFF1BEDA4FEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36FDD6A2C9A00EDE99D075FC /* CASTests.swift in Sources */,
+				A132ED0D4A8AA7206F006E96 /* EngineTests.swift in Sources */,
+				CCB80C83DFF7892A752FD578 /* GraphTests.swift in Sources */,
+				A374C484095BC98F618EBA35 /* ModelTests.swift in Sources */,
+				3D5055CBCCDC82B3E0CB479B /* NotationTests.swift in Sources */,
+				C48967EE4AC27896AAFBF1A7 /* ProgrammerTests.swift in Sources */,
+				22C02175FC2937BE3B795F02 /* QuickCalcTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		12F7F9EC9B8908E20F625EB7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9C35D9273FEF90061D6CEAE /* ClockworkCalc */;
+			targetProxy = 50C29762A18CB2791CD1B3E3 /* PBXContainerItemProxy */;
+		};
+		65B7295D8840586A8E6601F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9C35D9273FEF90061D6CEAE /* ClockworkCalc */;
+			targetProxy = EF0C568C8BD89550603D711A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		15C4B3C2A964042159AB733C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = BW8AVKUHR6;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Clockwork Calc";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.clockworkcalc.ios;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		205B6678C06D63F17C12851D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.ClockworkCalcUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ClockworkCalc;
+			};
+			name = Release;
+		};
+		22BD84CC28B910426E32F9AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = BW8AVKUHR6;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Clockwork Calc";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.clockworkcalc.ios;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		49B702D26B06E9077AEA6001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 26;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		527FA11ADF70C50722AA710C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.ClockworkCalcTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClockworkCalc.app/ClockworkCalc";
+			};
+			name = Debug;
+		};
+		9784C2AB80C59E0A22736BC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.ClockworkCalcUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ClockworkCalc;
+			};
+			name = Debug;
+		};
+		C0CE86625864393F8AF1828A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boonmam.ClockworkCalcTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClockworkCalc.app/ClockworkCalc";
+			};
+			name = Release;
+		};
+		DACCF13A0C2161E4F4507E5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 26;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1930EA02BDC74169FB0018DF /* Build configuration list for PBXProject "Clockwork Calc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DACCF13A0C2161E4F4507E5F /* Debug */,
+				49B702D26B06E9077AEA6001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8FB7791A22DF4697A2B17794 /* Build configuration list for PBXNativeTarget "ClockworkCalc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22BD84CC28B910426E32F9AB /* Debug */,
+				15C4B3C2A964042159AB733C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B046A28B5CA7FC435F5D76D8 /* Build configuration list for PBXNativeTarget "ClockworkCalcTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				527FA11ADF70C50722AA710C /* Debug */,
+				C0CE86625864393F8AF1828A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B4E3DB8A87C6FD82743926F0 /* Build configuration list for PBXNativeTarget "ClockworkCalcUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9784C2AB80C59E0A22736BC9 /* Debug */,
+				205B6678C06D63F17C12851D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9F60782021D2B2750DA58C3C /* Project object */;
+}
