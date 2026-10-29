@@ -320,3 +320,21 @@ on the Duo. The existing keypad/graph UI regression now selects both methods
 through Tab options rather than the removed segmented control.
 The updated Duo UI regression passed, including keyboard appearance/hiding and
 Power keypad calculations after using the options menu.
+
+## Cursor preservation and key haptics — build 27 (2026-10-29)
+
+Text-view synchronization now suppresses delegate feedback while applying model
+text and selection, preventing UIKit's temporary end selection from overwriting
+the intended caret. Native selection/typing/paste still update bindings. Result
+chaining only starts at the end with no selection; an operator pressed inside a
+completed expression edits at that cursor. Added a soft, low-intensity impact on
+calculator, programmer, converter, and Quick Calc keypad actions.
+
+Cursor regression tests cover repeated middle deletion/insertion with synchronous
+selection callbacks, range replacement, and native edit/selection propagation.
+Model tests cover operator editing after evaluation and normal answer chaining.
+All eight editor/model tests passed. The native Paste UI test focuses the editor
+before long-pressing to avoid an unfocused-menu timing failure in the initial run.
+Signed build and packaged audit passed; build 27 installed and launched on Duo.
+Haptic intensity requires physical feel assessment; the simulator cannot verify it.
+The final focused native-Paste UI regression passed with the keypad visible.

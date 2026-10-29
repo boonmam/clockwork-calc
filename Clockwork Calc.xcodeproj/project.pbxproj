@@ -32,11 +32,13 @@
 		A132ED0D4A8AA7206F006E96 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BFFA01AE11FF6087B9BD84 /* EngineTests.swift */; };
 		A374C484095BC98F618EBA35 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224463BF454A72775C49E7BC /* ModelTests.swift */; };
 		AD6D4841FAB898E849EA089D /* ProgrammerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC257A3D0BB993EF68C90938 /* ProgrammerModel.swift */; };
+		BE3417644BEB64DEC5B6148A /* CalculatorHaptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B9FC4BDBC1D0512C8A2CDF /* CalculatorHaptics.swift */; };
 		C306AD8DC14879705A704368 /* ClockworkCalcApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B6C2B176B036523A804DD /* ClockworkCalcApp.swift */; };
 		C48967EE4AC27896AAFBF1A7 /* ProgrammerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF8FED3AB0A02741E85A404 /* ProgrammerTests.swift */; };
 		CB8B21E3BDB728FA34D1A37D /* ExpressionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098DD6F3B3513E788E00F4B /* ExpressionEditor.swift */; };
 		CCB80C83DFF7892A752FD578 /* GraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBC761C03DE1AEA395F2A5E /* GraphTests.swift */; };
 		CFBF4F5ECBEB484CE229860D /* QuickCalc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4621360487B4259631151943 /* QuickCalc.swift */; };
+		D460E72408FD09633C6C5ECB /* ExpressionEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61397E710954EC2EDC4F430 /* ExpressionEditorTests.swift */; };
 		E28A9F5A4CA880C1B970AE1B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 731C0C339B4AB64544CC658F /* PrivacyInfo.xcprivacy */; };
 		F3A197A2AD21DDF75000918E /* QuickCalcView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9ADFA9F7F2DF897B7983AF /* QuickCalcView.swift */; };
 /* End PBXBuildFile section */
@@ -62,6 +64,7 @@
 		009DC67DF4C1BCDD63D279FA /* QuickNumberEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickNumberEntry.swift; sourceTree = "<group>"; };
 		17DEDD686A753544A9C71DD2 /* MatrixEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixEditor.swift; sourceTree = "<group>"; };
 		1D37BB5E035348B64852C0B1 /* UnitConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitConverterView.swift; sourceTree = "<group>"; };
+		21B9FC4BDBC1D0512C8A2CDF /* CalculatorHaptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorHaptics.swift; sourceTree = "<group>"; };
 		224463BF454A72775C49E7BC /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		2F112DC229E6F0C04D29B4F2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		346C861BA584C7684BBCC72E /* ProgrammerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammerView.swift; sourceTree = "<group>"; };
@@ -91,6 +94,7 @@
 		CDE36B5B182A5E9595A2B7E1 /* ClockworkCalcUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ClockworkCalcUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2B6C2B176B036523A804DD /* ClockworkCalcApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockworkCalcApp.swift; sourceTree = "<group>"; };
 		CFEB58A08EC7E1CCBC35F365 /* GraphingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphingView.swift; sourceTree = "<group>"; };
+		E61397E710954EC2EDC4F430 /* ExpressionEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEditorTests.swift; sourceTree = "<group>"; };
 		E7A79FE196DB9645D997DBAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EDA27CF7E02D3F786533FD97 /* ResultNotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultNotation.swift; sourceTree = "<group>"; };
 		F9BFFA01AE11FF6087B9BD84 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
@@ -110,6 +114,7 @@
 		1919375C727AA19D172E9148 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				21B9FC4BDBC1D0512C8A2CDF /* CalculatorHaptics.swift */,
 				5A4970552808A51C19C69FE8 /* CalculatorView.swift */,
 				4098DD6F3B3513E788E00F4B /* ExpressionEditor.swift */,
 				CFEB58A08EC7E1CCBC35F365 /* GraphingView.swift */,
@@ -164,6 +169,7 @@
 			children = (
 				CBEDD094FFE27FA82017A5A3 /* CASTests.swift */,
 				F9BFFA01AE11FF6087B9BD84 /* EngineTests.swift */,
+				E61397E710954EC2EDC4F430 /* ExpressionEditorTests.swift */,
 				5EBC761C03DE1AEA395F2A5E /* GraphTests.swift */,
 				224463BF454A72775C49E7BC /* ModelTests.swift */,
 				A0AF26DFCB2B52A35D387F09 /* NotationTests.swift */,
@@ -308,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6DA29F3292BED2A30A28CF51 /* CASRuntime.swift in Sources */,
+				BE3417644BEB64DEC5B6148A /* CalculatorHaptics.swift in Sources */,
 				8B6D448B3736FE6D36DC2DB2 /* CalculatorModel.swift in Sources */,
 				19B69E2DEC92B4CC5CF1E51A /* CalculatorView.swift in Sources */,
 				C306AD8DC14879705A704368 /* ClockworkCalcApp.swift in Sources */,
@@ -343,6 +350,7 @@
 			files = (
 				36FDD6A2C9A00EDE99D075FC /* CASTests.swift in Sources */,
 				A132ED0D4A8AA7206F006E96 /* EngineTests.swift in Sources */,
+				D460E72408FD09633C6C5ECB /* ExpressionEditorTests.swift in Sources */,
 				CCB80C83DFF7892A752FD578 /* GraphTests.swift in Sources */,
 				A374C484095BC98F618EBA35 /* ModelTests.swift in Sources */,
 				3D5055CBCCDC82B3E0CB479B /* NotationTests.swift in Sources */,
@@ -470,7 +478,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -583,7 +591,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

@@ -67,7 +67,7 @@ struct QuickNumberPad: View {
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 4), spacing: 6) {
             ForEach(keys, id: \.self) { key in
-                Button { press(key) } label: {
+                Button { CalculatorHaptics.keyPress(); press(key) } label: {
                     Text(key).font(.system(size: 19, weight: .medium, design: .rounded))
                         .frame(maxWidth: .infinity).frame(height: 38)
                         .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))

@@ -22,28 +22,42 @@ struct ExpressionEditor: UIViewRepresentable {
     }
     func updateUIView(_ view: UITextView, context: Context) {
         context.coordinator.parent = self
-        let wantsKeyboard = keyboardVisible
-        if wantsKeyboard != context.coordinator.systemKeyboard {
-            context.coordinator.systemKeyboard = wantsKeyboard
-            view.inputView = wantsKeyboard ? nil : context.coordinator.keypadInputView
-            if wantsKeyboard { view.becomeFirstResponder() }
-            view.reloadInputViews()
-        }
-        if view.text != text { view.text = text }
-        let length = (text as NSString).length
-        let safe = NSRange(location: min(selection.location, length), length: min(selection.length, max(0, length - selection.location)))
-        if view.selectedRange != safe { view.selectedRange = safe }
+        context.coordinator.synchronize(view, text: text, selection: selection, keyboardVisible: keyboardVisible)
     }
+
     func makeCoordinator() -> Coordinator { Coordinator(self) }
     final class Coordinator: NSObject, UITextViewDelegate {
         var parent: ExpressionEditor
         let keypadInputView = UIView(frame: .zero)
         var systemKeyboard = false
+        private var synchronizing = false
         init(_ parent: ExpressionEditor) { self.parent = parent }
-        func textViewDidBeginEditing(_ view: UITextView) { parent.keyboardVisible = systemKeyboard }
-        func textViewDidEndEditing(_ view: UITextView) { parent.keyboardVisible = false }
-        func textViewDidChange(_ view: UITextView) { parent.text = view.text; parent.selection = view.selectedRange }
+        func synchronize(_ view: UITextView, text: String, selection: NSRange, keyboardVisible: Bool) {
+            // Setting UITextView.text can move its selection and synchronously notify
+            // the delegate. Keep that transient cursor out of the SwiftUI binding.
+            synchronizing = true
+            defer { synchronizing = false }
+            if keyboardVisible != systemKeyboard {
+                systemKeyboard = keyboardVisible
+                view.inputView = keyboardVisible ? nil : keypadInputView
+                if keyboardVisible { view.becomeFirstResponder() }
+                view.reloadInputViews()
+            }
+            if view.text != text { view.text = text }
+            let length = (text as NSString).length
+            let start = min(selection.location, length)
+            let safe = NSRange(location: start, length: min(selection.length, length - start))
+            if view.selectedRange != safe { view.selectedRange = safe }
+        }
+        func textViewDidBeginEditing(_ view: UITextView) { if !synchronizing { parent.keyboardVisible = systemKeyboard } }
+        func textViewDidEndEditing(_ view: UITextView) { if !synchronizing { parent.keyboardVisible = false } }
+        func textViewDidChange(_ view: UITextView) {
+            guard !synchronizing else { return }
+            let text = view.text ?? "", selection = view.selectedRange
+            parent.text = text; parent.selection = selection
+        }
         func textViewDidChangeSelection(_ view: UITextView) {
+            guard !synchronizing else { return }
             if parent.selection != view.selectedRange { parent.selection = view.selectedRange }
         }
         func textView(_ view: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

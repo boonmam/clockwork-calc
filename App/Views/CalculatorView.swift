@@ -226,6 +226,7 @@ struct CalculatorView: View {
         ["to":"Convert units", "EE":"Enter exponent, times ten to the power", "÷":"Divide", "×":"Multiply", "−":"Subtract", "+":"Add", "=":"Equals", "⌫":"Backspace", "AC":"Clear expression", "√":"Square root", "^":"Power", "Ans":"Last answer"][key] ?? key
     }
     private func press(_ key: String) {
+        CalculatorHaptics.keyPress()
         switch key {
         case "=": model.calculate()
         case "AC": model.clear()

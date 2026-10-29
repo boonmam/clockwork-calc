@@ -47,7 +47,7 @@ extension ModelTests {
         let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }
         let model = CalculatorModel(historyURL: url)
-        model.expression = "2+3"; model.calculate()
+        model.insert("2+3"); model.calculate()
         while model.busy { try await Task.sleep(for: .milliseconds(20)) }
         model.insertOperator("*"); model.insert("4"); model.calculate()
         while model.busy { try await Task.sleep(for: .milliseconds(20)) }
@@ -58,5 +58,20 @@ extension ModelTests {
         restored.insertLastAnswer(); XCTAssertEqual(restored.expression, "(20)")
         restored.clear(); restored.insert("7+"); restored.insertOperator("-")
         XCTAssertEqual(restored.expression, "7+-")
+    }
+}
+
+
+extension ModelTests {
+    func testOperatorEditsAtCursorAfterCalculation() async throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let model = CalculatorModel(historyURL: url)
+        model.expression = "12+34"; model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        model.selection = NSRange(location: 3, length: 0)
+        model.insertOperator("-")
+        XCTAssertEqual(model.expression, "12+-34")
+        XCTAssertEqual(model.selection.location, 4)
     }
 }

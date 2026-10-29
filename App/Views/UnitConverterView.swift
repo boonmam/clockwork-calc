@@ -107,6 +107,7 @@ struct UnitConverterView: View {
             .accessibilityIdentifier(title == "From unit" ? "fromUnit" : "toUnit")
     }
     private func press(_ key: String) {
+        CalculatorHaptics.keyPress()
         switch key {
         case "AC": input = "0"
         case "⌫": input = String(input.dropLast()); if input.isEmpty || input == "-" { input = "0" }

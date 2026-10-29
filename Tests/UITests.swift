@@ -265,6 +265,7 @@ extension UITests {
         waitForExpectations(timeout: 10)
         copy.tap()
         app.buttons["key_AC"].tap()
+        app.textViews["expressionEditor"].tap()
         app.textViews["expressionEditor"].press(forDuration: 1.2)
         let paste = app.menuItems["Paste"].exists ? app.menuItems["Paste"] : app.buttons["Paste"]
         XCTAssertTrue(paste.waitForExistence(timeout: 5))

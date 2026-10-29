@@ -57,7 +57,8 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         }
     }
     func insertOperator(_ operation: String) {
-        if let result, expression.trimmingCharacters(in: .whitespacesAndNewlines) == result.expression {
+        if let result, selection.length == 0, selection.location == expression.utf16.count,
+           expression.trimmingCharacters(in: .whitespacesAndNewlines) == result.expression {
             expression = "(" + result.text + ")"
             selection = NSRange(location: (expression as NSString).length, length: 0)
         }

@@ -66,6 +66,7 @@ struct ProgrammerView: View {
         return number >= model.radix
     }
     private func press(_ key: String) {
+        CalculatorHaptics.keyPress()
         if key.count == 1, UInt64(key, radix: 16) != nil { model.digit(key); return }
         switch key {
         case "AC": model.clear()
