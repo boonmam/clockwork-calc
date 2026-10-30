@@ -338,3 +338,9 @@ before long-pressing to avoid an unfocused-menu timing failure in the initial ru
 Signed build and packaged audit passed; build 27 installed and launched on Duo.
 Haptic intensity requires physical feel assessment; the simulator cannot verify it.
 The final focused native-Paste UI regression passed with the keypad visible.
+
+## Graph above equations — build 28 (2026-10-29)
+
+Graphing now uses a vertical layout at every width: plot above the equation entry
+panel, including the unfolded Duo. The equation list retains its own scrolling.
+Signed device build succeeded.

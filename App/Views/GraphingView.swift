@@ -24,11 +24,9 @@ struct GraphingView: View {
     }
     var body: some View {
         GeometryReader { geometry in
-            let wide = geometry.size.width > 650
-            let layout = wide ? AnyLayout(HStackLayout(spacing: 12)) : AnyLayout(VStackLayout(spacing: 10))
-            layout {
-                controls.frame(width: wide ? min(320, geometry.size.width * 0.38) : nil, height: wide ? nil : min(220, geometry.size.height * 0.4))
+            VStack(spacing: 10) {
                 plot
+                controls.frame(height: min(220, geometry.size.height * 0.4))
             }
             .padding(.horizontal, 12).padding(.bottom, 12)
         }
