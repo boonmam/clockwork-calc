@@ -14,8 +14,8 @@ for the development story, architecture, and feature overview.
 
 ## Result notation
 
-Choose **Result format** above the expression area. The selection applies to the
-next calculation in both Calculator and CAS modes:
+Choose **Result format** above the expression area. Changing it immediately updates the displayed result in both Calculator and CAS
+modes, without adding a history entry or evaluating edits still in progress:
 
 | Format | 4700 | 0.0000022 |
 | --- | --- | --- |

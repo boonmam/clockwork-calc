@@ -43,17 +43,17 @@ private struct MathWebView: UIViewRepresentable {
         if context.coordinator.loaded { context.coordinator.render(view) }
     }
     final class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: MathWebView; var loaded = false; var renderedID: UUID?
+        var parent: MathWebView; var loaded = false; var renderedCalculation: Calculation?
         init(_ parent: MathWebView) { self.parent = parent }
         func webView(_ view: WKWebView, didFinish navigation: WKNavigation!) { loaded = true; render(view) }
         func webView(_ view: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { parent.failed = true }
         func webView(_ view: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) { parent.failed = true }
         func webViewWebContentProcessDidTerminate(_ view: WKWebView) {
-            loaded = false; renderedID = nil; parent.ready = false; parent.failed = true
+            loaded = false; renderedCalculation = nil; parent.ready = false; parent.failed = true
         }
         func render(_ view: WKWebView) {
             let calculation = parent.calculation
-            guard renderedID != calculation.id else { return }; renderedID = calculation.id
+            guard renderedCalculation != calculation else { return }; renderedCalculation = calculation
             view.callAsyncJavaScript("window.showCalculation(input, result, approximate)",
                 arguments: ["input": calculation.inputLatex, "result": calculation.latex, "approximate": calculation.approximate],
                 in: nil, in: .page, completionHandler: { [weak self] result in

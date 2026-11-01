@@ -118,3 +118,58 @@ extension NotationTests {
         XCTAssertEqual(decoded.presentedText, value.presentedText)
     }
 }
+
+extension NotationTests {
+    @MainActor func testFormatChangesRefreshExistingResultAndKeepDraftAndHistory() async throws {
+        let saved = UserDefaults.standard.string(forKey: "resultNotation")
+        defer { UserDefaults.standard.set(saved, forKey: "resultNotation") }
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let model = CalculatorModel(historyURL: url)
+        model.mode = .calculator; model.notation = .exact; model.insert("47000"); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        let original = try XCTUnwrap(model.result)
+        model.expression = "47000+"; model.selection = NSRange(location: 2, length: 0)
+        for (format, expected) in [(ResultNotation.scientific, "4.7 × 10^4"), (.engineering, "47 × 10^3"), (.symbolicEngineering, "47 k"), (.decimal, "47000"), (.exact, "47000"), (.scientific, "4.7 × 10^4")] {
+            model.setNotation(format)
+            while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+            XCTAssertNil(model.error)
+            XCTAssertEqual(model.result?.presentedText, expected)
+            XCTAssertEqual(model.result?.id, original.id)
+            XCTAssertEqual(model.result?.date, original.date)
+            XCTAssertEqual(model.history.count, 1)
+            XCTAssertEqual(model.history.first?.notation, format)
+            XCTAssertEqual(model.expression, "47000+")
+            XCTAssertEqual(model.selection.location, 2)
+        }
+        let restored = CalculatorModel(historyURL: url)
+        XCTAssertEqual(restored.history.first?.presentedText, "4.7 × 10^4")
+    }
+    @MainActor func testAutomaticFormatsRestoreExactFractionsAndOriginalAngle() async throws {
+        let saved = UserDefaults.standard.string(forKey: "resultNotation"), oldDegrees = UserDefaults.standard.object(forKey: "angleDegrees")
+        defer {
+            UserDefaults.standard.set(saved, forKey: "resultNotation")
+            UserDefaults.standard.set(oldDegrees, forKey: "angleDegrees")
+        }
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let model = CalculatorModel(historyURL: url)
+        model.mode = .calculator; model.notation = .exact; model.degrees = true
+        model.insert("sin(30)"); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertEqual(model.result?.text, "1/2")
+        model.degrees = false
+        model.setNotation(.decimal)
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertEqual(model.result?.text, "0.5")
+        model.setNotation(.exact)
+        XCTAssertEqual(model.result?.text, "1/2")
+        XCTAssertEqual(model.history.count, 1)
+        let recalled = CalculatorModel(historyURL: url)
+        recalled.recall(try XCTUnwrap(recalled.history.first))
+        XCTAssertTrue(recalled.degrees)
+        recalled.setNotation(.scientific)
+        while recalled.busy { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertEqual(recalled.result?.presentedText, "5 × 10^-1")
+    }
+}

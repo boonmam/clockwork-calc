@@ -337,3 +337,27 @@ extension UITests {
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); attachment.lifetime = .keepAlways; add(attachment)
     }
 }
+
+
+extension UITests {
+    func testChangingResultFormatRefreshesWithoutEquals() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Calculator"].tap()
+        let format = app.buttons["resultNotation"]
+        format.tap(); app.buttons["Exact"].tap()
+        app.buttons["key_AC"].tap()
+        for key in ["4", "7", "0", "0", "0", "="] { app.buttons["key_" + key].tap() }
+        expectation(for: NSPredicate(format: "value == %@", "47000"), evaluatedWith: app.buttons["copyResult"])
+        waitForExpectations(timeout: 10)
+        let rendered = app.webViews["formattedEquation"]
+        for (name, text) in [("Scientific", "4.7 × 10^4"), ("Engineering", "47 × 10^3"), ("Engineering (SI symbols)", "47 k"), ("Decimal", "47000")] {
+            format.tap(); app.buttons[name].tap()
+            expectation(for: NSPredicate(format: "label ENDSWITH %@", "equals " + text), evaluatedWith: rendered)
+            waitForExpectations(timeout: 10)
+            if name == "Engineering (SI symbols)" {
+                let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+                attachment.name = "Live format change"; attachment.lifetime = .keepAlways; add(attachment)
+            }
+        }
+    }
+}

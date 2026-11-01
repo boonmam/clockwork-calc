@@ -14,6 +14,7 @@ struct Calculation: Codable, Identifiable, Equatable {
     let warnings: [String]
     var mode: CalculationMode? = nil
     var notation: ResultNotation? = nil
+    var angleDegrees: Bool? = nil
     var displayText: String? = nil
     var presentedText: String { displayText ?? text }
 }
@@ -25,8 +26,12 @@ actor CalculatorEngine {
         return EngineeringNotation.apply(result, notation: notation)
     }
     func evaluate(_ expression: String, exact: Bool, degrees: Bool, mode: CalculationMode = .calculator) async throws -> Calculation {
-        if mode == .cas { return try await CASRuntime.evaluate(expression, exact: exact) }
-        return try math.evaluate(expression, exact: exact, degrees: degrees)
+        var result: Calculation
+        if mode == .cas { result = try await CASRuntime.evaluate(expression, exact: exact) }
+        else { result = try math.evaluate(expression, exact: exact, degrees: degrees) }
+        result.mode = mode
+        result.angleDegrees = mode == .calculator ? degrees : nil
+        return result
     }
 }
 struct CalculationError: LocalizedError { let message: String; var errorDescription: String? { message } }
@@ -43,6 +48,8 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     @AppStorage("calculationMode") var mode: CalculationMode = .calculator
     private var calculationTask: Task<Void, Never>?
     private let engine = CalculatorEngine()
+    // Unformatted exact/decimal bases for the currently displayed calculation.
+    private var resultBases: [Bool: Calculation] = [:]
     private let historyURL: URL
 
     init(historyURL: URL? = nil) {
@@ -96,27 +103,67 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         expression = source.replacingCharacters(in: range, with: "")
         selection = NSRange(location: range.location, length: 0)
     }
-    func clear() { result = nil; expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
+    func clear() { resultBases = [:]; result = nil; expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
     func recall(_ item: Calculation) {
+        resultBases = [:]
         expression = item.expression; selection = NSRange(location: (expression as NSString).length, length: 0)
         result = item; mode = item.mode ?? .calculator
         if let savedNotation = item.notation { notation = savedNotation }
+        if let savedDegrees = item.angleDegrees { degrees = savedDegrees }
         error = nil
     }
     func calculate() {
         let input = expression.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, !busy else { return }
-        busy = true; error = nil; result = nil
+        busy = true; error = nil; result = nil; resultBases = [:]
         let notation = notation, degrees = degrees, mode = mode
         calculationTask = Task {
             do {
-                let calculation = try await engine.evaluate(input, notation: notation, degrees: degrees, mode: mode)
+                let base = try await engine.evaluate(input, exact: notation == .exact, degrees: degrees, mode: mode)
+                resultBases = [notation == .exact: base]
+                let calculation = EngineeringNotation.apply(base, notation: notation)
                 result = calculation
                 history.insert(calculation, at: 0); history = Array(history.prefix(100))
                 persist()
             } catch is CancellationError { self.error = "Calculation cancelled." }
             catch { self.error = error.localizedDescription }
             busy = false
+        }
+    }
+    func setNotation(_ value: ResultNotation) {
+        notation = value
+        guard let source = result, !busy else { return }
+        let exact = value == .exact
+        if let base = resultBases[exact] {
+            present(base, as: value)
+            return
+        }
+        // Re-evaluate the displayed calculation only when its exact/decimal base
+        // is unavailable. Subsequent numeric-format switches use the cached base.
+        busy = true; error = nil
+        let calculationMode = source.mode ?? mode
+        let calculationDegrees = source.angleDegrees ?? degrees
+        calculationTask = Task {
+            defer { busy = false }
+            do {
+                let evaluated = try await engine.evaluate(source.expression, exact: exact, degrees: calculationDegrees, mode: calculationMode)
+                guard !Task.isCancelled, result?.id == source.id, notation == value else { return }
+                let base = Calculation(id: source.id, date: source.date, expression: source.expression,
+                                       text: evaluated.text, latex: evaluated.latex, inputLatex: evaluated.inputLatex,
+                                       approximate: evaluated.approximate, warnings: evaluated.warnings,
+                                       mode: evaluated.mode, angleDegrees: evaluated.angleDegrees)
+                resultBases[exact] = base
+                present(base, as: value)
+            } catch is CancellationError { self.error = "Format change cancelled." }
+            catch { self.error = error.localizedDescription }
+        }
+    }
+    private func present(_ base: Calculation, as notation: ResultNotation) {
+        let formatted = EngineeringNotation.apply(base, notation: notation)
+        result = formatted
+        if let index = history.firstIndex(where: { $0.id == formatted.id }) {
+            history[index] = formatted
+            persist()
         }
     }
     func cancelCalculation() { calculationTask?.cancel() }

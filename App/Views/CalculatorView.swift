@@ -36,7 +36,7 @@ struct CalculatorView: View {
     private var calculationSettings: some View {
         VStack(spacing: 12) {
             HStack {
-                Picker("Result format", selection: $model.notation) {
+                Picker("Result format", selection: Binding(get: { model.notation }, set: model.setNotation)) {
                     ForEach(ResultNotation.allCases, id: \.self) { notation in
                         Text(notation.title).tag(notation)
                     }
