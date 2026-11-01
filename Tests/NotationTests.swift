@@ -89,3 +89,32 @@ final class NotationTests: XCTestCase {
         XCTAssertEqual(decoded.presentedText, decoded.text)
     }
 }
+
+extension NotationTests {
+    func testScientificScaling() {
+        for (input, expected) in [
+            ("47000", "4.7 × 10^4"), ("0.0047", "4.7 × 10^-3"),
+            ("999", "9.99 × 10^2"), ("0.999", "9.99 × 10^-1"),
+            ("-12300", "-1.23 × 10^4"), ("1.23", "1.23"), ("0", "0"),
+            ("1.79769313486232e308", "1.79769313486232 × 10^308"),
+            ("5e-324", "5 × 10^-324"), ("123456789012345678901", "1.23456789012345678901 × 10^20")
+        ] {
+            XCTAssertEqual(EngineeringNotation.format(input, symbolic: false, latex: false, scientific: true), expected, input)
+        }
+        XCTAssertEqual(EngineeringNotation.format(#"4.7\times 10^{4}"#, symbolic: false, latex: true, scientific: true), #"{4.7\times 10^{4}}"#)
+        XCTAssertEqual(EngineeringNotation.format("x1000+47000*x", symbolic: false, latex: false, scientific: true), "x1000+(4.7 × 10^4)*x")
+    }
+    func testScientificResultsAndCAS() async throws {
+        let engine = CalculatorEngine()
+        let value = try await engine.evaluate("47000", notation: .scientific, degrees: false)
+        XCTAssertEqual(value.presentedText, "4.7 × 10^4")
+        XCTAssertEqual(value.text, "47000")
+        XCTAssertEqual(value.notation, .scientific)
+        let symbolic = try await engine.evaluate("47000*x", notation: .scientific, degrees: false, mode: .cas)
+        XCTAssertTrue(symbolic.latex.contains(#"4.7\times 10^{4}"#))
+        XCTAssertTrue(symbolic.text.contains("47000"))
+        let decoded = try JSONDecoder().decode(Calculation.self, from: JSONEncoder().encode(value))
+        XCTAssertEqual(decoded.notation, .scientific)
+        XCTAssertEqual(decoded.presentedText, value.presentedText)
+    }
+}

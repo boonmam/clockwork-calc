@@ -21,10 +21,12 @@ next calculation in both Calculator and CAS modes:
 | --- | --- | --- |
 | Exact | 4700 | 11/5000000 |
 | Decimal | 4700 | 2.2 × 10⁻⁶ |
+| Scientific | 4.7 × 10³ | 2.2 × 10⁻⁶ |
 | Engineering | 4.7 × 10³ | 2.2 × 10⁻⁶ |
 | Engineering (SI symbols) | 4.7 k | 2.2 µ |
 
-Engineering exponents are multiples of three. SI symbols cover q (10⁻³⁰) through
+Scientific notation uses a coefficient from 1 up to 10 in magnitude, with any
+integer exponent. Engineering exponents are multiples of three. SI symbols cover q (10⁻³⁰) through
 Q (10³⁰), with engineering powers of ten outside that range. Symbols are display
 scale factors, not new variables or an expansion of the unit parser. These modes
 use decimal evaluation and format numeric coefficients, complex components, and
