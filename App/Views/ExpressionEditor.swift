@@ -6,6 +6,9 @@ struct ExpressionEditor: UIViewRepresentable {
     @Binding var selection: NSRange
     @Binding var keyboardVisible: Bool
     var calculate: () -> Void
+    var accessibilityIdentifier = "expressionEditor"
+    var accessibilityLabel = "Expression"
+    var onFocus: (() -> Void)? = nil
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
         view.delegate = context.coordinator
@@ -15,8 +18,8 @@ struct ExpressionEditor: UIViewRepresentable {
         view.autocorrectionType = .no; view.autocapitalizationType = .none
         view.smartQuotesType = .no; view.smartDashesType = .no
         view.keyboardType = .asciiCapable; view.returnKeyType = .go
-        view.accessibilityIdentifier = "expressionEditor"
-        view.accessibilityLabel = "Expression"
+        view.accessibilityIdentifier = accessibilityIdentifier
+        view.accessibilityLabel = accessibilityLabel
         view.textContainerInset = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 8)
         return view
     }
@@ -49,7 +52,7 @@ struct ExpressionEditor: UIViewRepresentable {
             let safe = NSRange(location: start, length: min(selection.length, length - start))
             if view.selectedRange != safe { view.selectedRange = safe }
         }
-        func textViewDidBeginEditing(_ view: UITextView) { if !synchronizing { parent.keyboardVisible = systemKeyboard } }
+        func textViewDidBeginEditing(_ view: UITextView) { if !synchronizing { parent.onFocus?(); parent.keyboardVisible = systemKeyboard } }
         func textViewDidEndEditing(_ view: UITextView) { if !synchronizing { parent.keyboardVisible = false } }
         func textViewDidChange(_ view: UITextView) {
             guard !synchronizing else { return }

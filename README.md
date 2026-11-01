@@ -301,8 +301,24 @@ Drag to pan, pinch or use +/− to zoom, Reset to restore the window, and tap th
 plot to inspect coordinates. Angles use radians. Graphing samples functions
 numerically and breaks curves at detected discontinuities or non-real values;
 it can miss very narrow features. This version supports explicit `y=f(x)` plots;
-implicit equations, inequalities, sliders, and polar/parametric plots are not
+implicit equations, inequalities, and polar/parametric plots are not
 included.
+
+Use **Axes** to open a compact popup for X/Y minimum and maximum bounds. The
+plot updates as you type while the popup remains open; Cancel restores the
+original ranges. Axis ranges save on-device.
+New constants in functions such as `a*sin(b*x)` automatically get sliders.
+The slider icon also lets you add a named constant with a value, minimum, maximum,
+and step. Up to eight
+sliders update the graph live; tap a slider's name to edit its settings or its
+minus button to remove it. Slider definitions and values survive restarts.
+
+Tap a function to open the graph keypad. It includes x, trig functions, powers,
+parentheses, EE, and a **Vars** menu for saved constants and additional functions
+and symbols. **Plot** closes the keypad; the keyboard icon switches to the system
+keyboard. While entering a function, the keypad uses half the available space:
+the right half in wide windows and the bottom half in narrow windows. The graph
+stays above the equation area.
 
 Each Quick Calc tab has a saved **Keyboard / Keypad** setting, available in the
 **…** options menu and in Configure tab. Existing saved tabs retain their formulas.

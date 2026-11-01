@@ -327,6 +327,7 @@ extension UITests {
         XCTAssertTrue(graph.waitForExistence(timeout: 5))
         expectation(for: NSPredicate(format: "value BEGINSWITH %@", "1 curves"), evaluatedWith: graph)
         waitForExpectations(timeout: 10)
+        app.buttons["graphReset"].tap()
         graph.tap()
         XCTAssertTrue(app.staticTexts["graphPoint0"].waitForExistence(timeout: 5))
         let before = graph.value as? String
@@ -359,5 +360,51 @@ extension UITests {
                 attachment.name = "Live format change"; attachment.lifetime = .keepAlways; add(attachment)
             }
         }
+    }
+}
+
+extension UITests {
+    func testGraphAxesSliderAndModifiedKeypad() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        app.buttons["graphAxes"].tap()
+        for (index, value) in ["-5", "5", "-5", "5"].enumerated() {
+            let field = app.textFields["graphAxis\(index)"]
+            field.tap(); field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20) + value)
+        }
+        let liveAxes = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); liveAxes.name = "Live axes popup"; liveAxes.lifetime = .keepAlways; add(liveAxes)
+        app.buttons["applyGraphAxes"].tap()
+        let graph = app.otherElements["functionGraph"]
+        XCTAssertTrue(graph.waitForExistence(timeout: 5))
+        XCTAssertTrue((graph.value as? String ?? "").contains("x from -5.0 to 5.0; y from -5.0 to 5.0"), graph.value as? String ?? "missing ranges")
+        if app.buttons["Remove slider a"].exists { app.buttons["Remove slider a"].tap() }
+        let field = app.textViews["graphFunction0"]
+        field.tap()
+        XCTAssertEqual(app.keyboards.count, 0)
+        app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_Vars"].tap(); app.buttons["a"].tap()
+        let startKey = app.buttons["graphKey_sin"], endKey = app.buttons["graphKey_Plot"]
+        let bounds = app.windows.firstMatch.frame
+        if bounds.width < 620 { XCTAssertGreaterThan(endKey.frame.maxY-startKey.frame.minY, bounds.height*0.38) }
+        else { XCTAssertGreaterThan(endKey.frame.maxX-startKey.frame.minX, bounds.width*0.38) }
+        let keypadShot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); keypadShot.name = "Half-screen graph keypad"; keypadShot.lifetime = .keepAlways; add(keypadShot)
+        for key in ["×", "x", "Plot"] { app.buttons["graphKey_" + key].tap() }
+        XCTAssertEqual(field.value as? String, "a*x")
+        XCTAssertTrue(app.sliders["graphSlider_a"].waitForExistence(timeout: 5))
+        expectation(for: NSPredicate(format: "value BEGINSWITH %@", "1 curves"), evaluatedWith: graph)
+        waitForExpectations(timeout: 10)
+        graph.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.5)).tap()
+        let point = app.staticTexts["graphPoint0"]
+        XCTAssertTrue(point.waitForExistence(timeout: 5))
+        let before = point.label
+        let inspectedX = Double(before.dropFirst().split(separator: ",")[0]) ?? .nan
+        XCTAssertEqual(inspectedX, 2.5, accuracy: 0.05)
+        app.sliders["graphSlider_a"].adjust(toNormalizedSliderPosition: 0.8)
+        XCTAssertNotEqual(point.label, before)
+        app.terminate(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        XCTAssertTrue(app.sliders["graphSlider_a"].waitForExistence(timeout: 5))
+        XCTAssertTrue((app.otherElements["functionGraph"].value as? String ?? "").contains("x from -5.0 to 5.0"))
+        let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); screenshot.lifetime = .keepAlways; add(screenshot)
     }
 }

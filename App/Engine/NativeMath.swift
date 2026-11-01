@@ -545,8 +545,37 @@ struct NativeMath {
 
 
 extension NativeMath {
+    func graphConstantNames(_ input: String) throws -> [String] {
+        var text = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        if text.hasPrefix("y=") { text = String(text.dropFirst(2)) }
+        else if text.hasPrefix("y =") { text = String(text.dropFirst(3)) }
+        guard text.count <= 500 else { throw mathError("Keep each function under 500 characters.") }
+        var parser = try Parser(text)
+        let (expression, target) = try parser.parse()
+        guard target == nil else { throw mathError("Graph functions cannot contain unit conversions.") }
+        var names = Set<String>()
+        func collect(_ e: Expression) throws {
+            switch e {
+            case .number: break
+            case .symbol(let name):
+                if !GraphConstant.reserved.contains(name) { names.insert(name) }
+            case .unary(let a): try collect(a)
+            case .binary(let op, let a, let b):
+                guard ["+", "-", "*", "/", "^"].contains(op) else { throw mathError("Enter y = f(x).") }
+                try collect(a); try collect(b)
+            case .call(let name, let args):
+                guard ["sin", "cos", "tan", "asin", "acos", "atan", "sqrt", "abs", "ln", "log", "exp", "floor", "ceil"].contains(name), args.count == 1 else { throw mathError("Unsupported graph function: \(name)") }
+                try args.forEach(collect)
+            }
+        }
+        try collect(expression)
+        return names.sorted()
+    }
     /// Compile once for a plot; undefined or non-real samples break the curve.
-    func graphFunction(_ input: String) throws -> (Double) -> Double? {
+    func graphFunction(_ input: String, constants: [String: Double] = [:]) throws -> (Double) -> Double? {
+        guard constants.values.allSatisfy(\.isFinite), !constants.keys.contains(where: { GraphConstant.reserved.contains($0) }) else {
+            throw mathError("Slider constants must be finite and cannot replace x or built-in constants/functions.")
+        }
         var text = input.trimmingCharacters(in: .whitespacesAndNewlines)
         if text.hasPrefix("y=") { text = String(text.dropFirst(2)) }
         else if text.hasPrefix("y =") { text = String(text.dropFirst(3)) }
@@ -557,7 +586,7 @@ extension NativeMath {
         func validate(_ e: Expression) throws {
             switch e {
             case .number: break
-            case .symbol(let name): guard ["x", "pi", "π", "e"].contains(name) else { throw mathError("Use x as the variable. Unknown name: \(name)") }
+            case .symbol(let name): guard ["x", "pi", "π", "e"].contains(name) || constants[name] != nil else { throw mathError("Unknown constant: \(name). Add a slider or use x as the variable.") }
             case .unary(let a): try validate(a)
             case .binary(let op, let a, let b):
                 guard ["+", "-", "*", "/", "^"].contains(op) else { throw mathError("Enter y = f(x), such as y = sin(x).") }
@@ -571,7 +600,7 @@ extension NativeMath {
         try validate(expression)
         let evaluator = Evaluator(degrees: false)
         return { x in
-            evaluator.operations = 0; evaluator.variables = ["x": x]
+            evaluator.operations = 0; evaluator.variables = constants; evaluator.variables["x"] = x
             guard x.isFinite, let q = try? evaluator.evaluate(expression), q.isDimensionless,
                   q.value.im == 0, q.value.re.isFinite else { return nil }
             return q.value.re

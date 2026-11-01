@@ -26,6 +26,8 @@ struct QuickNumberEntry: UIViewRepresentable {
     }
     func updateUIView(_ view: UITextField, context: Context) {
         context.coordinator.parent = self
+        context.coordinator.synchronizing = true
+        defer { context.coordinator.synchronizing = false }
         let custom = style == .keypad
         if (view.inputView != nil) != custom {
             view.inputView = custom ? context.coordinator.empty : nil
@@ -43,15 +45,21 @@ struct QuickNumberEntry: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(self) }
     final class Coordinator: NSObject, UITextFieldDelegate {
         var parent: QuickNumberEntry
+        var synchronizing = false
         let empty = UIView(frame: .zero)
         init(_ parent: QuickNumberEntry) { self.parent = parent }
         func textFieldDidBeginEditing(_ view: UITextField) {
             parent.active = parent.index
             parent.selection = NSRange(location: 0, length: parent.text.utf16.count)
             view.selectAll(nil)
+            DispatchQueue.main.async { [weak self, weak view] in
+                guard let self, let view, view.isFirstResponder else { return }
+                view.selectAll(nil)
+                self.readSelection(view)
+            }
         }
-        @objc func changed(_ view: UITextField) { parent.text = view.text ?? ""; readSelection(view) }
-        func textFieldDidChangeSelection(_ view: UITextField) { if view.isFirstResponder { readSelection(view) } }
+        @objc func changed(_ view: UITextField) { guard !synchronizing else { return }; parent.text = view.text ?? ""; readSelection(view) }
+        func textFieldDidChangeSelection(_ view: UITextField) { if !synchronizing, view.isFirstResponder { readSelection(view) } }
         private func readSelection(_ view: UITextField) {
             guard let range = view.selectedTextRange else { return }
             let value = NSRange(location: view.offset(from: view.beginningOfDocument, to: range.start), length: view.offset(from: range.start, to: range.end))
