@@ -466,3 +466,31 @@ extension UITests {
         XCTAssertEqual(expression.value as? String, "[1]")
     }
 }
+
+
+extension UITests {
+    func testGraphListKeypadAndVariablePicker() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        let expression = app.textViews["graphFunction0"]
+        expression.tap(); app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_Vars"].tap(); app.buttons["C"].tap()
+        app.buttons["graphKey_="].tap()
+        app.buttons["graphKey_("].press(forDuration: 0.6)
+        for key in ["1", "u", ",", "1", "0", "u"] { app.buttons["graphKey_" + key].tap() }
+        app.buttons["graphKey_)"].press(forDuration: 0.6)
+        XCTAssertEqual(expression.value as? String, "C=[1u,10u]")
+        app.buttons["graphKey_Vars"].tap()
+        XCTAssertTrue(app.buttons["C"].exists)
+        XCTAssertEqual(app.buttons["C"].value as? String, "= [1u,10u]")
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); shot.name = "Graph variable picker"; shot.lifetime = .keepAlways; add(shot)
+        app.buttons["Letters"].tap(); app.buttons["ABC"].tap()
+        app.buttons["R"].tap()
+        XCTAssertEqual(expression.value as? String, "C=[1u,10u]R")
+        app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_Functions"].tap(); app.buttons["sin"].tap()
+        for key in ["x", ")"] { app.buttons["graphKey_" + key].tap() }
+        XCTAssertEqual(expression.value as? String, "sin(x)")
+        let keypad = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); keypad.name = "Refined graph keypad"; keypad.lifetime = .keepAlways; add(keypad)
+    }
+}

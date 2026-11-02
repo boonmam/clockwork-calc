@@ -12,6 +12,9 @@ struct GraphingView: View {
     @State private var equations: [GraphEquation]
     @State private var window = GraphWindow()
     @State private var constants: [GraphConstant] = []
+    @State private var variablesPresented = false
+    @State private var variableLetters = false
+    @State private var uppercaseVariables = false
     @State private var axesPresented = false
     @State private var constantEditor: GraphConstant?
     @State private var curves: [GraphCurve] = []
@@ -192,22 +195,35 @@ struct GraphingView: View {
         selections[equations[index].id] = NSRange(location: start + value.utf16.count, length: 0)
     }
     private func graphKeypad(height: CGFloat) -> some View {
-        let keys = ["sin", "cos", "tan", "AC", "⌫", "ln", "√", "^", "(", ")", "7", "8", "9", "x", "÷", "4", "5", "6", "Vars", "×", "1", "2", "3", "=", "−", "0", ".", "EE", "+", "Plot"]
+        let keys = ["ƒ", "Vars", "^", "AC", "⌫", "x", "y", "=", "(", ")", "7", "8", "9", ",", "÷", "4", "5", "6", "EE", "×", "1", "2", "3", "u", "−", "0", ".", "√", "+", "Plot"]
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 5), spacing: 6) {
             ForEach(keys, id: \.self) { key in
                 if key == "Vars" {
-                    Menu {
-                        Section("Variables") {
-                            ForEach(["x", "y", "M", "C", "n", "a", "b", "c", "k"], id: \.self) { name in Button(name) { insertGraphKey(name) } }
-                            ForEach(variableNames.filter { !["x", "y", "M", "C", "n", "a", "b", "c", "k"].contains($0) }, id: \.self) { name in Button(name) { insertGraphKey(name) } }
-                            Button("Add slider…") { finishEditing(); constantEditor = GraphConstant(name: ["a","b","c","d","k","m","n","p"].first { candidate in !constants.contains { $0.name == candidate } } ?? "a") }.disabled(constants.count >= 8)
+                    Button { variablesPresented = true } label: { graphKeyLabel(key, height: height) }
+                        .buttonStyle(.plain).accessibilityIdentifier("graphKey_Vars")
+                        .popover(isPresented: $variablesPresented) {
+                            variablePicker.frame(width: 230)
+                                .presentationCompactAdaptation(.popover)
                         }
-                        Section("More symbols") {
-                            ForEach(["abs(", "exp(", "asin(", "acos(", "atan(", "floor(", "ceil(", "pi", "e", "[", "]", ",", "u"], id: \.self) { symbol in
-                                Button(symbol) { insertGraphKey(symbol) }
+                } else if key == "ƒ" {
+                    Menu {
+                        Section("Trigonometry") {
+                            ForEach(["sin", "cos", "tan", "asin", "acos", "atan"], id: \.self) { name in
+                                Button(name) { insertGraphKey(name + "(") }
                             }
                         }
-                    } label: { graphKeyLabel(key, height: height) }.accessibilityIdentifier("graphKey_Vars")
+                        Section("Functions") {
+                            ForEach(["ln", "exp", "abs", "floor", "ceil"], id: \.self) { name in
+                                Button(name) { insertGraphKey(name + "(") }
+                            }
+                        }
+                        Section("Constants and symbols") {
+                            Button("π") { insertGraphKey("pi") }
+                            Button("e") { insertGraphKey("e") }
+                            ForEach(["[", "]"], id: \.self) { symbol in Button(symbol) { insertGraphKey(symbol) } }
+                        }
+                    } label: { graphKeyLabel(key, height: height) }
+                        .accessibilityLabel("Functions").accessibilityIdentifier("graphKey_Functions")
                 } else if key == "(" || key == ")" {
                     let bracket = key == "(" ? "[" : "]"
                     graphKeyLabel(key, height: height)
@@ -235,9 +251,74 @@ struct GraphingView: View {
             }
         }
     }
+    private func chooseVariable(_ name: String) {
+        insertGraphKey(name)
+        variablesPresented = false
+    }
+    private var variablePicker: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Variables").font(.headline)
+                Spacer()
+                Button("Done") { variablesPresented = false }
+            }
+            Picker("Variable selection", selection: $variableLetters) {
+                Text("In use").tag(false)
+                Text("Letters").tag(true)
+            }.pickerStyle(.segmented)
+            if variableLetters {
+                Picker("Letter case", selection: $uppercaseVariables) {
+                    Text("abc").tag(false)
+                    Text("ABC").tag(true)
+                }.pickerStyle(.segmented)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 8) {
+                    ForEach(Array((uppercaseVariables ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "abcdefghijklmnopqrstuvwxyz").map(String.init)), id: \.self) { name in
+                        Button(name) { chooseVariable(name) }.frame(maxWidth: .infinity, minHeight: 32)
+                    }
+                }.buttonStyle(.bordered).controlSize(.mini)
+                Text("Combine letters for names. New constants get sliders automatically.").font(.caption).foregroundStyle(.secondary)
+            } else {
+                HStack {
+                    ForEach(["x", "y"], id: \.self) { name in
+                        Button(name) { chooseVariable(name) }.frame(maxWidth: .infinity)
+                    }
+                }.buttonStyle(.bordered)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(variableNames, id: \.self) { name in
+                            Button { chooseVariable(name) } label: {
+                                HStack {
+                                    Text(name).font(.body.monospaced().bold()).frame(minWidth: 32, alignment: .leading)
+                                    Text(variableDetail(name)).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                    Spacer(minLength: 0)
+                                }.padding(8).frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
+                            }.buttonStyle(.plain).accessibilityLabel(name).accessibilityValue(variableDetail(name))
+                        }
+                    }
+                }.frame(maxHeight: 140)
+                Text("Quick letters").font(.caption).foregroundStyle(.secondary)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
+                    ForEach(["M", "C", "n", "a", "b", "c", "k", "t"].filter { !variableNames.contains($0) }, id: \.self) { name in
+                        Button(name) { chooseVariable(name) }.frame(maxWidth: .infinity, minHeight: 32)
+                    }
+                }.buttonStyle(.bordered)
+            }
+        }.padding(16)
+    }
+    private func variableDetail(_ name: String) -> String {
+        if let equation = equations.first(where: { $0.definitionName == name }), let equal = equation.expression.firstIndex(of: "=") {
+            return "= " + equation.expression[equation.expression.index(after: equal)...].trimmingCharacters(in: .whitespaces)
+        }
+        if let constant = constants.first(where: { $0.name == name }) { return "= " + String(format: "%.6g", constant.value) + " · slider" }
+        return ""
+    }
     private func graphKeyLabel(_ key: String, height: CGFloat) -> some View {
         Text(key).font(.system(size: key.count > 2 ? 16 : 21, weight: .medium, design: .rounded))
             .frame(maxWidth: .infinity).frame(height: height)
+            .overlay(alignment: .bottom) {
+                if key == "u" { Text("micro").font(.system(size: 8)).foregroundStyle(.secondary).fixedSize().padding(.bottom, 2) }
+            }
             .foregroundStyle(key == "Plot" ? Color.calculatorAccentText : Color.primary)
             .background(key == "Plot" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 9))
     }
