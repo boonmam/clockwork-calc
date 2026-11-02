@@ -511,6 +511,8 @@ extension UITests {
 extension UITests {
     func testGraphJPEGShareAndLegend() {
         let app = XCUIApplication(); app.launch()
+        let pendingPhotoPermission = XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "Clockwork Calc", "add photos")).firstMatch
+        if pendingPhotoPermission.exists { pendingPhotoPermission.buttons["Allow"].tap() }
         if app.buttons["header.closeButton"].exists { app.buttons["header.closeButton"].tap() }
         app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
         if !app.textViews["graphFunction0"].waitForExistence(timeout: 5) {
@@ -541,6 +543,8 @@ extension UITests {
         expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: export)
         waitForExpectations(timeout: 5)
         export.tap()
+        app.descendants(matching: .any).matching(identifier: "graphPrintExport").firstMatch.tap()
+        export.tap(); app.buttons["shareGraphJPEG"].tap()
         let file = app.otherElements.matching(NSPredicate(format: "label CONTAINS %@", "Clockwork-Calc-Plot-")).firstMatch
         XCTAssertTrue(file.waitForExistence(timeout: 10))
         XCTAssertTrue(app.cells["Save to Files"].exists)
@@ -548,5 +552,42 @@ extension UITests {
         let share = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); share.name = "JPEG share sheet"; share.lifetime = .keepAlways; add(share)
         app.buttons["header.closeButton"].tap()
         XCTAssertTrue(app.buttons["exportGraphJPEG"].waitForExistence(timeout: 5))
+        app.buttons["exportGraphJPEG"].tap(); app.buttons["saveGraphToPhotos"].tap()
+        let permission = XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.firstMatch
+        if permission.waitForExistence(timeout: 3) {
+            let allow = permission.buttons.matching(NSPredicate(format: "label == %@ OR label == %@ OR label == %@", "Allow", "Allow Photos to Be Added", "Allow Access to Add Photos")).firstMatch
+            XCTAssertTrue(allow.waitForExistence(timeout: 3)); allow.tap()
+        }
+        XCTAssertTrue(app.alerts["Saved to Photos"].waitForExistence(timeout: 10), app.alerts.debugDescription)
+        let saved = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); saved.name = "Saved plot to Photos"; saved.lifetime = .keepAlways; add(saved)
+        app.alerts["Saved to Photos"].buttons["OK"].tap()
+    }
+}
+
+
+extension UITests {
+    func testX3PresetAndSaveToPhotos() {
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .photos)
+        let monitor = addUIInterruptionMonitor(withDescription: "Add plot to Photos") { alert in
+            if alert.label.contains("Clockwork Calc"), alert.buttons["Allow"].exists { alert.buttons["Allow"].tap(); return true }
+            return false
+        }
+        defer { removeUIInterruptionMonitor(monitor) }
+        app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        if !app.otherElements["functionGraph"].waitForExistence(timeout: 5) {
+            app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        }
+        let export = app.buttons["exportGraphJPEG"]
+        expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: export); waitForExpectations(timeout: 5)
+        export.tap(); app.buttons["graphAdvancedExport"].tap()
+        app.descendants(matching: .any).matching(identifier: "graphX3Export").firstMatch.tap()
+        export.tap(); app.buttons["saveGraphToPhotos"].tap()
+        let permission = XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.matching(NSPredicate(format: "label CONTAINS %@", "Clockwork Calc")).firstMatch
+        if permission.waitForExistence(timeout: 5) { permission.buttons["Allow"].tap() }
+        XCTAssertTrue(app.alerts["Saved to Photos"].waitForExistence(timeout: 10), app.debugDescription)
+        let saved = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); saved.name = "X3 plot saved to Photos"; saved.lifetime = .keepAlways; add(saved)
+        app.alerts["Saved to Photos"].buttons["OK"].tap()
     }
 }

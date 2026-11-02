@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import ImageIO
 @testable import ClockworkCalc
 final class GraphTests: XCTestCase {
     func testCompiledFunctionsAndDomains() throws {
@@ -162,5 +163,58 @@ extension GraphTests {
         let attachment = XCTAttachment(contentsOfFile: url); attachment.name = "Four-value plot JPEG"; attachment.lifetime = .keepAlways; add(attachment)
         var hidden = equations; hidden[0].visible = false
         XCTAssertTrue(GraphLegendEntry.entries(equations: hidden, curves: curves).isEmpty)
+    }
+}
+
+
+extension GraphTests {
+    @MainActor func testPrintJPEGUsesWhiteBackgroundAndDistinctMonochromeLines() throws {
+        let equations = [GraphEquation(expression: "y=C*x"), GraphEquation(expression: "C=[1u,10u,30u,60u]")]
+        let window = try GraphWindow.bounds(xMin: 0, xMax: 10, yMin: 0, yMax: 0.0006)
+        let curves = GraphSampler.sampleAll(equations, window: window, constants: [:])
+        let entries = GraphLegendEntry.entries(equations: equations, curves: curves, monochrome: true)
+        XCTAssertEqual(entries.count, 4)
+        XCTAssertEqual(Set(entries.map(\.dash)).count, 4)
+        XCTAssertTrue(entries.allSatisfy { $0.color == .black })
+        let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: [], monochrome: true)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let image = try XCTUnwrap(UIImage(contentsOfFile: url.path)?.cgImage)
+        XCTAssertEqual(image.width, 2000)
+        var pixels = [UInt8](repeating: 0, count: image.width * image.height * 4)
+        pixels.withUnsafeMutableBytes { buffer in
+            let context = CGContext(data: buffer.baseAddress, width: image.width, height: image.height, bitsPerComponent: 8, bytesPerRow: image.width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+            context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+        }
+        XCTAssertGreaterThan(pixels[0], 250)
+        var dark = 0
+        for index in stride(from: 0, to: pixels.count-4, by: 124) {
+            let channels = pixels[index...index+2]
+            XCTAssertLessThanOrEqual(Int(channels.max()!)-Int(channels.min()!), 3)
+            if pixels[index] < 128 { dark += 1 }
+        }
+        XCTAssertGreaterThan(dark, 100)
+        let attachment = XCTAttachment(contentsOfFile: url); attachment.name = "Black and white print JPEG"; attachment.lifetime = .keepAlways; add(attachment)
+    }
+}
+
+
+extension GraphTests {
+    @MainActor func testX3ExportPaperSizesResolutionAndLegend() throws {
+        let equations = [GraphEquation(expression: "y=C*x"), GraphEquation(expression: "C=[1u,10u,30u,60u]")]
+        let window = try GraphWindow.bounds(xMin: 0, xMax: 10, yMin: 0, yMax: 0.0006)
+        let curves = GraphSampler.sampleAll(equations, window: window, constants: [:])
+        for (millimeters, pixels) in [(80,945), (50,591)] {
+            let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: [], x3PaperWidth: millimeters)
+            defer { try? FileManager.default.removeItem(at: url) }
+            let source = try XCTUnwrap(CGImageSourceCreateWithURL(url as CFURL, nil))
+            let image = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, nil))
+            let properties = try XCTUnwrap(CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any])
+            XCTAssertEqual(image.width, pixels)
+            XCTAssertEqual(properties[kCGImagePropertyDPIWidth] as? Int, 300)
+            XCTAssertEqual(image.colorSpace?.model, .monochrome)
+            XCTAssertEqual(GraphLegendEntry.entries(equations: equations, curves: curves, monochrome: true).count, 4)
+            let attachment = XCTAttachment(contentsOfFile: url); attachment.name = "X3 \(millimeters) mm JPEG"; attachment.lifetime = .keepAlways; add(attachment)
+        }
+        XCTAssertThrowsError(try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: [], x3PaperWidth: 999))
     }
 }

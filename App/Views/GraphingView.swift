@@ -1,4 +1,7 @@
 import SwiftUI
+import Photos
+import ImageIO
+import UniformTypeIdentifiers
 
 private struct GraphRequest: Hashable {
     let equations: String
@@ -19,6 +22,11 @@ struct GraphingView: View {
     @State private var exportFile: GraphExportFile?
     @State private var exportURL: URL?
     @State private var exportError: String?
+    @AppStorage("graphPrintExport") private var printExport = false
+    @AppStorage("graphX3Export") private var x3Export = false
+    @AppStorage("graphX3PaperWidth") private var x3PaperWidth = 80
+    @State private var savingPhoto = false
+    @State private var photoSaved = false
     @State private var axesPresented = false
     @State private var constantEditor: GraphConstant?
     @State private var curves: [GraphCurve] = []
@@ -98,6 +106,9 @@ struct GraphingView: View {
         .alert("Could not export plot", isPresented: Binding(get: { exportError != nil }, set: { if !$0 { exportError = nil } })) {
             Button("OK") { exportError = nil }
         } message: { Text(exportError ?? "") }
+        .alert("Saved to Photos", isPresented: $photoSaved) {
+            Button("OK", role: .cancel) {}
+        } message: { Text("Your JPEG plot, legend, and equations were saved.") }
         .sheet(item: $constantEditor) { constant in
             GraphConstantEditor(constant: constant, usedNames: constants.filter { $0.id != constant.id }.map(\.name)) { updated in
                 if let index = constants.firstIndex(where: { $0.id == updated.id }) { constants[index] = updated }
@@ -342,9 +353,29 @@ struct GraphingView: View {
                             .presentationCompactAdaptation(.popover)
                     }
                 Spacer(minLength: 0)
-                Button { exportPlot() } label: { Image(systemName: "square.and.arrow.up") }
-                    .accessibilityLabel("Export plot as JPEG").accessibilityIdentifier("exportGraphJPEG")
-                    .disabled(sampledRequest != request || !curves.contains { !$0.segments.isEmpty })
+                Menu {
+                    Toggle("Black & white for printing", isOn: Binding(get: { printExport || x3Export }, set: { printExport = $0 }))
+                        .disabled(x3Export).accessibilityIdentifier("graphPrintExport")
+                    Menu("Advanced") {
+                        Toggle("Optimize for ORGBRO X3", isOn: $x3Export).accessibilityIdentifier("graphX3Export")
+                        if x3Export {
+                            Picker("Paper width", selection: $x3PaperWidth) {
+                                Text("80 mm roll").tag(80)
+                                Text("50 mm roll").tag(50)
+                            }
+                        }
+                    }.accessibilityIdentifier("graphAdvancedExport")
+                    Divider()
+                    Button { savePlotToPhotos() } label: { Label("Save to Photos", systemImage: "photo.on.rectangle") }
+                        .accessibilityIdentifier("saveGraphToPhotos")
+                    Button { exportPlot() } label: { Label("Share JPEG…", systemImage: "square.and.arrow.up") }
+                        .accessibilityIdentifier("shareGraphJPEG")
+                } label: {
+                    if savingPhoto { ProgressView() }
+                    else { Image(systemName: "square.and.arrow.up") }
+                }
+                .accessibilityLabel("Export plot").accessibilityIdentifier("exportGraphJPEG")
+                .disabled(savingPhoto || sampledRequest != request || !curves.contains { !$0.segments.isEmpty })
             }.buttonStyle(.bordered)
             GeometryReader { geometry in
                 GraphPlotCanvas(equations: equations, window: window, curves: curves, traceX: traceX)
@@ -384,10 +415,30 @@ struct GraphingView: View {
     private var graphDescription: String {
         "\(curves.filter { !$0.segments.isEmpty }.count) curves; x from \(window.xMin) to \(window.xMax); y from \(window.yMin) to \(window.yMax)"
     }
+    @MainActor private func savePlotToPhotos() {
+        guard !savingPhoto else { return }
+        finishEditing()
+        savingPhoto = true
+        Task { @MainActor in
+            defer { savingPhoto = false }
+            do {
+                let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: constants, monochrome: printExport, x3PaperWidth: x3Export ? x3PaperWidth : nil)
+                defer { try? FileManager.default.removeItem(at: url) }
+                let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+                guard status == .authorized || status == .limited else {
+                    throw CalculationError(message: "Allow Clockwork Calc to add photos in Settings, then try Save to Photos again.")
+                }
+                try await PHPhotoLibrary.shared().performChanges {
+                    PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: url)
+                }
+                photoSaved = true
+            } catch { exportError = error.localizedDescription }
+        }
+    }
     @MainActor private func exportPlot() {
         finishEditing()
         do {
-            let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: constants)
+            let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: constants, monochrome: printExport, x3PaperWidth: x3Export ? x3PaperWidth : nil)
             exportURL = url; exportFile = GraphExportFile(url: url)
         } catch { exportError = error.localizedDescription }
     }
@@ -399,8 +450,16 @@ struct GraphPlotCanvas: View {
     let window: GraphWindow
     let curves: [GraphCurve]
     var traceX: Double? = nil
+    var monochrome = false
+    var thermal = false
     static let colors: [Color] = [.cyan, .orange, .pink, .green, .purple, .yellow, .blue, .mint]
     private var colors: [Color] { Self.colors }
+    static func lineDash(for curve: GraphCurve, in curves: [GraphCurve]) -> [CGFloat] {
+        let index = curves.filter { $0.evaluate != nil }.firstIndex { $0.id == curve.id && $0.variant == curve.variant } ?? 0
+        let patterns: [[CGFloat]] = [[], [10, 4], [2, 4], [10, 3, 2, 3], [10, 3, 2, 3, 2, 3], [5, 3], [16, 4], [16, 3, 5, 3],
+                                    [2, 2], [5, 2, 2, 2], [16, 3, 2, 3], [5, 5], [10, 5, 5, 5], [2, 6], [16, 3, 2, 3, 2, 3], [5, 2, 5, 2, 2, 2]]
+        return patterns[index % patterns.count]
+    }
     var body: some View {
         Canvas { context, size in draw(context: &context, size: size) }.clipped()
     }
@@ -408,26 +467,28 @@ struct GraphPlotCanvas: View {
         func px(_ x: Double) -> CGFloat { (x-window.xMin)/window.spanX * size.width }
         func py(_ y: Double) -> CGFloat { size.height - (y-window.yMin)/window.spanY * size.height }
         var grid = Path()
-        let stepX = GraphSampler.step(for: window.spanX), stepY = GraphSampler.step(for: window.spanY)
+        let stepX = GraphSampler.step(for: window.spanX * (thermal ? 2 : 1)), stepY = GraphSampler.step(for: window.spanY * (thermal ? 2 : 1))
         for index in 0..<16 {
             let x = ceil(window.xMin/stepX)*stepX + Double(index)*stepX
             if x <= window.xMin + window.spanX {
                 let screen = px(x)
                 grid.move(to: CGPoint(x: screen, y: 0)); grid.addLine(to: CGPoint(x: screen, y: size.height))
-                context.draw(Text(String(format: "%.4g", x)).font(.system(size: 10)).foregroundColor(.secondary), at: CGPoint(x: screen+3, y: min(size.height-10, max(10, py(0)+10))), anchor: .leading)
+                context.draw(Text(String(format: "%.4g", x)).font(.system(size: thermal ? 28 : 10)).foregroundColor(thermal ? .black : .secondary), at: CGPoint(x: screen+3, y: min(size.height-(thermal ? 20 : 10), max(thermal ? 20 : 10, py(0)+(thermal ? 20 : 10)))), anchor: .leading)
             }
             let y = ceil(window.yMin/stepY)*stepY + Double(index)*stepY
             if y <= window.yMin + window.spanY {
                 let screen = py(y)
                 grid.move(to: CGPoint(x: 0, y: screen)); grid.addLine(to: CGPoint(x: size.width, y: screen))
-                if abs(y) > stepY*0.01 { context.draw(Text(String(format: "%.4g", y)).font(.system(size: 10)).foregroundColor(.secondary), at: CGPoint(x: min(size.width-30, max(5, px(0)+5)), y: screen-6), anchor: .leading) }
+                if abs(y) > stepY*0.01 { context.draw(Text(String(format: "%.4g", y)).font(.system(size: thermal ? 28 : 10)).foregroundColor(thermal ? .black : .secondary), at: CGPoint(x: min(size.width-30, max(5, px(0)+5)), y: screen-(thermal ? 18 : 6)), anchor: .leading) }
             }
         }
-        context.stroke(grid, with: .color(.secondary.opacity(0.18)), lineWidth: 0.5)
+        if thermal {
+            context.stroke(Path(CGRect(origin: .zero, size: size)), with: .color(.black), lineWidth: 2)
+        } else { context.stroke(grid, with: .color(.secondary.opacity(0.18)), lineWidth: 0.5) }
         var axes = Path()
         if window.xMin <= 0, window.xMin + window.spanX >= 0 { axes.move(to: CGPoint(x: px(0), y: 0)); axes.addLine(to: CGPoint(x: px(0), y: size.height)) }
         if window.yMin <= 0, window.yMin + window.spanY >= 0 { axes.move(to: CGPoint(x: 0, y: py(0))); axes.addLine(to: CGPoint(x: size.width, y: py(0))) }
-        context.stroke(axes, with: .color(.secondary), lineWidth: 1)
+        context.stroke(axes, with: .color(thermal ? .black : .secondary), lineWidth: thermal ? 2 : 1)
         for (index, equation) in equations.enumerated() where equation.visible && equation.definitionName == nil {
             for curve in curves.filter({ $0.id == equation.id }) {
                 var path = Path()
@@ -437,8 +498,8 @@ struct GraphPlotCanvas: View {
                         if offset == 0 { path.move(to: point) } else { path.addLine(to: point) }
                     }
                 }
-                let color = colors[(index+curve.variant) % colors.count]
-                context.stroke(path, with: .color(color), lineWidth: 2)
+                let color = monochrome ? Color.black : colors[(index+curve.variant) % colors.count]
+                context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: thermal ? 3 : 2, dash: monochrome ? Self.lineDash(for: curve, in: curves) : []))
                 if let x = traceX, let y = curve.evaluate?(x) {
                     let circle = Path(ellipseIn: CGRect(x: px(x)-4, y: py(y)-4, width: 8, height: 8))
                     context.fill(circle, with: .color(color))
@@ -452,14 +513,16 @@ struct GraphLegendEntry: Identifiable {
     let id: String
     let label: String
     let color: Color
-    static func entries(equations: [GraphEquation], curves: [GraphCurve]) -> [Self] {
+    var dash: [CGFloat] = []
+    static func entries(equations: [GraphEquation], curves: [GraphCurve], monochrome: Bool = false) -> [Self] {
         let plotCount = equations.filter { $0.visible && $0.definitionName == nil }.count
         return equations.enumerated().flatMap { index, equation -> [Self] in
             guard equation.visible, equation.definitionName == nil else { return [] }
             return curves.filter { $0.id == equation.id && $0.evaluate != nil }.map { curve in
                 let label = curve.seriesLabel.map { (plotCount > 1 ? "\(index+1): " : "") + $0 } ?? equation.expression
                 return Self(id: "\(equation.id)-\(curve.variant)", label: label,
-                            color: GraphPlotCanvas.colors[(index+curve.variant) % GraphPlotCanvas.colors.count])
+                            color: monochrome ? .black : GraphPlotCanvas.colors[(index+curve.variant) % GraphPlotCanvas.colors.count],
+                            dash: monochrome ? GraphPlotCanvas.lineDash(for: curve, in: curves) : [])
             }
         }
     }
@@ -468,7 +531,8 @@ private struct GraphLegendRow: View {
     let entry: GraphLegendEntry
     var body: some View {
         HStack(alignment: .center, spacing: 7) {
-            RoundedRectangle(cornerRadius: 1).fill(entry.color).frame(width: 18, height: 3)
+            Path { path in path.move(to: CGPoint(x: 0, y: 2)); path.addLine(to: CGPoint(x: 38, y: 2)) }
+                .stroke(entry.color, style: StrokeStyle(lineWidth: 2, dash: entry.dash)).frame(width: 38, height: 4)
             Text(entry.label).fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }.accessibilityElement(children: .combine)
@@ -476,39 +540,70 @@ private struct GraphLegendRow: View {
 }
 
 @MainActor enum GraphJPEGExport {
-    static func write(equations: [GraphEquation], window: GraphWindow, curves: [GraphCurve], constants: [GraphConstant]) throws -> URL {
-        let entries = GraphLegendEntry.entries(equations: equations, curves: curves)
-        let content = VStack(alignment: .leading, spacing: 18) {
-            Text("Clockwork Calc · Plot").font(.system(size: 24, weight: .semibold))
-            GraphPlotCanvas(equations: equations, window: window, curves: curves)
-                .frame(height: 620)
-                .background(Color(white: 0.10))
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
-                ForEach(entries) { entry in GraphLegendRow(entry: entry).font(.system(size: 17)) }
+    static func write(equations: [GraphEquation], window: GraphWindow, curves: [GraphCurve], constants: [GraphConstant], monochrome: Bool = false, x3PaperWidth: Int? = nil) throws -> URL {
+        if let width = x3PaperWidth, ![50, 80].contains(width) { throw CalculationError(message: "Choose a 50 mm or 80 mm roll for the X3 preset.") }
+        let thermal = x3PaperWidth != nil
+        let blackAndWhite = monochrome || thermal
+        // Paper dimensions and 300 DPI follow ORGBRO's X3 specification; 2 mm margins are layout padding.
+        let width = x3PaperWidth.map { (Double($0) * 300 / 25.4).rounded() } ?? 1000
+        let entries = GraphLegendEntry.entries(equations: equations, curves: curves, monochrome: blackAndWhite)
+        let content = VStack(alignment: .leading, spacing: thermal ? 22 : 18) {
+            Text("Clockwork Calc · Plot").font(.system(size: thermal ? 34 : 24, weight: .semibold))
+            GraphPlotCanvas(equations: equations, window: window, curves: curves, monochrome: blackAndWhite, thermal: thermal)
+                .frame(height: thermal ? width * 0.8 : 620)
+                .background(blackAndWhite ? Color.white : Color(white: 0.10))
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: thermal ? 1 : 2), alignment: .leading, spacing: thermal ? 16 : 10) {
+                ForEach(entries) { entry in GraphLegendRow(entry: entry).font(.system(size: thermal ? 30 : 17)) }
             }
             Text("X: \(String(format: "%.6g", window.xMin)) to \(String(format: "%.6g", window.xMax))    Y: \(String(format: "%.6g", window.yMin)) to \(String(format: "%.6g", window.yMax))")
-                .font(.system(size: 14)).foregroundStyle(.secondary)
-            VStack(alignment: .leading, spacing: 7) {
+                .font(.system(size: thermal ? 28 : 14)).foregroundStyle(thermal ? Color.black : Color.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: thermal ? 12 : 7) {
                 ForEach(Array(equations.enumerated()).filter { $0.element.visible || $0.element.definitionName != nil }, id: \.element.id) { index, equation in
-                    Text("\(index+1): \(equation.expression)").font(.system(size: 15, design: .monospaced)).fixedSize(horizontal: false, vertical: true)
+                    Text("\(index+1): \(equation.expression)").font(.system(size: thermal ? 28 : 15, design: .monospaced)).fixedSize(horizontal: false, vertical: true)
                 }
                 if !constants.isEmpty {
                     Text(constants.map { $0.name + " = " + String(format: "%.6g", $0.value) }.joined(separator: "   ·   "))
-                        .font(.system(size: 15, design: .monospaced)).fixedSize(horizontal: false, vertical: true)
+                        .font(.system(size: thermal ? 28 : 15, design: .monospaced)).fixedSize(horizontal: false, vertical: true)
                 }
             }
-        }.padding(28).frame(width: 1000).background(Color.black).foregroundStyle(.white)
-            .environment(\.colorScheme, .dark)
+        }.padding(thermal ? 24 : 28).frame(width: width)
+            .background(blackAndWhite ? Color.white : Color.black).foregroundStyle(blackAndWhite ? Color.black : Color.white)
+            .environment(\.colorScheme, blackAndWhite ? .light : .dark)
         let renderer = ImageRenderer(content: content)
-        renderer.scale = 2
+        renderer.scale = thermal ? 1 : 2
         renderer.isOpaque = true
-        guard let image = renderer.uiImage, let data = image.jpegData(compressionQuality: 0.95) else {
+        guard var image = renderer.uiImage?.cgImage else {
             throw CalculationError(message: "The plot image could not be created. Please try again.")
         }
+        if blackAndWhite {
+            guard let gray = CGContext(data: nil, width: image.width, height: image.height, bitsPerComponent: 8, bytesPerRow: image.width,
+                                       space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue) else {
+                throw CalculationError(message: "The print image could not be created.")
+            }
+            gray.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+            if thermal, let pixels = gray.data?.assumingMemoryBound(to: UInt8.self) {
+                for index in 0..<(gray.bytesPerRow * image.height) { pixels[index] = pixels[index] < 200 ? 0 : 255 }
+            }
+            guard let converted = gray.makeImage() else { throw CalculationError(message: "The print image could not be created.") }
+            image = converted
+        }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("Clockwork-Calc-Plot-" + UUID().uuidString + ".jpg")
-        try data.write(to: url, options: .atomic)
+        guard let destination = CGImageDestinationCreateWithURL(url as CFURL, UTType.jpeg.identifier as CFString, 1, nil) else {
+            throw CalculationError(message: "The JPEG file could not be created.")
+        }
+        let dpi = thermal ? 300 : 144
+        let properties: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: thermal ? 1.0 : 0.95,
+                                         kCGImagePropertyDPIWidth: dpi, kCGImagePropertyDPIHeight: dpi,
+                                         kCGImagePropertyJFIFDictionary: [kCGImagePropertyJFIFXDensity: dpi, kCGImagePropertyJFIFYDensity: dpi, kCGImagePropertyJFIFDensityUnit: 1]]
+        CGImageDestinationAddImage(destination, image, properties as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else {
+            try? FileManager.default.removeItem(at: url)
+            throw CalculationError(message: "The JPEG file could not be saved.")
+        }
         return url
     }
+
 }
 private struct GraphExportFile: Identifiable {
     let id = UUID()

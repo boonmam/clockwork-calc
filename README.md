@@ -294,6 +294,16 @@ worksheets are not included.
 
 ## Graphing and numeric entry — build 25
 
+The plot's share icon offers **Share JPEG** and **Save to Photos**, with a complete
+curve legend and equations. **Black & white for printing** uses a white page and
+matching solid/dashed legend samples. Under **Advanced**, **Optimize for ORGBRO X3**
+adds 50 mm and 80 mm roll presets (80 mm default), 300 DPI JPEG metadata, larger
+text, three-pixel curves, a single-column legend, and high-contrast monochrome
+rasterization. Save the image to Photos and import it in Snap & Tag for printing.
+The [manufacturer's X3 specifications](https://orgbro.com/product/orgbro-x3-print-pods-mini-thermal-printer-bluetooth-sticker-maker-olive-green/)
+list 300 DPI and 50–80 mm media support. Output widths are 591/945 pixels with
+approximately 2 mm layout margins; physical printer calibration has not been tested.
+
 Choose **Graphing** from the mode menu. Enter up to twelve graph rows using `x`,
 with an optional `y =` prefix. Examples: `sin(x)`, `x^2-2*x+1`, `1/x`, and
 `sqrt(x)`. Each curve has a color and visibility toggle; functions save on-device.
