@@ -294,7 +294,7 @@ worksheets are not included.
 
 ## Graphing and numeric entry — build 25
 
-Choose **Graphing** from the mode menu. Enter up to four real functions of `x`,
+Choose **Graphing** from the mode menu. Enter up to twelve graph rows using `x`,
 with an optional `y =` prefix. Examples: `sin(x)`, `x^2-2*x+1`, `1/x`, and
 `sqrt(x)`. Each curve has a color and visibility toggle; functions save on-device.
 Drag to pan, pinch or use +/− to zoom, Reset to restore the window, and tap the
@@ -303,6 +303,19 @@ numerically and breaks curves at detected discontinuities or non-real values;
 it can miss very narrow features. This version supports explicit `y=f(x)` plots;
 implicit equations, inequalities, and polar/parametric plots are not
 included.
+
+The graph keypad has a literal **=** key; **Plot** finishes entry. Named rows
+such as `M=1/(1-(x/120)^n)` define reusable expressions evaluated at each x, and
+`y=(1-x/50)*(101*M)*C` can use M even when its definition appears later. Definition
+rows do not draw their own curve; add a row containing `M` to plot it. Free
+constants such as n get sliders; defined names do not.
+
+Use a numeric list for a family of curves: `C=[1u,10u,30u,60u]`. The example above
+then draws four colored curves with C labels. Graph numeric suffixes include
+f, p, n, u/µ, m, k, M, G, and T (`u` means 10^-6). These are scale factors, not
+physical units. Lists accept 1–8 values; up to 16 combinations/curves are plotted.
+Duplicate and circular definitions are flagged, and undefined real points leave
+gaps. Definitions, lists, and slider values save on-device.
 
 Use **Axes** to open a compact popup for X/Y minimum and maximum bounds. The
 plot updates as you type while the popup remains open; Cancel restores the

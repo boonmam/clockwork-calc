@@ -97,3 +97,45 @@ extension GraphTests {
         XCTAssertEqual(GraphConstant.addingMissing(for: [many], to: []).count, 8)
     }
 }
+
+extension GraphTests {
+    func testUserDefinitionAndCapacitanceSweep() throws {
+        let equations = [
+            GraphEquation(expression: "y = (1-x/50)*(101*M)*C"),
+            GraphEquation(expression: "M = 1/(1-(x/120)^n)"),
+            GraphEquation(expression: "C = [1u, 10u, 30u, 60u]")]
+        let sliders = GraphConstant.addingMissing(for: equations, to: [GraphConstant(name: "M"), GraphConstant(name: "C")])
+        XCTAssertEqual(sliders.map(\.name), ["n"])
+        let workspace = NativeMath().graphWorkspace(equations, constants: ["n": 2])
+        XCTAssertTrue(workspace.errors.isEmpty, "\(workspace.errors)")
+        XCTAssertEqual(workspace.curves.count, 4)
+        let values = [1e-6, 10e-6, 30e-6, 60e-6]
+        for (curve, c) in zip(workspace.curves, values) {
+            XCTAssertEqual(try XCTUnwrap(curve.evaluate(0)), 101*c, accuracy: 1e-12)
+            XCTAssertEqual(try XCTUnwrap(curve.evaluate(30)), (1-30.0/50)*101/(1-pow(30.0/120,2))*c, accuracy: 1e-12)
+            XCTAssertEqual(curve.evaluate(50), 0)
+            XCTAssertNil(curve.evaluate(120))
+            XCTAssertTrue(curve.label?.hasPrefix("C=") == true)
+        }
+        let reversed = NativeMath().graphWorkspace(equations.reversed(), constants: ["n": 2])
+        XCTAssertTrue(reversed.errors.isEmpty)
+        XCTAssertEqual(reversed.curves.count, 4)
+    }
+    func testNamedDefinitionsAndListErrors() throws {
+        let native = NativeMath()
+        let good = native.graphWorkspace([GraphEquation(expression: "y=A*x"), GraphEquation(expression: "A=2u")], constants: [:])
+        XCTAssertTrue(good.errors.isEmpty)
+        XCTAssertEqual(try XCTUnwrap(good.curves.first?.evaluate(3)), 6e-6, accuracy: 1e-12)
+        let circular = native.graphWorkspace([GraphEquation(expression: "y=A"), GraphEquation(expression: "A=B+1"), GraphEquation(expression: "B=A+1")], constants: [:])
+        XCTAssertTrue(circular.curves.isEmpty)
+        XCTAssertTrue(circular.errors.values.contains { $0.contains("Circular") })
+        let duplicate = native.graphWorkspace([GraphEquation(expression: "y=A"), GraphEquation(expression: "A=1"), GraphEquation(expression: "A=2")], constants: [:])
+        XCTAssertTrue(duplicate.curves.isEmpty)
+        XCTAssertTrue(duplicate.errors.values.contains { $0.contains("Duplicate") })
+        let oversized = native.graphWorkspace([GraphEquation(expression: "y=A*B"), GraphEquation(expression: "A=[1,2,3,4,5]"), GraphEquation(expression: "B=[1,2,3,4]")], constants: [:])
+        XCTAssertTrue(oversized.curves.isEmpty)
+        XCTAssertTrue(oversized.errors.values.contains { $0.contains("16") })
+        let sampled = GraphSampler.sampleAll([GraphEquation(expression: "y=C*x"), GraphEquation(expression: "C=[1u,10u,30u,60u]")], window: GraphWindow(), constants: [:])
+        XCTAssertEqual(sampled.filter { !$0.segments.isEmpty }.count, 4)
+    }
+}

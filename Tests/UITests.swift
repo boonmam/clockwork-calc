@@ -408,3 +408,44 @@ extension UITests {
         let screenshot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); screenshot.lifetime = .keepAlways; add(screenshot)
     }
 }
+
+extension UITests {
+    func testGraphEqualsDefinitionsAndListCurves() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        for _ in 0..<12 {
+            if app.buttons["Remove function 2"].exists { app.buttons["Remove function 2"].tap() }
+            else { break }
+        }
+        let helper = app.textViews["graphFunction0"]
+        helper.tap(); app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_Vars"].tap(); app.buttons["M"].tap()
+        for key in ["=", "2", "Plot"] { app.buttons["graphKey_" + key].tap() }
+        XCTAssertEqual(helper.value as? String, "M=2")
+        app.buttons["Add graph function"].tap()
+        let output = app.textViews["graphFunction1"]
+        output.tap(); app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_Vars"].tap(); app.buttons["M"].tap()
+        for key in ["×", "x", "Plot"] { app.buttons["graphKey_" + key].tap() }
+        let graph = app.otherElements["functionGraph"]
+        expectation(for: NSPredicate(format: "value BEGINSWITH %@", "1 curves"), evaluatedWith: graph)
+        waitForExpectations(timeout: 10)
+        helper.tap(); app.buttons["graphKey_AC"].tap()
+        app.buttons["Use graph keyboard"].tap()
+        helper.typeText("M=[1u,10u,30u,60u]\n")
+        expectation(for: NSPredicate(format: "value BEGINSWITH %@", "4 curves"), evaluatedWith: graph)
+        waitForExpectations(timeout: 10)
+        XCTAssertFalse(app.sliders["graphSlider_M"].exists)
+        app.buttons["graphAxes"].tap()
+        for (index, value) in [(2, "-0.001"), (3, "0.001")] {
+            let field = app.textFields["graphAxis\(index)"]
+            field.tap(); field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20)+value)
+        }
+        app.buttons["applyGraphAxes"].tap()
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); shot.name = "Four engineering-value curves"; shot.lifetime = .keepAlways; add(shot)
+        app.terminate(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        expectation(for: NSPredicate(format: "value BEGINSWITH %@", "4 curves"), evaluatedWith: app.otherElements["functionGraph"])
+        waitForExpectations(timeout: 10)
+    }
+}

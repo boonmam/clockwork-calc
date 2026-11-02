@@ -607,3 +607,160 @@ extension NativeMath {
         }
     }
 }
+
+private struct GraphParsedLine {
+    let id: UUID
+    let name: String?
+    let expression: Expression?
+    let values: [Double]?
+    let visible: Bool
+}
+
+extension NativeMath {
+    /// Numeric suffixes in graph expressions are scale factors, not physical units.
+    private func graphEngineeringNumbers(_ input: String) -> String {
+        let scales = ["f": "1e-15", "p": "1e-12", "n": "1e-9", "u": "1e-6", "µ": "1e-6", "μ": "1e-6", "m": "1e-3", "k": "1e3", "M": "1e6", "G": "1e9", "T": "1e12"]
+        let regex = try! NSRegularExpression(pattern: #"(?<![A-Za-z_0-9.])([0-9]+(?:\.[0-9]*)?|\.[0-9]+)([eE][+-]?[0-9]+)?([fpnuµμmkMGT])(?![A-Za-z_0-9])"#)
+        let source = input as NSString
+        var result = input
+        for match in regex.matches(in: input, range: NSRange(location: 0, length: source.length)).reversed() {
+            let number = source.substring(with: match.range(at: 1)) + (match.range(at: 2).location == NSNotFound ? "" : source.substring(with: match.range(at: 2)))
+            let suffix = source.substring(with: match.range(at: 3))
+            if let scale = scales[suffix], let range = Range(match.range, in: result) { result.replaceSubrange(range, with: "(\(number)*\(scale))") }
+        }
+        return result
+    }
+    private func graphTree(_ input: String) throws -> Expression {
+        guard input.count <= 500 else { throw mathError("Keep each expression under 500 characters.") }
+        var parser = try Parser(graphEngineeringNumbers(input))
+        let (tree, target) = try parser.parse()
+        guard target == nil else { throw mathError("Use numbers and engineering suffixes in graph expressions, without unit conversions.") }
+        func validate(_ e: Expression) throws {
+            switch e {
+            case .number, .symbol: break
+            case .unary(let child): try validate(child)
+            case .binary(let op, let a, let b):
+                guard ["+", "-", "*", "/", "^"].contains(op) else { throw mathError("Use one = sign to define a name or y.") }
+                try validate(a); try validate(b)
+            case .call(let name, let args):
+                guard ["sin", "cos", "tan", "asin", "acos", "atan", "sqrt", "abs", "ln", "log", "exp", "floor", "ceil"].contains(name), args.count == 1 else { throw mathError("Unsupported graph function: \(name)") }
+                try args.forEach(validate)
+            }
+        }
+        try validate(tree); return tree
+    }
+    private func graphLine(_ equation: GraphEquation) throws -> GraphParsedLine {
+        let parts = equation.expression.components(separatedBy: "=")
+        guard parts.count <= 2 else { throw mathError("Use one = sign per row.") }
+        let left = parts.count == 2 ? parts[0].trimmingCharacters(in: .whitespacesAndNewlines) : nil
+        if let left, left != "y" {
+            guard equation.definitionName != nil else { throw mathError("Use a name such as M or C; x and built-in names cannot be defined.") }
+        }
+        let name = equation.definitionName
+        let rhs = parts.last!.trimmingCharacters(in: .whitespacesAndNewlines)
+        if rhs.hasPrefix("[") || rhs.hasSuffix("]") {
+            guard name != nil, rhs.hasPrefix("["), rhs.hasSuffix("]") else { throw mathError("Define a list as C = [1u, 10u, 30u, 60u].") }
+            let members = rhs.dropFirst().dropLast().split(separator: ",", omittingEmptySubsequences: false)
+            guard (1...8).contains(members.count) else { throw mathError("Use 1–8 numeric values in a list.") }
+            let values = try members.map { member -> Double in
+                let tree = try graphTree(String(member))
+                guard graphNames(tree).subtracting(["pi", "π", "e"]).isEmpty else { throw mathError("List entries must be numeric, for example 1u or 10u.") }
+                let q = try Evaluator(degrees: false).evaluate(tree)
+                guard q.isDimensionless, q.value.im == 0, q.value.re.isFinite else { throw mathError("List entries must be finite real numbers.") }
+                return q.value.re
+            }
+            return GraphParsedLine(id: equation.id, name: name, expression: nil, values: values, visible: equation.visible)
+        }
+        return GraphParsedLine(id: equation.id, name: name, expression: try graphTree(rhs), values: nil, visible: equation.visible)
+    }
+    private func graphNames(_ tree: Expression) -> Set<String> {
+        switch tree {
+        case .number: return []
+        case .symbol(let name): return [name]
+        case .unary(let child): return graphNames(child)
+        case .binary(_, let a, let b): return graphNames(a).union(graphNames(b))
+        case .call(_, let args): return args.reduce(into: Set<String>()) { $0.formUnion(graphNames($1)) }
+        }
+    }
+    func graphFreeConstants(_ equations: [GraphEquation]) -> [String] {
+        let declared = Set(equations.compactMap(\.definitionName))
+        let references = equations.reduce(into: Set<String>()) { names, equation in
+            if let line = try? graphLine(equation), let expression = line.expression { names.formUnion(graphNames(expression)) }
+        }
+        return references.subtracting(declared).subtracting(GraphConstant.reserved).sorted()
+    }
+    func graphWorkspace(_ equations: [GraphEquation], constants: [String: Double]) -> GraphWorkspace {
+        var result = GraphWorkspace()
+        var plots: [GraphParsedLine] = [], definitions: [String: GraphParsedLine] = [:]
+        var duplicateNames = Set<String>()
+        for equation in equations.prefix(12) {
+            do {
+                let line = try graphLine(equation)
+                if let name = line.name {
+                    if let previous = definitions[name] {
+                        result.errors[previous.id] = "Duplicate definition: \(name)"
+                        result.errors[line.id] = "Duplicate definition: \(name)"; duplicateNames.insert(name)
+                    } else { definitions[name] = line }
+                } else if line.visible { plots.append(line) }
+            } catch { result.errors[equation.id] = error.localizedDescription }
+        }
+        let declared = Set(equations.compactMap(\.definitionName))
+        var expanded: [String: Expression] = [:]
+        var nodes = 0
+        func expand(_ tree: Expression, path: Set<String>) throws -> Expression {
+            nodes += 1
+            guard nodes < 10000 else { throw mathError("Definitions are too complex to graph.") }
+            switch tree {
+            case .number: return tree
+            case .symbol(let name):
+                if ["x", "pi", "π", "e"].contains(name) { return tree }
+                guard !duplicateNames.contains(name) else { throw mathError("Duplicate definition: \(name)") }
+                if let definition = definitions[name] {
+                    guard !path.contains(name) else { throw mathError("Circular definition involving \(name).") }
+                    if definition.values != nil { return tree }
+                    if let cached = expanded[name] { return cached }
+                    let value = try expand(definition.expression!, path: path.union([name]))
+                    expanded[name] = value; return value
+                }
+                if declared.contains(name) { throw mathError("Fix the definition of \(name) before using it.") }
+                guard let value = constants[name], value.isFinite else { throw mathError("Unknown constant: \(name).") }
+                return .number(String(value))
+            case .unary(let child): return .unary(try expand(child, path: path))
+            case .binary(let op, let a, let b): return .binary(op, try expand(a, path: path), try expand(b, path: path))
+            case .call(let name, let args): return .call(name, try args.map { try expand($0, path: path) })
+            }
+        }
+        // Validate unused definitions too, so cycles/errors are visible at their source.
+        for (name, definition) in definitions where definition.expression != nil && !duplicateNames.contains(name) {
+            do { nodes = 0; _ = try expand(.symbol(name), path: []) }
+            catch { result.errors[definition.id] = error.localizedDescription }
+        }
+        for plot in plots {
+            do {
+                nodes = 0
+                let expression = try expand(plot.expression!, path: [])
+                let listNames = graphNames(expression).filter { definitions[$0]?.values != nil }.sorted()
+                var combinations: [[String: Double]] = [[:]]
+                for name in listNames {
+                    let values = definitions[name]!.values!
+                    guard combinations.count * values.count <= 16 else { throw mathError("Limit a plot to 16 list combinations.") }
+                    combinations = combinations.flatMap { combination in values.map { value in var copy = combination; copy[name] = value; return copy } }
+                }
+                guard result.curves.count + combinations.count <= 16 else { throw mathError("Limit the graph to 16 curves.") }
+                for (index, values) in combinations.enumerated() {
+                    let evaluator = Evaluator(degrees: false)
+                    let label = listNames.isEmpty ? nil : listNames.map { name in
+                        name + "=" + EngineeringNotation.format(String(format: "%.9g", values[name]!), symbolic: true, latex: false)
+                    }.joined(separator: ", ")
+                    let function: (Double) -> Double? = { x in
+                        evaluator.operations = 0; evaluator.variables = values; evaluator.variables["x"] = x
+                        guard x.isFinite, let q = try? evaluator.evaluate(expression), q.isDimensionless, q.value.im == 0, q.value.re.isFinite else { return nil }
+                        return q.value.re
+                    }
+                    result.curves.append(GraphCompiledCurve(id: plot.id, variant: index, label: label, evaluate: function))
+                }
+            } catch { result.errors[plot.id] = error.localizedDescription }
+        }
+        return result
+    }
+}

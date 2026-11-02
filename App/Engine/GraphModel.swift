@@ -4,6 +4,14 @@ struct GraphEquation: Codable, Identifiable, Equatable {
     var id = UUID()
     var expression = "sin(x)"
     var visible = true
+    var definitionName: String? {
+        let pieces = expression.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+        guard pieces.count == 2 else { return nil }
+        let name = pieces[0].trimmingCharacters(in: .whitespacesAndNewlines)
+        guard name != "y", name.range(of: "^[A-Za-z]+$", options: .regularExpression) != nil,
+              !GraphConstant.reserved.contains(name) else { return nil }
+        return name
+    }
 }
 struct GraphWindow: Codable, Equatable {
     var centerX = 0.0
@@ -36,6 +44,19 @@ struct GraphCurve {
     let id: UUID
     var segments: [[GraphPoint]] = []
     var error: String?
+    var variant = 0
+    var seriesLabel: String?
+    var evaluate: ((Double) -> Double?)?
+}
+struct GraphCompiledCurve {
+    let id: UUID
+    let variant: Int
+    let label: String?
+    let evaluate: (Double) -> Double?
+}
+struct GraphWorkspace {
+    var curves: [GraphCompiledCurve] = []
+    var errors: [UUID: String] = [:]
 }
 enum GraphSampler {
     static func sample(_ equation: GraphEquation, window: GraphWindow, count: Int = 700, constants: [String: Double] = [:]) -> GraphCurve {
@@ -71,6 +92,37 @@ enum GraphSampler {
         } catch { curve.error = error.localizedDescription }
         return curve
     }
+    static func sampleAll(_ equations: [GraphEquation], window: GraphWindow, constants: [String: Double]) -> [GraphCurve] {
+        let workspace = NativeMath().graphWorkspace(equations, constants: constants)
+        var curves = workspace.errors.map { GraphCurve(id: $0.key, error: $0.value) }
+        for function in workspace.curves {
+            if Task.isCancelled { break }
+            var curve = GraphCurve(id: function.id, variant: function.variant, seriesLabel: function.label, evaluate: function.evaluate)
+            var segment: [GraphPoint] = []
+            var previous: GraphPoint?
+            for index in 0...700 {
+                if Task.isCancelled { break }
+                let x = window.xMin + Double(index)/700 * window.spanX
+                guard let y = function.evaluate(x), abs(y-window.centerY) <= window.spanY*2 else {
+                    if segment.count > 1 { curve.segments.append(segment) }
+                    segment = []; previous = nil; continue
+                }
+                if let old = previous {
+                    let midpoint = function.evaluate((old.x+x)/2)
+                    if midpoint == nil || abs(y-old.y) >= window.spanY*0.4 || abs(midpoint!-(old.y+y)/2) >= window.spanY*0.05 {
+                        if segment.count > 1 { curve.segments.append(segment) }
+                        segment = []
+                    }
+                }
+                let point = GraphPoint(x: x, y: y)
+                segment.append(point); previous = point
+            }
+            if segment.count > 1 { curve.segments.append(segment) }
+            if curve.segments.isEmpty { curve.error = "No visible real-valued curve in this window." }
+            curves.append(curve)
+        }
+        return curves
+    }
     static func step(for span: Double) -> Double {
         let raw = span/8
         let power = pow(10, floor(log10(raw)))
@@ -88,8 +140,9 @@ struct GraphConstant: Codable, Identifiable, Equatable {
     var maximum = 10.0
     var step = 0.1
     static func addingMissing(for equations: [GraphEquation], to existing: [GraphConstant]) -> [GraphConstant] {
-        var result = existing
-        let names = Set(equations.flatMap { (try? NativeMath().graphConstantNames($0.expression)) ?? [] }).sorted()
+        let declared = Set(equations.compactMap(\.definitionName))
+        var result = existing.filter { !declared.contains($0.name) }
+        let names = NativeMath().graphFreeConstants(equations)
         for name in names where !result.contains(where: { $0.name == name }) && result.count < 8 {
             let constant = GraphConstant(name: name)
             if (try? constant.validate()) != nil { result.append(constant) }

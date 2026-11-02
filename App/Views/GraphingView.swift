@@ -19,11 +19,11 @@ struct GraphingView: View {
     @State private var editing: UUID?
     @State private var graphKeyboardVisible = false
     @State private var selections: [UUID: NSRange] = [:]
-    private let colors: [Color] = [.cyan, .orange, .pink, .green]
+    private let colors: [Color] = [.cyan, .orange, .pink, .green, .purple, .yellow, .blue, .mint]
     init() {
         let saved = UserDefaults.standard.data(forKey: "graphEquations")
         let decoded = saved.flatMap { try? JSONDecoder().decode([GraphEquation].self, from: $0) }
-        _equations = State(initialValue: decoded.map { Array($0.prefix(4)) }.flatMap { $0.isEmpty ? nil : $0 } ?? [GraphEquation()])
+        _equations = State(initialValue: decoded.map { Array($0.prefix(12)) }.flatMap { $0.isEmpty ? nil : $0 } ?? [GraphEquation()])
         if let data = UserDefaults.standard.data(forKey: "graphWindow"), let saved = try? JSONDecoder().decode(GraphWindow.self, from: data), saved.isValid { _window = State(initialValue: saved) }
         if let data = UserDefaults.standard.data(forKey: "graphConstants"), let saved = try? JSONDecoder().decode([GraphConstant].self, from: data) {
             var names = Set<String>()
@@ -70,7 +70,7 @@ struct GraphingView: View {
             guard !Task.isCancelled else { return }
             let equations = equations, window = window, values = constantValues
             let sampling = Task.detached(priority: .userInitiated) {
-                equations.map { GraphSampler.sample($0, window: window, constants: values) }
+                GraphSampler.sampleAll(equations, window: window, constants: values)
             }
             let sampled = await withTaskCancellationHandler(operation: { await sampling.value }, onCancel: { sampling.cancel() })
             if !Task.isCancelled { curves = sampled }
@@ -97,7 +97,7 @@ struct GraphingView: View {
                 Text("Functions").font(.headline)
                 Spacer()
                 Button { equations.append(GraphEquation(expression: "x")); editing = equations.last?.id } label: { Image(systemName: "plus") }
-                    .disabled(equations.count >= 4).accessibilityLabel("Add graph function")
+                    .disabled(equations.count >= 12).accessibilityLabel("Add graph function")
                 Button {
                     let name = ["a", "b", "c", "d", "k", "m", "n", "p"].first { candidate in !constants.contains(where: { $0.name == candidate }) } ?? "a"
                     finishEditing(); constantEditor = GraphConstant(name: name)
@@ -115,8 +115,8 @@ struct GraphingView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             HStack(spacing: 6) {
                                 Button { equations[index].visible.toggle() } label: {
-                                    Image(systemName: equation.visible ? "circle.fill" : "circle").foregroundStyle(colors[index])
-                                }.accessibilityLabel("Toggle function \(index+1)")
+                                    Image(systemName: equation.visible ? "circle.fill" : "circle").foregroundStyle(colors[index % colors.count])
+                                }.disabled(equation.definitionName != nil).accessibilityLabel(equation.definitionName.map { "Definition " + $0 } ?? "Toggle function \(index+1)")
                                 ExpressionEditor(text: $equations[index].expression,
                                     selection: Binding(get: { selections[equation.id] ?? NSRange(location: equation.expression.utf16.count, length: 0) }, set: { selections[equation.id] = $0 }),
                                     keyboardVisible: Binding(get: { editing == equation.id && graphKeyboardVisible }, set: { if editing == equation.id { graphKeyboardVisible = $0 } }),
@@ -131,10 +131,15 @@ struct GraphingView: View {
                             if let error = curves.first(where: { $0.id == equation.id })?.error {
                                 Text(error).font(.caption2).foregroundStyle(.secondary)
                             }
-                            if let x = traceX, equation.visible,
-                               let function = try? NativeMath().graphFunction(equation.expression, constants: constantValues), let y = function(x) {
-                                Text(String(format: "(%.6g, %.6g)", x, y)).font(.caption.monospacedDigit()).foregroundStyle(colors[index])
-                                    .accessibilityIdentifier("graphPoint\(index)")
+                            if let name = equation.definitionName { Text("Defines \(name)").font(.caption2).foregroundStyle(.secondary) }
+                            ForEach(curves.filter { $0.id == equation.id && $0.evaluate != nil }, id: \.variant) { curve in
+                                HStack(spacing: 6) {
+                                    if let label = curve.seriesLabel { Text(label).font(.caption2) }
+                                    if let x = traceX, let y = curve.evaluate?(x) {
+                                        Text(String(format: "(%.6g, %.6g)", x, y)).font(.caption.monospacedDigit())
+                                            .accessibilityIdentifier(curve.variant == 0 ? "graphPoint\(index)" : "graphPoint\(index)_\(curve.variant)")
+                                    }
+                                }.foregroundStyle(colors[(index+curve.variant) % colors.count])
                             }
                         }
                     }
@@ -150,8 +155,11 @@ struct GraphingView: View {
                     }
                 }
             }
-            Text("Use x and slider constants, e.g. a*sin(b*x). Angles are radians.").font(.caption2).foregroundStyle(.secondary)
+            Text("Use = for definitions; C=[1u,10u,30u,60u] draws a curve for each value.").font(.caption2).foregroundStyle(.secondary)
         }
+    }
+    private var variableNames: [String] {
+        Array(Set(constants.map(\.name) + equations.compactMap(\.definitionName))).sorted()
     }
     private func finishEditing() {
         editing = nil; graphKeyboardVisible = false
@@ -184,18 +192,18 @@ struct GraphingView: View {
         selections[equations[index].id] = NSRange(location: start + value.utf16.count, length: 0)
     }
     private func graphKeypad(height: CGFloat) -> some View {
-        let keys = ["sin", "cos", "tan", "AC", "⌫", "ln", "√", "^", "(", ")", "7", "8", "9", "x", "÷", "4", "5", "6", "Vars", "×", "1", "2", "3", "π", "−", "0", ".", "EE", "+", "Plot"]
+        let keys = ["sin", "cos", "tan", "AC", "⌫", "ln", "√", "^", "(", ")", "7", "8", "9", "x", "÷", "4", "5", "6", "Vars", "×", "1", "2", "3", "=", "−", "0", ".", "EE", "+", "Plot"]
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 5), spacing: 6) {
             ForEach(keys, id: \.self) { key in
                 if key == "Vars" {
                     Menu {
                         Section("Variables") {
-                            ForEach(["x", "a", "b", "c", "k"], id: \.self) { name in Button(name) { insertGraphKey(name) } }
-                            ForEach(constants.filter { !["x", "a", "b", "c", "k"].contains($0.name) }) { constant in Button(constant.name) { insertGraphKey(constant.name) } }
+                            ForEach(["x", "y", "M", "C", "n", "a", "b", "c", "k"], id: \.self) { name in Button(name) { insertGraphKey(name) } }
+                            ForEach(variableNames.filter { !["x", "y", "M", "C", "n", "a", "b", "c", "k"].contains($0) }, id: \.self) { name in Button(name) { insertGraphKey(name) } }
                             Button("Add slider…") { finishEditing(); constantEditor = GraphConstant(name: ["a","b","c","d","k","m","n","p"].first { candidate in !constants.contains { $0.name == candidate } } ?? "a") }.disabled(constants.count >= 8)
                         }
                         Section("More symbols") {
-                            ForEach(["abs(", "exp(", "asin(", "acos(", "atan(", "floor(", "ceil(", "pi", "e", ","], id: \.self) { symbol in
+                            ForEach(["abs(", "exp(", "asin(", "acos(", "atan(", "floor(", "ceil(", "pi", "e", "[", "]", ",", "u"], id: \.self) { symbol in
                                 Button(symbol) { insertGraphKey(symbol) }
                             }
                         }
@@ -276,19 +284,21 @@ struct GraphingView: View {
         if window.xMin <= 0, window.xMin + window.spanX >= 0 { axes.move(to: CGPoint(x: px(0), y: 0)); axes.addLine(to: CGPoint(x: px(0), y: size.height)) }
         if window.yMin <= 0, window.yMin + window.spanY >= 0 { axes.move(to: CGPoint(x: 0, y: py(0))); axes.addLine(to: CGPoint(x: size.width, y: py(0))) }
         context.stroke(axes, with: .color(.secondary), lineWidth: 1)
-        for (index, equation) in equations.enumerated() {
-            guard let curve = curves.first(where: { $0.id == equation.id }), equation.visible else { continue }
-            var path = Path()
-            for segment in curve.segments {
-                for (offset, point) in segment.enumerated() {
-                    let point = CGPoint(x: px(point.x), y: py(point.y))
-                    if offset == 0 { path.move(to: point) } else { path.addLine(to: point) }
+        for (index, equation) in equations.enumerated() where equation.visible && equation.definitionName == nil {
+            for curve in curves.filter({ $0.id == equation.id }) {
+                var path = Path()
+                for segment in curve.segments {
+                    for (offset, point) in segment.enumerated() {
+                        let point = CGPoint(x: px(point.x), y: py(point.y))
+                        if offset == 0 { path.move(to: point) } else { path.addLine(to: point) }
+                    }
                 }
-            }
-            context.stroke(path, with: .color(colors[index]), lineWidth: 2)
-            if let x = traceX, let function = try? NativeMath().graphFunction(equation.expression, constants: constantValues), let y = function(x) {
-                let circle = Path(ellipseIn: CGRect(x: px(x)-4, y: py(y)-4, width: 8, height: 8))
-                context.fill(circle, with: .color(colors[index]))
+                let color = colors[(index+curve.variant) % colors.count]
+                context.stroke(path, with: .color(color), lineWidth: 2)
+                if let x = traceX, let y = curve.evaluate?(x) {
+                    let circle = Path(ellipseIn: CGRect(x: px(x)-4, y: py(y)-4, width: 8, height: 8))
+                    context.fill(circle, with: .color(color))
+                }
             }
         }
     }
