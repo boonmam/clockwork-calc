@@ -466,6 +466,16 @@ struct GraphPlotCanvas: View {
     private func draw(context: inout GraphicsContext, size: CGSize) {
         func px(_ x: Double) -> CGFloat { (x-window.xMin)/window.spanX * size.width }
         func py(_ y: Double) -> CGFloat { size.height - (y-window.yMin)/window.spanY * size.height }
+        let labelFont = Font.system(size: thermal ? 28 : 10)
+        let labelColor: Color = thermal ? .black : .secondary
+        let labelY = min(size.height-(thermal ? 20 : 10), max(thermal ? 20 : 10, py(0)+(thermal ? 20 : 10)))
+        func xLabel(_ value: Double) -> Text {
+            Text(String(format: "%.6g", value)).font(labelFont).foregroundColor(labelColor)
+        }
+        let minLabel = context.resolve(xLabel(window.xMin))
+        let maxLabel = context.resolve(xLabel(window.xMax))
+        let minWidth = minLabel.measure(in: size).width
+        let maxWidth = maxLabel.measure(in: size).width
         var grid = Path()
         let stepX = GraphSampler.step(for: window.spanX * (thermal ? 2 : 1)), stepY = GraphSampler.step(for: window.spanY * (thermal ? 2 : 1))
         for index in 0..<16 {
@@ -473,7 +483,11 @@ struct GraphPlotCanvas: View {
             if x <= window.xMin + window.spanX {
                 let screen = px(x)
                 grid.move(to: CGPoint(x: screen, y: 0)); grid.addLine(to: CGPoint(x: screen, y: size.height))
-                context.draw(Text(String(format: "%.4g", x)).font(.system(size: thermal ? 28 : 10)).foregroundColor(thermal ? .black : .secondary), at: CGPoint(x: screen+3, y: min(size.height-(thermal ? 20 : 10), max(thermal ? 20 : 10, py(0)+(thermal ? 20 : 10)))), anchor: .leading)
+                let label = context.resolve(xLabel(x))
+                let labelWidth = label.measure(in: size).width
+                if screen > minWidth + 12, screen + labelWidth + 12 < size.width - maxWidth {
+                    context.draw(label, at: CGPoint(x: screen+3, y: labelY), anchor: .leading)
+                }
             }
             let y = ceil(window.yMin/stepY)*stepY + Double(index)*stepY
             if y <= window.yMin + window.spanY {
@@ -483,6 +497,8 @@ struct GraphPlotCanvas: View {
             }
         }
         if thermal {
+            // Sparse black dots survive the thermal export's monochrome threshold.
+            context.stroke(grid, with: .color(.black), style: StrokeStyle(lineWidth: 1, dash: [1, 7]))
             context.stroke(Path(CGRect(origin: .zero, size: size)), with: .color(.black), lineWidth: 2)
         } else { context.stroke(grid, with: .color(.secondary.opacity(0.18)), lineWidth: 0.5) }
         var axes = Path()
@@ -506,6 +522,9 @@ struct GraphPlotCanvas: View {
                 }
             }
         }
+        // Keep both bounds inside the plot even when they are not regular grid ticks.
+        context.draw(minLabel, at: CGPoint(x: 3, y: labelY), anchor: .leading)
+        context.draw(maxLabel, at: CGPoint(x: size.width-3, y: labelY), anchor: .trailing)
     }
 }
 
