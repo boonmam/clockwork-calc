@@ -185,7 +185,7 @@ struct GraphingView: View {
             equations[index].expression = source.replacingCharacters(in: removing, with: "")
             selections[equations[index].id] = NSRange(location: removing.location, length: 0); return
         }
-        var value = ["sin": "sin(", "cos": "cos(", "tan": "tan(", "ln": "ln(", "√": "sqrt(", "×": "*", "÷": "/", "−": "-" ][key] ?? key
+        var value = ["π": "pi", "sin": "sin(", "cos": "cos(", "tan": "tan(", "ln": "ln(", "√": "sqrt(", "×": "*", "÷": "/", "−": "-" ][key] ?? key
         if key == "EE" {
             let prefix = source.substring(to: start).trimmingCharacters(in: .whitespaces)
             if prefix.range(of: #"(?<![A-Za-z_0-9.])(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$"#, options: .regularExpression) != nil { value = "e" }
@@ -195,7 +195,7 @@ struct GraphingView: View {
         selections[equations[index].id] = NSRange(location: start + value.utf16.count, length: 0)
     }
     private func graphKeypad(height: CGFloat) -> some View {
-        let keys = ["ƒ", "Vars", "^", "AC", "⌫", "x", "y", "=", "(", ")", "7", "8", "9", ",", "÷", "4", "5", "6", "EE", "×", "1", "2", "3", "u", "−", "0", ".", "√", "+", "Plot"]
+        let keys = ["ƒ", "Vars", "^", "AC", "⌫", "x", "y", "=", "(", ")", "7", "8", "9", "EE", "÷", "4", "5", "6", "π", "×", "1", "2", "3", ",", "−", "0", ".", "√", "+", "Plot"]
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 5), spacing: 6) {
             ForEach(keys, id: \.self) { key in
                 if key == "Vars" {
@@ -314,13 +314,10 @@ struct GraphingView: View {
         return ""
     }
     private func graphKeyLabel(_ key: String, height: CGFloat) -> some View {
-        Text(key).font(.system(size: key.count > 2 ? 16 : 21, weight: .medium, design: .rounded))
+        Text(key).font(.system(size: key.count > 2 ? 18 : 23, weight: .medium, design: .rounded))
             .frame(maxWidth: .infinity).frame(height: height)
-            .overlay(alignment: .bottom) {
-                if key == "u" { Text("micro").font(.system(size: 8)).foregroundStyle(.secondary).fixedSize().padding(.bottom, 2) }
-            }
-            .foregroundStyle(key == "Plot" ? Color.calculatorAccentText : Color.primary)
-            .background(key == "Plot" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 9))
+            .foregroundStyle(key == "Plot" ? Color.calculatorAccentText : (["÷", "×", "−", "+", "^", "√", "AC", "⌫", "EE"].contains(key) ? Color.calculatorAccent : Color.primary))
+            .background(key == "Plot" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
     }
     private var plot: some View {
         VStack(spacing: 6) {

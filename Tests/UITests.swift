@@ -198,7 +198,7 @@ extension UITests {
         app.buttons["calculationMode"].tap()
         app.buttons["Unit converter"].tap()
         XCTAssertEqual(app.scrollViews.count, 0)
-        for identifier in ["conversionCategory", "fromUnit", "toUnit", "swapUnits", "copyConversion", "convertKey_0", "convertKey_−"] {
+        for identifier in ["conversionCategory", "fromUnit", "toUnit", "swapUnits", "copyConversion", "convertKey_0", "convertKey_Copy"] {
             let control = app.buttons[identifier]
             XCTAssertTrue(control.isHittable, identifier)
             XCTAssertTrue(app.windows.firstMatch.frame.contains(control.frame), identifier)
@@ -210,6 +210,8 @@ extension UITests {
         XCTAssertTrue(app.buttons["convertKey_EE"].isHittable)
         app.buttons["convertKey_AC"].tap()
         XCTAssertEqual(app.staticTexts["conversionResult"].label, "0")
+        for key in ["5", "EE", "±", "3"] { app.buttons["convertKey_" + key].tap() }
+        XCTAssertEqual(app.staticTexts["conversionInput"].label, "5e-3")
     }
 }
 
@@ -222,7 +224,7 @@ extension UITests {
         app.buttons["base_16"].tap()
         app.buttons["programKey_F"].tap(); app.buttons["programKey_F"].tap()
         XCTAssertEqual(app.buttons["base_10"].value as? String, "255")
-        app.buttons["programKey_AND"].tap(); app.buttons["programKey_F"].tap()
+        app.buttons["programKey_Bits"].tap(); app.buttons["programKey_AND"].tap(); app.buttons["programKey_F"].tap()
         app.buttons["programKey_="].tap()
         XCTAssertEqual(app.buttons["base_10"].value as? String, "15")
         app.buttons["base_2"].tap()
@@ -325,6 +327,12 @@ extension UITests {
         app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
         let graph = app.otherElements["functionGraph"]
         XCTAssertTrue(graph.waitForExistence(timeout: 5))
+        for _ in 0..<12 {
+            if app.buttons["Remove function 2"].exists { app.buttons["Remove function 2"].tap() } else { break }
+        }
+        app.textViews["graphFunction0"].tap(); app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_Functions"].tap(); app.buttons["sin"].tap()
+        for key in ["x", ")", "Plot"] { app.buttons["graphKey_" + key].tap() }
         expectation(for: NSPredicate(format: "value BEGINSWITH %@", "1 curves"), evaluatedWith: graph)
         waitForExpectations(timeout: 10)
         app.buttons["graphReset"].tap()
@@ -472,21 +480,25 @@ extension UITests {
     func testGraphListKeypadAndVariablePicker() {
         let app = XCUIApplication(); app.launch()
         app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        if !app.textViews["graphFunction0"].waitForExistence(timeout: 5) {
+            app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        }
         let expression = app.textViews["graphFunction0"]
         expression.tap(); app.buttons["graphKey_AC"].tap()
         app.buttons["graphKey_Vars"].tap(); app.buttons["C"].tap()
         app.buttons["graphKey_="].tap()
         app.buttons["graphKey_("].press(forDuration: 0.6)
-        for key in ["1", "u", ",", "1", "0", "u"] { app.buttons["graphKey_" + key].tap() }
+        XCTAssertFalse(app.buttons["graphKey_u"].exists)
+        for key in ["1", "EE", "−", "6", ",", "1", "0", "EE", "−", "6"] { app.buttons["graphKey_" + key].tap() }
         app.buttons["graphKey_)"].press(forDuration: 0.6)
-        XCTAssertEqual(expression.value as? String, "C=[1u,10u]")
+        XCTAssertEqual(expression.value as? String, "C=[1e-6,10e-6]")
         app.buttons["graphKey_Vars"].tap()
         XCTAssertTrue(app.buttons["C"].exists)
-        XCTAssertEqual(app.buttons["C"].value as? String, "= [1u,10u]")
+        XCTAssertEqual(app.buttons["C"].value as? String, "= [1e-6,10e-6]")
         let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); shot.name = "Graph variable picker"; shot.lifetime = .keepAlways; add(shot)
         app.buttons["Letters"].tap(); app.buttons["ABC"].tap()
         app.buttons["R"].tap()
-        XCTAssertEqual(expression.value as? String, "C=[1u,10u]R")
+        XCTAssertEqual(expression.value as? String, "C=[1e-6,10e-6]R")
         app.buttons["graphKey_AC"].tap()
         app.buttons["graphKey_Functions"].tap(); app.buttons["sin"].tap()
         for key in ["x", ")"] { app.buttons["graphKey_" + key].tap() }

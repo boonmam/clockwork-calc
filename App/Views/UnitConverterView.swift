@@ -83,14 +83,11 @@ struct UnitConverterView: View {
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(12)
                     .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20))
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
-                    ForEach(["7", "8", "9", "⌫", "4", "5", "6", "AC", "1", "2", "3", "±", "0", ".", "EE", "−"], id: \.self) { key in
-                        Button { press(key) } label: {
-                            Text(key).font(.title2).frame(maxWidth: .infinity).frame(height: 48)
-                                .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
-                        }.buttonStyle(.plain).accessibilityIdentifier("convertKey_\(key)")
-                    }
+                QuickNumberPad(completion: "Copy", identifierPrefix: "convertKey_", keyHeight: 48) { key in
+                    if key == "Next" { UIPasteboard.general.string = output }
+                    else { press(key) }
                 }.frame(width: wide ? min(340, space.size.width * 0.38) : nil)
+
             }.padding(12).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onChange(of: categoryIndex) { _, _ in from = 0; to = 1 }
@@ -107,11 +104,12 @@ struct UnitConverterView: View {
             .accessibilityIdentifier(title == "From unit" ? "fromUnit" : "toUnit")
     }
     private func press(_ key: String) {
-        CalculatorHaptics.keyPress()
         switch key {
         case "AC": input = "0"
         case "⌫": input = String(input.dropLast()); if input.isEmpty || input == "-" { input = "0" }
-        case "±": if input.hasPrefix("-") { input.removeFirst() } else { input = "-" + input }
+        case "±":
+            var selection = NSRange(location: input.utf16.count, length: 0)
+            NumberPadEditing.apply(key, text: &input, selection: &selection)
         case "−": if input.hasSuffix("e") { input += "-" } else if !input.contains("e") { input = "-" + input.replacingOccurrences(of: "-", with: "") }
         case "EE": if !input.contains("e") { input += "e" }
         case ".": if !input.contains(".") && !input.contains("e") { input += "." }

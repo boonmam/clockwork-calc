@@ -2,12 +2,10 @@ import SwiftUI
 
 struct ProgrammerView: View {
     @StateObject private var model = ProgrammerModel()
-    private let keys = ["A", "B", "C", "D", "E", "F",
-                        "AND", "OR", "XOR", "NOT", "AC", "⌫",
-                        "7", "8", "9", "÷", "<<", ">>",
-                        "4", "5", "6", "×", "MOD", "ASR",
-                        "1", "2", "3", "−", "±", "=",
-                        "0", "+"]
+    private let rows = [["Bits", "±", "MOD", "AC", "⌫"],
+                        ["7", "8", "9", "<<", "÷"],
+                        ["4", "5", "6", ">>", "×"],
+                        ["1", "2", "3", "ASR", "−"]]
     var body: some View {
         GeometryReader { space in
             let wide = space.size.width >= 620 || (space.size.width >= 500 && space.size.height < 500)
@@ -46,20 +44,48 @@ struct ProgrammerView: View {
                         }.accessibilityLabel("Copy integer")
                     }
                 }.padding(8).background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 6), spacing: 6) {
-                    ForEach(keys, id: \.self) { key in
-                        Button { press(key) } label: {
-                            Text(key).font(.system(size: key.count > 2 ? 13 : 20, weight: .medium, design: .rounded))
-                                .frame(maxWidth: .infinity).frame(height: 44)
-                                .foregroundStyle(key == "=" ? Color.calculatorAccentText : Color.primary)
-                                .background(key == "=" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
-                        }.buttonStyle(.plain).disabled(disabled(key)).opacity(disabled(key) ? 0.3 : 1)
-                            .accessibilityIdentifier("programKey_\(key)")
-                            .accessibilityLabel(key == "ASR" ? "Arithmetic right shift" : key == ">>" ? "Logical right shift" : key == "<<" ? "Left shift" : key)
+                Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+                    ForEach(rows.indices, id: \.self) { row in
+                        GridRow {
+                            ForEach(rows[row], id: \.self) { key in
+                                if key == "Bits" {
+                                    Menu {
+                                        ForEach(["AND", "OR", "XOR", "NOT"], id: \.self) { operation in
+                                            Button(operation) { press(operation) }.accessibilityIdentifier("programKey_\(operation)")
+                                        }
+                                    } label: { keyLabel(key) }.accessibilityIdentifier("programKey_Bits")
+                                } else { keyButton(key) }
+                            }
+                        }
+                        if row == 0 {
+                            GridRow {
+                                HStack(spacing: 8) {
+                                    ForEach(["A", "B", "C", "D", "E", "F"], id: \.self) { key in keyButton(key) }
+                                }.gridCellColumns(5)
+                            }
+                        }
+                    }
+                    GridRow {
+                        keyButton("0").gridCellColumns(3)
+                        keyButton("+")
+                        keyButton("=")
                     }
                 }.frame(width: wide ? space.size.width * 0.5 : nil)
+
             }.padding(12).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
+    }
+    private func keyLabel(_ key: String) -> some View {
+        Text(key).font(.system(size: key.count > 2 ? 16 : 23, weight: .medium, design: .rounded))
+            .frame(maxWidth: .infinity).frame(height: 44)
+            .foregroundStyle(key == "=" ? Color.calculatorAccentText : (["÷", "×", "−", "+", "AC", "⌫"].contains(key) ? Color.calculatorAccent : Color.primary))
+            .background(key == "=" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+    }
+    private func keyButton(_ key: String) -> some View {
+        Button { press(key) } label: { keyLabel(key) }
+            .buttonStyle(.plain).disabled(disabled(key)).opacity(disabled(key) ? 0.3 : 1)
+            .accessibilityIdentifier("programKey_\(key)")
+            .accessibilityLabel(key == "ASR" ? "Arithmetic right shift" : key == ">>" ? "Logical right shift" : key == "<<" ? "Left shift" : key)
     }
     private func disabled(_ key: String) -> Bool {
         guard key.count == 1, let number = UInt64(key, radix: 16) else { return false }

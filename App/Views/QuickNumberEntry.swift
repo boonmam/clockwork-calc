@@ -70,16 +70,20 @@ struct QuickNumberEntry: UIViewRepresentable {
 }
 
 struct QuickNumberPad: View {
+    var completion = "Next"
+    var identifierPrefix = "numberPad_"
+    var keyHeight: CGFloat = 38
     let press: (String) -> Void
     private let keys = ["7", "8", "9", "⌫", "4", "5", "6", "AC", "1", "2", "3", "±", "0", ".", "EE", "Next"]
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 4), spacing: 6) {
             ForEach(keys, id: \.self) { key in
                 Button { CalculatorHaptics.keyPress(); press(key) } label: {
-                    Text(key).font(.system(size: 19, weight: .medium, design: .rounded))
-                        .frame(maxWidth: .infinity).frame(height: 38)
-                        .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
-                }.buttonStyle(.plain).accessibilityIdentifier("numberPad_\(key)")
+                    Text(key == "Next" ? completion : key).font(.system(size: 19, weight: .medium, design: .rounded))
+                        .frame(maxWidth: .infinity).frame(height: keyHeight)
+                        .foregroundStyle(key == "Next" ? Color.calculatorAccentText : (["AC", "⌫", "EE", "±"].contains(key) ? Color.calculatorAccent : Color.primary))
+                        .background(key == "Next" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+                }.buttonStyle(.plain).accessibilityIdentifier(identifierPrefix + (key == "Next" ? completion : key))
             }
         }.accessibilityIdentifier("quickNumberPad")
     }
