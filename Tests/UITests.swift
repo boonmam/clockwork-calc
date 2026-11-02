@@ -506,3 +506,47 @@ extension UITests {
         let keypad = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); keypad.name = "Refined graph keypad"; keypad.lifetime = .keepAlways; add(keypad)
     }
 }
+
+
+extension UITests {
+    func testGraphJPEGShareAndLegend() {
+        let app = XCUIApplication(); app.launch()
+        if app.buttons["header.closeButton"].exists { app.buttons["header.closeButton"].tap() }
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        if !app.textViews["graphFunction0"].waitForExistence(timeout: 5) {
+            app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        }
+        let first = app.textViews["graphFunction0"]
+        if first.value as? String != "y=C*x" {
+            first.tap(); app.buttons["graphKey_AC"].tap(); app.buttons["Use graph keyboard"].tap()
+            first.typeText("y=C*x\n")
+        }
+        if !app.textViews["graphFunction1"].exists { app.buttons["Add graph function"].tap() }
+        let second = app.textViews["graphFunction1"]
+        if second.value as? String != "C=[1u,10u,30u,60u]" {
+            second.tap(); app.buttons["graphKey_AC"].tap(); app.buttons["Use graph keyboard"].tap()
+            second.typeText("C=[1u,10u,30u,60u]\n")
+        }
+        app.buttons["graphAxes"].tap()
+        for (index, value) in [(0, "0"), (1, "10"), (2, "0"), (3, "0.0006")] {
+            let field = app.textFields["graphAxis\(index)"]
+            field.tap(); field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20)+value)
+        }
+        app.buttons["applyGraphAxes"].tap()
+        let legend = app.scrollViews["graphLegend"]
+        XCTAssertTrue(legend.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["C=60 µ"].exists)
+        let plot = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); plot.name = "On-plot sweep legend"; plot.lifetime = .keepAlways; add(plot)
+        let export = app.buttons["exportGraphJPEG"]
+        expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: export)
+        waitForExpectations(timeout: 5)
+        export.tap()
+        let file = app.otherElements.matching(NSPredicate(format: "label CONTAINS %@", "Clockwork-Calc-Plot-")).firstMatch
+        XCTAssertTrue(file.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.cells["Save to Files"].exists)
+        XCTAssertTrue(app.otherElements.matching(NSPredicate(format: "label BEGINSWITH %@", "JPEG Image")).firstMatch.exists)
+        let share = XCTAttachment(screenshot: XCUIScreen.main.screenshot()); share.name = "JPEG share sheet"; share.lifetime = .keepAlways; add(share)
+        app.buttons["header.closeButton"].tap()
+        XCTAssertTrue(app.buttons["exportGraphJPEG"].waitForExistence(timeout: 5))
+    }
+}

@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 @testable import ClockworkCalc
 final class GraphTests: XCTestCase {
     func testCompiledFunctionsAndDomains() throws {
@@ -137,5 +138,29 @@ extension GraphTests {
         XCTAssertTrue(oversized.errors.values.contains { $0.contains("16") })
         let sampled = GraphSampler.sampleAll([GraphEquation(expression: "y=C*x"), GraphEquation(expression: "C=[1u,10u,30u,60u]")], window: GraphWindow(), constants: [:])
         XCTAssertEqual(sampled.filter { !$0.segments.isEmpty }.count, 4)
+    }
+}
+
+
+extension GraphTests {
+    @MainActor func testJPEGExportIncludesEverySweepLegendEntry() throws {
+        let equations = [GraphEquation(expression: "y=(1-x/50)*(101*M)*C"),
+                         GraphEquation(expression: "M=1/(1-(x/120)^n)"),
+                         GraphEquation(expression: "C=[1u,10u,30u,60u]")]
+        let window = try GraphWindow.bounds(xMin: 0, xMax: 100, yMin: -0.02, yMax: 0.01)
+        let curves = GraphSampler.sampleAll(equations, window: window, constants: ["n": 2])
+        let entries = GraphLegendEntry.entries(equations: equations, curves: curves)
+        XCTAssertEqual(entries.map(\.label), ["C=1 µ", "C=10 µ", "C=30 µ", "C=60 µ"])
+        XCTAssertEqual(Set(entries.map(\.id)).count, 4)
+        let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: [GraphConstant(name: "n", value: 2)])
+        defer { try? FileManager.default.removeItem(at: url) }
+        let data = try Data(contentsOf: url)
+        XCTAssertEqual(Array(data.prefix(3)), [0xff, 0xd8, 0xff])
+        let image = try XCTUnwrap(UIImage(data: data)?.cgImage)
+        XCTAssertEqual(image.width, 2000)
+        XCTAssertGreaterThan(image.height, 1500)
+        let attachment = XCTAttachment(contentsOfFile: url); attachment.name = "Four-value plot JPEG"; attachment.lifetime = .keepAlways; add(attachment)
+        var hidden = equations; hidden[0].visible = false
+        XCTAssertTrue(GraphLegendEntry.entries(equations: hidden, curves: curves).isEmpty)
     }
 }

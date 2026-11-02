@@ -15,6 +15,10 @@ struct GraphingView: View {
     @State private var variablesPresented = false
     @State private var variableLetters = false
     @State private var uppercaseVariables = false
+    @State private var sampledRequest: GraphRequest?
+    @State private var exportFile: GraphExportFile?
+    @State private var exportURL: URL?
+    @State private var exportError: String?
     @State private var axesPresented = false
     @State private var constantEditor: GraphConstant?
     @State private var curves: [GraphCurve] = []
@@ -22,7 +26,7 @@ struct GraphingView: View {
     @State private var editing: UUID?
     @State private var graphKeyboardVisible = false
     @State private var selections: [UUID: NSRange] = [:]
-    private let colors: [Color] = [.cyan, .orange, .pink, .green, .purple, .yellow, .blue, .mint]
+    private let colors = GraphPlotCanvas.colors
     init() {
         let saved = UserDefaults.standard.data(forKey: "graphEquations")
         let decoded = saved.flatMap { try? JSONDecoder().decode([GraphEquation].self, from: $0) }
@@ -71,12 +75,12 @@ struct GraphingView: View {
         }
         .task(id: request) {
             guard !Task.isCancelled else { return }
-            let equations = equations, window = window, values = constantValues
+            let equations = equations, window = window, values = constantValues, target = request
             let sampling = Task.detached(priority: .userInitiated) {
                 GraphSampler.sampleAll(equations, window: window, constants: values)
             }
             let sampled = await withTaskCancellationHandler(operation: { await sampling.value }, onCancel: { sampling.cancel() })
-            if !Task.isCancelled { curves = sampled }
+            if !Task.isCancelled { curves = sampled; sampledRequest = target }
         }
         .onChange(of: equations) { _, value in
             if let data = try? JSONEncoder().encode(value) { UserDefaults.standard.set(data, forKey: "graphEquations") }
@@ -87,6 +91,13 @@ struct GraphingView: View {
         .onChange(of: window) { _, value in
             if value.isValid, let data = try? JSONEncoder().encode(value) { UserDefaults.standard.set(data, forKey: "graphWindow") }
         }
+        .sheet(item: $exportFile, onDismiss: {
+            if let exportURL { try? FileManager.default.removeItem(at: exportURL) }
+            exportURL = nil
+        }) { file in GraphShareSheet(url: file.url) }
+        .alert("Could not export plot", isPresented: Binding(get: { exportError != nil }, set: { if !$0 { exportError = nil } })) {
+            Button("OK") { exportError = nil }
+        } message: { Text(exportError ?? "") }
         .sheet(item: $constantEditor) { constant in
             GraphConstantEditor(constant: constant, usedNames: constants.filter { $0.id != constant.id }.map(\.name)) { updated in
                 if let index = constants.firstIndex(where: { $0.id == updated.id }) { constants[index] = updated }
@@ -330,11 +341,13 @@ struct GraphingView: View {
                         GraphAxesEditor(window: $window).frame(width: 260)
                             .presentationCompactAdaptation(.popover)
                     }
-                Spacer()
-                Text("Drag · pinch · tap to inspect").font(.caption2).foregroundStyle(.secondary)
+                Spacer(minLength: 0)
+                Button { exportPlot() } label: { Image(systemName: "square.and.arrow.up") }
+                    .accessibilityLabel("Export plot as JPEG").accessibilityIdentifier("exportGraphJPEG")
+                    .disabled(sampledRequest != request || !curves.contains { !$0.segments.isEmpty })
             }.buttonStyle(.bordered)
             GeometryReader { geometry in
-                Canvas { context, size in draw(context: &context, size: size) }
+                GraphPlotCanvas(equations: equations, window: window, curves: curves, traceX: traceX)
                     .background(Color(uiColor: .secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .contentShape(Rectangle())
@@ -352,11 +365,44 @@ struct GraphingView: View {
                     .accessibilityLabel("Function graph")
                     .accessibilityValue(graphDescription)
                     .accessibilityIdentifier("functionGraph")
+                    .overlay(alignment: .topTrailing) {
+                        let entries = GraphLegendEntry.entries(equations: equations, curves: curves)
+                        if !entries.isEmpty {
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    ForEach(entries) { entry in GraphLegendRow(entry: entry).font(.caption2) }
+                                }.padding(7)
+                            }
+                            .frame(width: min(140, geometry.size.width * 0.48), height: min(CGFloat(entries.count) * 20 + 14, geometry.size.height * 0.48))
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+                            .padding(6).accessibilityIdentifier("graphLegend")
+                        }
+                    }
             }
         }
     }
     private var graphDescription: String {
         "\(curves.filter { !$0.segments.isEmpty }.count) curves; x from \(window.xMin) to \(window.xMax); y from \(window.yMin) to \(window.yMax)"
+    }
+    @MainActor private func exportPlot() {
+        finishEditing()
+        do {
+            let url = try GraphJPEGExport.write(equations: equations, window: window, curves: curves, constants: constants)
+            exportURL = url; exportFile = GraphExportFile(url: url)
+        } catch { exportError = error.localizedDescription }
+    }
+
+}
+
+struct GraphPlotCanvas: View {
+    let equations: [GraphEquation]
+    let window: GraphWindow
+    let curves: [GraphCurve]
+    var traceX: Double? = nil
+    static let colors: [Color] = [.cyan, .orange, .pink, .green, .purple, .yellow, .blue, .mint]
+    private var colors: [Color] { Self.colors }
+    var body: some View {
+        Canvas { context, size in draw(context: &context, size: size) }.clipped()
     }
     private func draw(context: inout GraphicsContext, size: CGSize) {
         func px(_ x: Double) -> CGFloat { (x-window.xMin)/window.spanX * size.width }
@@ -400,6 +446,80 @@ struct GraphingView: View {
             }
         }
     }
+}
+
+struct GraphLegendEntry: Identifiable {
+    let id: String
+    let label: String
+    let color: Color
+    static func entries(equations: [GraphEquation], curves: [GraphCurve]) -> [Self] {
+        let plotCount = equations.filter { $0.visible && $0.definitionName == nil }.count
+        return equations.enumerated().flatMap { index, equation -> [Self] in
+            guard equation.visible, equation.definitionName == nil else { return [] }
+            return curves.filter { $0.id == equation.id && $0.evaluate != nil }.map { curve in
+                let label = curve.seriesLabel.map { (plotCount > 1 ? "\(index+1): " : "") + $0 } ?? equation.expression
+                return Self(id: "\(equation.id)-\(curve.variant)", label: label,
+                            color: GraphPlotCanvas.colors[(index+curve.variant) % GraphPlotCanvas.colors.count])
+            }
+        }
+    }
+}
+private struct GraphLegendRow: View {
+    let entry: GraphLegendEntry
+    var body: some View {
+        HStack(alignment: .center, spacing: 7) {
+            RoundedRectangle(cornerRadius: 1).fill(entry.color).frame(width: 18, height: 3)
+            Text(entry.label).fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }.accessibilityElement(children: .combine)
+    }
+}
+
+@MainActor enum GraphJPEGExport {
+    static func write(equations: [GraphEquation], window: GraphWindow, curves: [GraphCurve], constants: [GraphConstant]) throws -> URL {
+        let entries = GraphLegendEntry.entries(equations: equations, curves: curves)
+        let content = VStack(alignment: .leading, spacing: 18) {
+            Text("Clockwork Calc · Plot").font(.system(size: 24, weight: .semibold))
+            GraphPlotCanvas(equations: equations, window: window, curves: curves)
+                .frame(height: 620)
+                .background(Color(white: 0.10))
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
+                ForEach(entries) { entry in GraphLegendRow(entry: entry).font(.system(size: 17)) }
+            }
+            Text("X: \(String(format: "%.6g", window.xMin)) to \(String(format: "%.6g", window.xMax))    Y: \(String(format: "%.6g", window.yMin)) to \(String(format: "%.6g", window.yMax))")
+                .font(.system(size: 14)).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 7) {
+                ForEach(Array(equations.enumerated()).filter { $0.element.visible || $0.element.definitionName != nil }, id: \.element.id) { index, equation in
+                    Text("\(index+1): \(equation.expression)").font(.system(size: 15, design: .monospaced)).fixedSize(horizontal: false, vertical: true)
+                }
+                if !constants.isEmpty {
+                    Text(constants.map { $0.name + " = " + String(format: "%.6g", $0.value) }.joined(separator: "   ·   "))
+                        .font(.system(size: 15, design: .monospaced)).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }.padding(28).frame(width: 1000).background(Color.black).foregroundStyle(.white)
+            .environment(\.colorScheme, .dark)
+        let renderer = ImageRenderer(content: content)
+        renderer.scale = 2
+        renderer.isOpaque = true
+        guard let image = renderer.uiImage, let data = image.jpegData(compressionQuality: 0.95) else {
+            throw CalculationError(message: "The plot image could not be created. Please try again.")
+        }
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Clockwork-Calc-Plot-" + UUID().uuidString + ".jpg")
+        try data.write(to: url, options: .atomic)
+        return url
+    }
+}
+private struct GraphExportFile: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+private struct GraphShareSheet: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 private struct GraphAxesEditor: View {
