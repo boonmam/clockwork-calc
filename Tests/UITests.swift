@@ -449,3 +449,20 @@ extension UITests {
         waitForExpectations(timeout: 10)
     }
 }
+
+
+extension UITests {
+    func testGraphBracketLongPress() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Graphing"].tap()
+        let expression = app.textViews["graphFunction0"]
+        expression.tap(); app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_("].tap(); app.buttons["graphKey_)"].tap()
+        XCTAssertEqual(expression.value as? String, "()")
+        app.buttons["graphKey_AC"].tap()
+        app.buttons["graphKey_("].press(forDuration: 0.6)
+        app.buttons["graphKey_1"].tap()
+        app.buttons["graphKey_)"].press(forDuration: 0.6)
+        XCTAssertEqual(expression.value as? String, "[1]")
+    }
+}

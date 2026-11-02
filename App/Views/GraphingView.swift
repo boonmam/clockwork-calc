@@ -208,6 +208,26 @@ struct GraphingView: View {
                             }
                         }
                     } label: { graphKeyLabel(key, height: height) }.accessibilityIdentifier("graphKey_Vars")
+                } else if key == "(" || key == ")" {
+                    let bracket = key == "(" ? "[" : "]"
+                    graphKeyLabel(key, height: height)
+                        .overlay(alignment: .topTrailing) {
+                            Text(bracket).font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary).padding(5)
+                        }
+                        .contentShape(Rectangle())
+                        .gesture(LongPressGesture(minimumDuration: 0.4).exclusively(before: TapGesture()).onEnded { value in
+                            switch value {
+                            case .first: insertGraphKey(bracket)
+                            case .second: insertGraphKey(key)
+                            }
+                        })
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityLabel(key)
+                        .accessibilityHint("Hold to insert \(bracket)")
+                        .accessibilityAction { insertGraphKey(key) }
+                        .accessibilityAction(named: Text("Insert \(bracket)")) { insertGraphKey(bracket) }
+                        .accessibilityIdentifier("graphKey_\(key)")
                 } else {
                     Button { insertGraphKey(key) } label: { graphKeyLabel(key, height: height) }
                         .buttonStyle(.plain).accessibilityIdentifier("graphKey_\(key)")
