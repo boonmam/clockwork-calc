@@ -73,15 +73,18 @@ struct CalculatorView: View {
                 Button("Solve an equation or system") { model.casSolve = true }
                     .font(.caption).frame(maxWidth: .infinity, alignment: .leading)
             }
+
+        }.disabled(model.busy)
+    }
+    private var casCalculateButton: some View {
             Button {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 model.calculate()
             } label: {
-                HStack { if model.busy { ProgressView() }; Label(model.casSolve ? "Solve" : "Calculate", systemImage: "equal") }
+                HStack { if model.busy { ProgressView() }; Text(model.casSolve ? "Solve" : "Calculate") }
                     .frame(maxWidth: .infinity)
             }.buttonStyle(.borderedProminent).disabled(model.busy || model.expression.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .accessibilityIdentifier("casCalculate")
-        }.disabled(model.busy)
     }
     private var resultPanel: some View {
         VStack(spacing: 12) {
@@ -139,8 +142,8 @@ struct CalculatorView: View {
                             .disabled(key == "=" && model.busy)
                     }
                 }
-            } else {
-                Button(action: model.calculate) { HStack { if model.busy { ProgressView() }; Text("Calculate").bold(); Image(systemName: "equal") }.frame(maxWidth: .infinity) }
+            } else if model.mode != .cas {
+                Button(action: model.calculate) { HStack { if model.busy { ProgressView() }; Text("Calculate").bold() }.frame(maxWidth: .infinity) }
                     .buttonStyle(.borderedProminent).disabled(model.busy).accessibilityIdentifier("calculateButton")
             }        }
     }
