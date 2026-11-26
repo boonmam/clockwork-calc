@@ -136,11 +136,11 @@ struct CalculatorView: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 5), spacing: 8) {
                     ForEach(keys, id: \.self) { key in
                         Button { press(key) } label: {
-                            Text(key == "to" ? "Units" : key == "x" ? keypadVariable : key).font(.system(size: key.count > 2 || key == "to" ? 18 : 23, weight: key == "=" ? .bold : .medium, design: .rounded))
+                            Text(key == "to" ? "Units" : key == "x" ? keypadVariable : key).font(.system(size: key.count > 2 || key == "to" ? 18 : 23, weight: key == "=" && model.mode != .cas ? .bold : .medium, design: .rounded))
                                 .frame(maxWidth: .infinity).frame(height: keyHeight)
-                                .foregroundStyle(key == "=" ? Color.calculatorAccentText : (isOperator(key) ? Color.calculatorAccent : Color.primary))
-                                .background(key == "=" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
-                        }.buttonStyle(.plain).accessibilityLabel(key == "x" ? keypadVariable : accessibilityName(key)).accessibilityIdentifier("key_\(key)")
+                                .foregroundStyle(key == "=" ? (model.mode == .cas ? Color.calculatorAccent : Color.calculatorAccentText) : (isOperator(key) ? Color.calculatorAccent : Color.primary))
+                                .background(key == "=" ? (model.mode == .cas ? Color(uiColor: .secondarySystemBackground) : Color.calculatorAccent) : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+                        }.buttonStyle(.plain).accessibilityLabel(key == "x" ? keypadVariable : key == "=" && model.mode == .cas ? "Insert equals sign" : accessibilityName(key)).accessibilityIdentifier("key_\(key)")
                             .disabled(key == "=" && model.busy)
                             .contextMenu {
                                 if key == "x" {
@@ -276,7 +276,8 @@ struct CalculatorView: View {
     private func press(_ key: String) {
         CalculatorHaptics.keyPress()
         switch key {
-        case "=": model.calculate()
+        case "=":
+            if model.mode == .cas { model.insert("=") } else { model.calculate() }
         case "AC": model.clear()
         case "EE": model.insertExponent()
         case "⌫": model.backspace()
