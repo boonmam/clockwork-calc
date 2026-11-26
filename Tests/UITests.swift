@@ -610,3 +610,26 @@ extension UITests {
         shot.name = "CAS equation solver"; shot.lifetime = .keepAlways; add(shot)
     }
 }
+
+
+extension UITests {
+    func testCASVariableKeyAndOperatorColumn() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["CAS"].tap()
+        app.buttons["key_AC"].tap()
+        let equals = app.buttons["key_="]
+        var previousY = CGFloat.zero
+        for key in ["÷", "×", "−", "+", "="] {
+            let frame = app.buttons["key_\(key)"].frame
+            XCTAssertEqual(frame.midX, equals.frame.midX, accuracy: 1)
+            XCTAssertGreaterThan(frame.midY, previousY); previousY = frame.midY
+        }
+        let variable = app.buttons["key_x"]
+        variable.press(forDuration: 1)
+        app.buttons["casVariable_y"].tap()
+        XCTAssertEqual(variable.label, "y")
+        variable.tap()
+        XCTAssertEqual(app.textViews["expressionEditor"].value as? String, "y")
+        variable.press(forDuration: 1); app.buttons["casVariable_x"].tap()
+    }
+}

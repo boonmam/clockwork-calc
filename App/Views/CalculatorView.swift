@@ -12,13 +12,14 @@ struct CalculatorView: View {
     @State private var conversionMode = false
     @State private var programmerMode = false
     @State private var verticalToolbar = false
+    @AppStorage("casKeypadVariable") private var keypadVariable = "x"
     private var keys: [String] {
         ["sin", "cos", "tan", "AC", "⌫",
-         "ln", "√", "^", "(", ")",
-         "7", "8", "9", "EE", "÷",
-         "4", "5", "6", "π", "×",
-         "1", "2", "3", "Ans", "−",
-         "0", ".", "to", "+", "="]
+         "ln", "√", "^", "EE", "÷",
+         "7", "8", "9", "π", "×",
+         "4", "5", "6", "Ans", "−",
+         "1", "2", "3", "(", "+",
+         "0", ".", "to", ")", "="]
             .map { model.mode == .cas && $0 == "to" ? "x" : $0 }
     }
 
@@ -90,6 +91,7 @@ struct CalculatorView: View {
         VStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 0) {
                 expressionInput
+                if model.mode == .cas { casCalculateButton.padding(.horizontal, 16).padding(.bottom, 12) }
                 if let result = model.result {
                     MathView(calculation: result).frame(minHeight: 120)
                     HStack {
@@ -134,12 +136,21 @@ struct CalculatorView: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 5), spacing: 8) {
                     ForEach(keys, id: \.self) { key in
                         Button { press(key) } label: {
-                            Text(key == "to" ? "Units" : key).font(.system(size: key.count > 2 || key == "to" ? 18 : 23, weight: key == "=" ? .bold : .medium, design: .rounded))
+                            Text(key == "to" ? "Units" : key == "x" ? keypadVariable : key).font(.system(size: key.count > 2 || key == "to" ? 18 : 23, weight: key == "=" ? .bold : .medium, design: .rounded))
                                 .frame(maxWidth: .infinity).frame(height: keyHeight)
                                 .foregroundStyle(key == "=" ? Color.calculatorAccentText : (isOperator(key) ? Color.calculatorAccent : Color.primary))
                                 .background(key == "=" ? Color.calculatorAccent : Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
-                        }.buttonStyle(.plain).accessibilityLabel(accessibilityName(key)).accessibilityIdentifier("key_\(key)")
+                        }.buttonStyle(.plain).accessibilityLabel(key == "x" ? keypadVariable : accessibilityName(key)).accessibilityIdentifier("key_\(key)")
                             .disabled(key == "=" && model.busy)
+                            .contextMenu {
+                                if key == "x" {
+                                    ForEach(["x", "y", "z", "u", "v", "t", "a", "b", "c", "n"], id: \.self) { variable in
+                                        Button(variable) { keypadVariable = variable; CalculatorHaptics.keyPress() }
+                                            .accessibilityIdentifier("casVariable_\(variable)")
+                                    }
+                                }
+                            }
+                            .accessibilityHint(key == "x" ? "Touch and hold to choose a variable" : "")
                     }
                 }
             } else if model.mode != .cas {
@@ -276,6 +287,7 @@ struct CalculatorView: View {
         case "×": model.insertOperator("*")
         case "−": model.insertOperator("-")
         case "+", "^": model.insertOperator(key)
+        case "x": model.insert(keypadVariable)
         case "to": model.insert(" to ")
         default: model.insert(key)
         }
