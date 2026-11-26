@@ -349,3 +349,14 @@ Power defaults to Keypad; other tabs default to Keyboard. Tap an input field to
 choose it, then use the on-screen number pad. EE inserts an exponent; ± changes
 the exponent sign when entering one, otherwise the number sign. Next selects
 the next field. The standard editing menu remains available in number fields.
+
+## CAS equation entry — build 41
+
+In CAS mode, choose **Solve**, enter a plain equation such as `2*x+3=9`,
+set **Solve for** to `x`, and tap **Solve**. The **= sign** button inserts an
+actual equation sign; **+** adds an equation separator. For a linear system,
+enter `x+y=3; x-y=1` and set the variables to `x, y`. Single-variable
+expressions without an equals sign are solved equal to zero. Use **Evaluate**
+for algebra commands, matrices, derivatives, and integrals. Systems currently
+require linear equations; general single-equation solving may return incomplete
+solutions, as indicated in the calculation notes.

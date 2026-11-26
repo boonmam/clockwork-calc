@@ -147,3 +147,42 @@ extension CASTests {
         }
     }
 }
+
+extension CASTests {
+    func testPlainEquationSolveInput() async throws {
+        let command = try CASSolveInput.command(equations: "2*x + 3 = 9", variables: "x")
+        let result = try await cas(command)
+        XCTAssertTrue(result.text.contains("3"), result.text)
+        let rearranged = try await cas(CASSolveInput.command(equations: "V=I*R", variables: "R"))
+        XCTAssertEqual(rearranged.text, "{V*I^-1}")
+        let system = try await cas(CASSolveInput.command(equations: "x+y=3; x-y=1", variables: "x, y"))
+        XCTAssertEqual(system.text, "[{x => 2, y => 1}]")
+        XCTAssertEqual(try CASSolveInput.command(equations: "x+y=3\nx-y=1", variables: "x,y"), "linsolve([x+y=3,x-y=1],[x,y])")
+        for variables in ["", "x,x", "x)", "pi", "x,"] {
+            XCTAssertThrowsError(try CASSolveInput.command(equations: "x=1", variables: variables))
+        }
+        for source in ["", "x=", "=2", "x=2=3"] {
+            XCTAssertThrowsError(try CASSolveInput.command(equations: source, variables: "x"))
+        }
+    }
+    @MainActor func testSolvePreservesEquationAndReformatsResult() async throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let model = CalculatorModel(historyURL: url)
+        model.mode = .cas; model.casSolve = true; model.casVariables = "x"
+        model.expression = "3*x=1"; model.notation = .exact; model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(50)) }
+        XCTAssertNil(model.error)
+        XCTAssertEqual(model.expression, "3*x=1")
+        XCTAssertEqual(model.history.first?.expression, "solve(3*x=1,x)")
+        model.setNotation(.decimal)
+        while model.busy { try await Task.sleep(for: .milliseconds(50)) }
+        XCTAssertNil(model.error)
+        let saved = try XCTUnwrap(model.history.first)
+        model.recall(saved)
+        XCTAssertFalse(model.casSolve)
+        model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(50)) }
+        XCTAssertNil(model.error)
+    }
+}

@@ -50,6 +50,39 @@ struct CalculatorView: View {
             }
         }
     }
+    private var casControls: some View {
+        VStack(spacing: 8) {
+            Picker("CAS action", selection: $model.casSolve) {
+                Text("Evaluate").tag(false)
+                Text("Solve").tag(true)
+            }.pickerStyle(.segmented).accessibilityIdentifier("casAction")
+            if model.casSolve {
+                HStack {
+                    Text("Solve for").font(.subheadline)
+                    TextField("x or x, y", text: $model.casVariables)
+                        .textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .textFieldStyle(.roundedBorder).accessibilityIdentifier("casVariables")
+                    Button("= sign") { model.insert("=") }
+                        .accessibilityLabel("Insert equals sign").accessibilityIdentifier("casInsertEquals")
+                    Button { model.insert("; ") } label: { Image(systemName: "plus") }
+                        .accessibilityLabel("Add equation").accessibilityIdentifier("casAddEquation")
+                }
+                Text("Separate equations with ; and list system variables with commas. Systems must be linear.")
+                    .font(.caption).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Button("Solve an equation or system") { model.casSolve = true }
+                    .font(.caption).frame(maxWidth: .infinity, alignment: .leading)
+            }
+            Button {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                model.calculate()
+            } label: {
+                HStack { if model.busy { ProgressView() }; Label(model.casSolve ? "Solve" : "Calculate", systemImage: "equal") }
+                    .frame(maxWidth: .infinity)
+            }.buttonStyle(.borderedProminent).disabled(model.busy || model.expression.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .accessibilityIdentifier("casCalculate")
+        }.disabled(model.busy)
+    }
     private var resultPanel: some View {
         VStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 0) {
@@ -120,6 +153,7 @@ struct CalculatorView: View {
             layout {
                 VStack(spacing: 12) {
                     calculationSettings
+                    if model.mode == .cas { casControls }
                     GeometryReader { resultSpace in
                         ScrollView {
                             resultPanel.frame(minHeight: resultSpace.size.height)

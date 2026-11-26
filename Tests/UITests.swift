@@ -591,3 +591,22 @@ extension UITests {
         app.alerts["Saved to Photos"].buttons["OK"].tap()
     }
 }
+
+
+extension UITests {
+    func testCASPlainEquationControls() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["CAS"].tap()
+        app.segmentedControls["casAction"].buttons["Solve"].tap()
+        XCTAssertTrue(app.buttons["casCalculate"].exists)
+        app.buttons["key_AC"].tap()
+        app.buttons["key_2"].tap(); app.buttons["key_×"].tap(); app.buttons["key_x"].tap()
+        app.buttons["key_+"].tap(); app.buttons["key_3"].tap()
+        app.buttons["casInsertEquals"].tap(); app.buttons["key_9"].tap()
+        app.buttons["casCalculate"].tap()
+        XCTAssertTrue(app.buttons["copyResult"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts["calculationError"].exists)
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.name = "CAS equation solver"; shot.lifetime = .keepAlways; add(shot)
+    }
+}

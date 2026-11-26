@@ -38,6 +38,8 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
 
 @MainActor final class CalculatorModel: ObservableObject {
     @Published var expression = ""
+    @Published var casSolve = false
+    @Published var casVariables = "x"
     @Published var selection = NSRange(location: 0, length: 0)
     @Published var result: Calculation?
     @Published var history: [Calculation] = []
@@ -106,6 +108,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     func clear() { resultBases = [:]; result = nil; expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
     func recall(_ item: Calculation) {
         resultBases = [:]
+        casSolve = false
         expression = item.expression; selection = NSRange(location: (expression as NSString).length, length: 0)
         result = item; mode = item.mode ?? .calculator
         if let savedNotation = item.notation { notation = savedNotation }
@@ -113,8 +116,12 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         error = nil
     }
     func calculate() {
-        let input = expression.trimmingCharacters(in: .whitespacesAndNewlines)
+        var input = expression.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !input.isEmpty, !busy else { return }
+        if mode == .cas && casSolve {
+            do { input = try CASSolveInput.command(equations: input, variables: casVariables) }
+            catch { self.error = error.localizedDescription; return }
+        }
         busy = true; error = nil; result = nil; resultBases = [:]
         let notation = notation, degrees = degrees, mode = mode
         calculationTask = Task {
@@ -169,6 +176,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     func cancelCalculation() { calculationTask?.cancel() }
     func example(_ expression: String, mode: CalculationMode? = nil) {
         if let mode { self.mode = mode }
+        casSolve = false
         self.expression = expression; selection = NSRange(location: (expression as NSString).length, length: 0); calculate()
     }
     func deleteHistory(at offsets: IndexSet) { history.remove(atOffsets: offsets); persist() }

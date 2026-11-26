@@ -81,3 +81,31 @@ import WebKit
         decisionHandler(action.request.url?.isFileURL == true ? .allow : .cancel)
     }
 }
+
+/// Builds solver calls without changing the user's editable equations.
+enum CASSolveInput {
+    static func command(equations source: String, variables sourceVariables: String) throws -> String {
+        let variables = sourceVariables.split(separator: ",", omittingEmptySubsequences: false)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        guard !variables.isEmpty, variables.count <= 8,
+              Set(variables).count == variables.count,
+              variables.allSatisfy({ $0.range(of: "^[A-Za-z][A-Za-z0-9_]*$", options: .regularExpression) != nil && !["pi", "e", "i", "Infinity"].contains($0) }) else {
+            throw CalculationError(message: "Enter a variable such as x, or distinct system variables separated by commas, such as x, y.")
+        }
+        let equations = source.components(separatedBy: CharacterSet(charactersIn: ";\n"))
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        guard !equations.isEmpty, equations.count <= 8 else {
+            throw CalculationError(message: "Enter one to eight equations, separated by semicolons or new lines.")
+        }
+        for equation in equations {
+            let sides = equation.components(separatedBy: "=")
+            guard sides.count <= 2, sides.allSatisfy({ !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else {
+                throw CalculationError(message: "Each equation needs a left and right side, for example 2*x + 3 = 9.")
+            }
+        }
+        if equations.count == 1 && variables.count == 1 {
+            return "solve(\(equations[0]),\(variables[0]))"
+        }
+        return "linsolve([\(equations.joined(separator: ","))],[\(variables.joined(separator: ","))])"
+    }
+}
