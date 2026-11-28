@@ -30,7 +30,11 @@ struct CalculatorView: View {
         }
         .sheet(isPresented: $historyPresented) { NavigationStack { HistoryView().navigationTitle("History").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { historyPresented = false } } } } }
         .sheet(isPresented: $aboutPresented) { AboutView() }
-        .sheet(isPresented: $variablesPresented) { StoredVariablesView() }
+        .sheet(isPresented: $variablesPresented) {
+            StoredVariablesView()
+                .presentationDetents([.height(380), .large])
+                .presentationDragIndicator(.visible)
+        }
         .alert("Calculation notes", isPresented: $notesPresented) { Button("Done", role: .cancel) {} } message: {
             Text(model.result?.warnings.joined(separator: "\n\n") ?? "")
         }
@@ -409,10 +413,12 @@ private struct StoredVariablesView: View {
                     HStack {
                         TextField("Name", text: $name).textInputAutocapitalization(.never).autocorrectionDisabled()
                             .accessibilityIdentifier("storedVariableName")
-                        Button(model.storedVariables[name] == nil ? "Save Ans" : "Replace") {
+                        Button(model.storedVariables[name] == nil ? "Save" : "Replace") {
                             do { try model.storeAnswer(as: name); message = nil }
                             catch { message = error.localizedDescription }
-                        }.disabled(model.result == nil && model.history.isEmpty).accessibilityIdentifier("storeAnswer")
+                        }.buttonStyle(.borderedProminent).tint(Color.calculatorAccent)
+                            .foregroundStyle(Color.calculatorAccentText).fontWeight(.semibold)
+                            .disabled(model.result == nil && model.history.isEmpty).accessibilityIdentifier("storeAnswer")
                     }
                     if let message { Text(message).foregroundStyle(.red) }
                 }
