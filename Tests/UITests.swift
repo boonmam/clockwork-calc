@@ -634,3 +634,24 @@ extension UITests {
         variable.press(forDuration: 1); app.buttons["casVariable_x"].tap()
     }
 }
+
+
+extension UITests {
+    func testSaveAndReuseAnswerVariable() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Calculator"].tap()
+        app.buttons["key_AC"].tap()
+        app.buttons["key_2"].tap(); app.buttons["key_+"].tap(); app.buttons["key_3"].tap(); app.buttons["key_="].tap()
+        XCTAssertTrue(app.buttons["saveAnswer"].waitForExistence(timeout: 5))
+        app.buttons["saveAnswer"].tap(); app.buttons["storeAnswer"].tap()
+        XCTAssertTrue(app.buttons["useVariable_x"].waitForExistence(timeout: 5))
+        app.buttons["useVariable_x"].tap()
+        XCTAssertEqual(app.textViews["expressionEditor"].value as? String, "x")
+        app.buttons["key_×"].tap(); app.buttons["key_2"].tap(); app.buttons["key_="].tap()
+        XCTAssertTrue(app.buttons["copyResult"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["copyResult"].value as? String, "10")
+        app.buttons["key_7"].tap()
+        XCTAssertEqual(app.textViews["expressionEditor"].value as? String, "7")
+        XCTAssertFalse(app.buttons["copyResult"].exists)
+    }
+}

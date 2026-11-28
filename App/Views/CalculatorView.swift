@@ -7,6 +7,7 @@ struct CalculatorView: View {
     @State private var keyboardVisible = false
     @State private var matrixPresented = false
     @State private var notesPresented = false
+    @State private var variablesPresented = false
     @State private var graphMode = false
     @State private var quickCalcMode = false
     @State private var conversionMode = false
@@ -29,6 +30,7 @@ struct CalculatorView: View {
         }
         .sheet(isPresented: $historyPresented) { NavigationStack { HistoryView().navigationTitle("History").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { historyPresented = false } } } } }
         .sheet(isPresented: $aboutPresented) { AboutView() }
+        .sheet(isPresented: $variablesPresented) { StoredVariablesView() }
         .alert("Calculation notes", isPresented: $notesPresented) { Button("Done", role: .cancel) {} } message: {
             Text(model.result?.warnings.joined(separator: "\n\n") ?? "")
         }
@@ -97,6 +99,9 @@ struct CalculatorView: View {
                     HStack {
                         if model.busy { ProgressView().controlSize(.small) }
                         Spacer()
+                        if model.mode == .calculator {
+                            Button("Save Ans") { variablesPresented = true }.accessibilityIdentifier("saveAnswer")
+                        }
                         Button { model.insert("(" + result.text + ")") } label: { Label("Use result", systemImage: "arrow.down.left") }
                         Button { UIPasteboard.general.string = result.text } label: { Label("Copy", systemImage: "doc.on.doc") }
                             .accessibilityIdentifier("copyResult").accessibilityValue(result.text)
@@ -167,6 +172,11 @@ struct CalculatorView: View {
             layout {
                 VStack(spacing: 12) {
                     calculationSettings
+                    if model.mode == .calculator {
+                        Button { variablesPresented = true } label: {
+                            Label("Variables · \(model.storedVariables.count)", systemImage: "tray.full")
+                        }.accessibilityIdentifier("storedVariables")
+                    }
                     if model.mode == .cas { casControls }
                     GeometryReader { resultSpace in
                         ScrollView {
@@ -290,6 +300,7 @@ struct CalculatorView: View {
         case "+", "^": model.insertOperator(key)
         case "x": model.insert(keypadVariable)
         case "to": model.insert(" to ")
+        case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".": model.insertDigit(key)
         default: model.insert(key)
         }
     }
@@ -380,4 +391,60 @@ private struct VerticalToolbarPreference: PreferenceKey {
 private struct ToolbarEdgeReader: View {
     @Environment(\.toolbarVerticalEdge) private var edge
     var body: some View { Color.clear.preference(key: VerticalToolbarPreference.self, value: edge != nil) }
+}
+
+private struct StoredVariablesView: View {
+    @EnvironmentObject private var model: CalculatorModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var name = "x"
+    @State private var message: String?
+    @State private var confirmClear = false
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Save answer as variable") {
+                    if let answer = model.result ?? model.history.first {
+                        Text(answer.presentedText).font(.system(.body, design: .monospaced)).textSelection(.enabled)
+                    }
+                    HStack {
+                        TextField("Name", text: $name).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            .accessibilityIdentifier("storedVariableName")
+                        Button(model.storedVariables[name] == nil ? "Save Ans" : "Replace") {
+                            do { try model.storeAnswer(as: name); message = nil }
+                            catch { message = error.localizedDescription }
+                        }.disabled(model.result == nil && model.history.isEmpty).accessibilityIdentifier("storeAnswer")
+                    }
+                    if let message { Text(message).foregroundStyle(.red) }
+                }
+                Section {
+                    if model.storedVariables.isEmpty { Text("No saved variables. Save an answer above, then tap its name to use it.").foregroundStyle(.secondary) }
+                    ForEach(model.storedVariables.keys.sorted(), id: \.self) { key in
+                        Button {
+                            model.insertStoredVariable(key); dismiss()
+                        } label: {
+                            HStack {
+                                Text(key).bold()
+                                Spacer()
+                                Text(model.storedVariables[key] ?? "").font(.system(.body, design: .monospaced)).foregroundStyle(.secondary).lineLimit(2)
+                            }
+                        }.accessibilityIdentifier("useVariable_\(key)")
+                            .swipeActions {
+                                Button("Delete", role: .destructive) {
+                                    do { try model.removeVariable(key) } catch { message = error.localizedDescription }
+                                }
+                            }
+                    }
+                } header: { Text("Tap to insert · swipe to delete") }
+                if !model.storedVariables.isEmpty {
+                    Button("Clear all variables", role: .destructive) { confirmClear = true }
+                }
+            }.navigationTitle("Variables").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+                .confirmationDialog("Clear all saved variables?", isPresented: $confirmClear, titleVisibility: .visible) {
+                    Button("Clear all", role: .destructive) {
+                        do { try model.clearVariables() } catch { message = error.localizedDescription }
+                    }
+                }
+        }
+    }
 }

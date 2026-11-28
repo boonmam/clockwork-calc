@@ -278,6 +278,7 @@ private final class Evaluator {
     let degrees: Bool
     var operations = 0
     var variables: [String: Double] = [:]
+    var storedValues: [String: Quantity] = [:]
     init(degrees: Bool) { self.degrees = degrees }
     func tick() throws {
         operations += 1
@@ -288,6 +289,7 @@ private final class Evaluator {
         switch expression {
         case .number(let text): return Quantity(value: Scalar(Double(text)!, fraction: Rational.literal(text)))
         case .symbol(let name):
+            if let value = storedValues[name] { return value }
             if let value = variables[name] { return Quantity(value: Scalar(value)) }
             if let unit = UnitDefinition.all[name] { return unit.quantity }
             if name == "pi" || name == "π" { return Quantity(value: Scalar(.pi)) }
@@ -454,10 +456,20 @@ private final class Evaluator {
 }
 
 struct NativeMath {
-    func evaluate(_ input: String, exact: Bool, degrees: Bool) throws -> Calculation {
+    static func validStoredVariable(_ name: String) -> Bool {
+        name.range(of: "^[A-Za-z][A-Za-z0-9_]{0,23}$", options: .regularExpression) != nil &&
+        UnitDefinition.all[name] == nil &&
+        !["pi", "e", "i", "to", "Ans", "sin", "cos", "tan", "asin", "acos", "atan", "sqrt", "ln", "log", "exp", "abs", "floor", "ceil", "diff", "solve"].contains(name)
+    }
+    func evaluate(_ input: String, exact: Bool, degrees: Bool, storedVariables: [String: String] = [:]) throws -> Calculation {
         var parser = try Parser(input)
         let (expression, target) = try parser.parse()
         let evaluator = Evaluator(degrees: degrees)
+        for (name, value) in storedVariables where Self.validStoredVariable(name) {
+            var valueParser = try Parser(value)
+            let (valueExpression, _) = try valueParser.parse()
+            evaluator.storedValues[name] = try Evaluator(degrees: false).evaluate(valueExpression)
+        }
         var text: String, latex: String, approximate = false
         var warnings: [String] = []
         if case .call(let name, let args) = expression, ["diff", "solve"].contains(name) {

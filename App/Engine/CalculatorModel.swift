@@ -16,6 +16,7 @@ struct Calculation: Codable, Identifiable, Equatable {
     var notation: ResultNotation? = nil
     var angleDegrees: Bool? = nil
     var displayText: String? = nil
+    var storedVariables: [String: String]? = nil
     var presentedText: String { displayText ?? text }
 }
 
@@ -25,10 +26,11 @@ actor CalculatorEngine {
         let result = try await evaluate(expression, exact: notation == .exact, degrees: degrees, mode: mode)
         return EngineeringNotation.apply(result, notation: notation)
     }
-    func evaluate(_ expression: String, exact: Bool, degrees: Bool, mode: CalculationMode = .calculator) async throws -> Calculation {
+    func evaluate(_ expression: String, exact: Bool, degrees: Bool, mode: CalculationMode = .calculator, storedVariables: [String: String] = [:]) async throws -> Calculation {
         var result: Calculation
         if mode == .cas { result = try await CASRuntime.evaluate(expression, exact: exact) }
-        else { result = try math.evaluate(expression, exact: exact, degrees: degrees) }
+        else { result = try math.evaluate(expression, exact: exact, degrees: degrees, storedVariables: storedVariables) }
+        result.storedVariables = mode == .calculator ? storedVariables : nil
         result.mode = mode
         result.angleDegrees = mode == .calculator ? degrees : nil
         return result
@@ -37,6 +39,7 @@ actor CalculatorEngine {
 struct CalculationError: LocalizedError { let message: String; var errorDescription: String? { message } }
 
 @MainActor final class CalculatorModel: ObservableObject {
+    @Published var storedVariables: [String: String] = [:]
     @Published var expression = ""
     @Published var casSolve = false
     @Published var casVariables = "x"
@@ -53,6 +56,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     // Unformatted exact/decimal bases for the currently displayed calculation.
     private var resultBases: [Bool: Calculation] = [:]
     private let historyURL: URL
+    private var variablesURL: URL { historyURL.appendingPathExtension("variables.json") }
 
     init(historyURL: URL? = nil) {
         if UserDefaults.standard.object(forKey: "resultNotation") == nil,
@@ -64,6 +68,38 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
            let saved = try? JSONDecoder().decode([Calculation].self, from: data) {
             history = Array(saved.prefix(100))
         }
+        if let data = try? Data(contentsOf: variablesURL), let saved = try? JSONDecoder().decode([String: String].self, from: data) {
+            storedVariables = saved
+        }
+    }
+    func insertDigit(_ text: String) {
+        if mode == .calculator, let result, result.expression == expression,
+           selection.length == 0, selection.location == expression.utf16.count { clear() }
+        result = nil; resultBases = [:]
+        insert(text)
+    }
+    func storeAnswer(as name: String) throws {
+        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard NativeMath.validStoredVariable(name) else {
+            throw CalculationError(message: "Use a name such as x, y, or total. Unit names, functions, and built-in constants are reserved.")
+        }
+        guard let answer = result ?? history.first else { throw CalculationError(message: "Calculate an answer first.") }
+        _ = try NativeMath().evaluate(answer.text, exact: true, degrees: false)
+        var updated = storedVariables; updated[name] = answer.text
+        try saveVariables(updated)
+    }
+    func removeVariable(_ name: String) throws {
+        var updated = storedVariables; updated.removeValue(forKey: name); try saveVariables(updated)
+    }
+    func clearVariables() throws { try saveVariables([:]) }
+    private func saveVariables(_ values: [String: String]) throws {
+        try JSONEncoder().encode(values).write(to: variablesURL, options: .atomic)
+        storedVariables = values
+    }
+    func insertStoredVariable(_ name: String) {
+        if mode == .calculator, let result, result.expression == expression,
+           selection.length == 0, selection.location == expression.utf16.count { clear() }
+        insert(name)
     }
     func insertOperator(_ operation: String) {
         if let result, selection.length == 0, selection.location == expression.utf16.count,
@@ -123,10 +159,10 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
             catch { self.error = error.localizedDescription; return }
         }
         busy = true; error = nil; result = nil; resultBases = [:]
-        let notation = notation, degrees = degrees, mode = mode
+        let notation = notation, degrees = degrees, mode = mode, variables = storedVariables
         calculationTask = Task {
             do {
-                let base = try await engine.evaluate(input, exact: notation == .exact, degrees: degrees, mode: mode)
+                let base = try await engine.evaluate(input, exact: notation == .exact, degrees: degrees, mode: mode, storedVariables: variables)
                 resultBases = [notation == .exact: base]
                 let calculation = EngineeringNotation.apply(base, notation: notation)
                 result = calculation
@@ -153,12 +189,12 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         calculationTask = Task {
             defer { busy = false }
             do {
-                let evaluated = try await engine.evaluate(source.expression, exact: exact, degrees: calculationDegrees, mode: calculationMode)
+                let evaluated = try await engine.evaluate(source.expression, exact: exact, degrees: calculationDegrees, mode: calculationMode, storedVariables: source.storedVariables ?? [:])
                 guard !Task.isCancelled, result?.id == source.id, notation == value else { return }
                 let base = Calculation(id: source.id, date: source.date, expression: source.expression,
                                        text: evaluated.text, latex: evaluated.latex, inputLatex: evaluated.inputLatex,
                                        approximate: evaluated.approximate, warnings: evaluated.warnings,
-                                       mode: evaluated.mode, angleDegrees: evaluated.angleDegrees)
+                                       mode: evaluated.mode, angleDegrees: evaluated.angleDegrees, storedVariables: evaluated.storedVariables)
                 resultBases[exact] = base
                 present(base, as: value)
             } catch is CancellationError { self.error = "Format change cancelled." }

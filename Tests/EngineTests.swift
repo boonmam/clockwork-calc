@@ -187,3 +187,45 @@ extension EngineTests {
         }
     }
 }
+
+extension EngineTests {
+    @MainActor func testFreshNumpadEntryAndStoredVariables() async throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url); try? FileManager.default.removeItem(at: url.appendingPathExtension("variables.json")) }
+        let model = CalculatorModel(historyURL: url)
+        model.mode = .calculator; model.notation = .exact
+        model.expression = "1/3"; model.selection = NSRange(location: 3, length: 0); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        try model.storeAnswer(as: "x")
+        XCTAssertEqual(model.storedVariables["x"], "1/3")
+        XCTAssertThrowsError(try model.storeAnswer(as: "m"))
+        XCTAssertThrowsError(try model.storeAnswer(as: "sin"))
+        model.insertDigit("2")
+        XCTAssertEqual(model.expression, "2"); XCTAssertNil(model.result)
+        model.insertOperator("*"); model.insertStoredVariable("x"); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertNil(model.error); XCTAssertEqual(model.result?.text, "2/3")
+        try model.storeAnswer(as: "x")
+        model.setNotation(.decimal)
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertEqual(Double(model.result!.text)!, 2.0/3, accuracy: 1e-12)
+        let restored = CalculatorModel(historyURL: url)
+        XCTAssertEqual(restored.storedVariables["x"], "2/3")
+        try restored.removeVariable("x"); XCTAssertTrue(restored.storedVariables.isEmpty)
+        try model.clearVariables(); XCTAssertTrue(model.storedVariables.isEmpty)
+        model.clear(); model.expression = "2+3"; model.selection = NSRange(location: 3, length: 0); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        model.insertOperator("+"); model.insertDigit("4")
+        XCTAssertEqual(model.expression, "(5)+4")
+        model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        model.selection = NSRange(location: 1, length: 0); model.insertDigit("2")
+        XCTAssertEqual(model.expression, "(25)+4")
+    }
+    func testStoredVariablesPreserveUnitsAndFractions() throws {
+        let math = NativeMath()
+        XCTAssertEqual(try math.evaluate("3x", exact: true, degrees: false, storedVariables: ["x":"1/3"]).text, "1")
+        let units = try math.evaluate("2*x to cm", exact: true, degrees: false, storedVariables: ["x":"(3)*m"])
+        XCTAssertTrue(units.text.contains("600"), units.text)
+    }
+}
