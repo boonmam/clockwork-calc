@@ -201,7 +201,7 @@ extension EngineTests {
         XCTAssertThrowsError(try model.storeAnswer(as: "m"))
         XCTAssertThrowsError(try model.storeAnswer(as: "sin"))
         model.insertDigit("2")
-        XCTAssertEqual(model.expression, "2"); XCTAssertNil(model.result)
+        XCTAssertEqual(model.expression, "2"); XCTAssertEqual(model.result?.text, "1/3")
         model.insertOperator("*"); model.insertStoredVariable("x"); model.calculate()
         while model.busy { try await Task.sleep(for: .milliseconds(20)) }
         XCTAssertNil(model.error); XCTAssertEqual(model.result?.text, "2/3")

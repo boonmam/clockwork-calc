@@ -74,8 +74,9 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     }
     func insertDigit(_ text: String) {
         if mode == .calculator, let result, result.expression == expression,
-           selection.length == 0, selection.location == expression.utf16.count { clear() }
-        result = nil; resultBases = [:]
+           selection.length == 0, selection.location == expression.utf16.count {
+            expression = ""; selection = NSRange(location: 0, length: 0); error = nil
+        }
         insert(text)
     }
     func storeAnswer(as name: String) throws {
@@ -98,7 +99,9 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     }
     func insertStoredVariable(_ name: String) {
         if mode == .calculator, let result, result.expression == expression,
-           selection.length == 0, selection.location == expression.utf16.count { clear() }
+           selection.length == 0, selection.location == expression.utf16.count {
+            expression = ""; selection = NSRange(location: 0, length: 0); error = nil
+        }
         insert(name)
     }
     func insertOperator(_ operation: String) {

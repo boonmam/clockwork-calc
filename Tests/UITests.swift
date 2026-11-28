@@ -655,6 +655,9 @@ extension UITests {
         XCTAssertEqual(app.buttons["copyResult"].value as? String, "10")
         app.buttons["key_7"].tap()
         XCTAssertEqual(app.textViews["expressionEditor"].value as? String, "7")
-        XCTAssertFalse(app.buttons["copyResult"].exists)
+        XCTAssertEqual(app.buttons["copyResult"].value as? String, "10")
+        app.buttons["key_="].tap()
+        XCTAssertTrue(app.buttons["copyResult"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["copyResult"].value as? String, "7")
     }
 }
