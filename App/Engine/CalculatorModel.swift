@@ -51,6 +51,8 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
     @AppStorage("resultNotation") var notation: ResultNotation = .exact
     @AppStorage("angleDegrees") var degrees = false
     @AppStorage("calculationMode") var mode: CalculationMode = .calculator
+    private var editingExpression = false
+    func beginEditingExpression() { editingExpression = true }
     private var calculationTask: Task<Void, Never>?
     private let engine = CalculatorEngine()
     // Unformatted exact/decimal bases for the currently displayed calculation.
@@ -73,7 +75,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         }
     }
     func insertDigit(_ text: String) {
-        if mode == .calculator, let result, result.expression == expression,
+        if !editingExpression, mode == .calculator, let result, result.expression == expression,
            selection.length == 0, selection.location == expression.utf16.count {
             expression = ""; selection = NSRange(location: 0, length: 0); error = nil
         }
@@ -98,14 +100,14 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         storedVariables = values
     }
     func insertStoredVariable(_ name: String) {
-        if mode == .calculator, let result, result.expression == expression,
+        if !editingExpression, mode == .calculator, let result, result.expression == expression,
            selection.length == 0, selection.location == expression.utf16.count {
             expression = ""; selection = NSRange(location: 0, length: 0); error = nil
         }
         insert(name)
     }
     func insertOperator(_ operation: String) {
-        if let result, selection.length == 0, selection.location == expression.utf16.count,
+        if !editingExpression, let result, selection.length == 0, selection.location == expression.utf16.count,
            expression.trimmingCharacters(in: .whitespacesAndNewlines) == result.expression {
             expression = "(" + result.text + ")"
             selection = NSRange(location: (expression as NSString).length, length: 0)
@@ -117,6 +119,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         insert("(" + answer.text + ")")
     }
     func insert(_ text: String) {
+        editingExpression = true
         let source = expression as NSString
         let start = min(selection.location, source.length)
         let range = NSRange(location: start, length: min(selection.length, source.length - start))
@@ -137,6 +140,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         insert(followsValue ? "*10^" : "10^")
     }
     func backspace() {
+        editingExpression = true
         let source = expression as NSString
         let start = min(selection.location, source.length)
         guard start > 0 || selection.length > 0 else { return }
@@ -144,8 +148,9 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
         expression = source.replacingCharacters(in: range, with: "")
         selection = NSRange(location: range.location, length: 0)
     }
-    func clear() { resultBases = [:]; result = nil; expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
+    func clear() { editingExpression = false; resultBases = [:]; result = nil; expression = ""; selection = NSRange(location: 0, length: 0); error = nil }
     func recall(_ item: Calculation) {
+        editingExpression = true
         resultBases = [:]
         casSolve = false
         expression = item.expression; selection = NSRange(location: (expression as NSString).length, length: 0)
@@ -161,6 +166,7 @@ struct CalculationError: LocalizedError { let message: String; var errorDescript
             do { input = try CASSolveInput.command(equations: input, variables: casVariables) }
             catch { self.error = error.localizedDescription; return }
         }
+        editingExpression = false
         busy = true; error = nil; result = nil; resultBases = [:]
         let notation = notation, degrees = degrees, mode = mode, variables = storedVariables
         calculationTask = Task {

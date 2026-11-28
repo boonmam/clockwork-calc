@@ -661,3 +661,24 @@ extension UITests {
         XCTAssertEqual(app.buttons["copyResult"].value as? String, "7")
     }
 }
+
+
+extension UITests {
+    func testEditingCalculatedExpressionKeepsOriginal() {
+        let app = XCUIApplication(); app.launch()
+        app.buttons["calculationMode"].tap(); app.buttons["Calculator"].tap()
+        app.buttons["key_AC"].tap()
+        app.buttons["key_4"].tap(); app.buttons["key_+"].tap(); app.buttons["key_5"].tap(); app.buttons["key_="].tap()
+        XCTAssertTrue(app.buttons["copyResult"].waitForExistence(timeout: 5))
+        let editor = app.textViews["expressionEditor"]
+        editor.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.35)).tap()
+        app.buttons["key_^"].tap(); app.buttons["key_0"].tap(); app.buttons["key_."].tap(); app.buttons["key_5"].tap()
+        XCTAssertEqual(editor.value as? String, "4+5^0.5")
+        XCTAssertEqual(app.buttons["copyResult"].value as? String, "9")
+        // Tap again while the editor is already focused, after another calculation.
+        app.buttons["key_="].tap()
+        XCTAssertTrue(app.buttons["copyResult"].waitForExistence(timeout: 5))
+        editor.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.35)).tap(); app.buttons["key_+"].tap(); app.buttons["key_2"].tap()
+        XCTAssertEqual(editor.value as? String, "4+5^0.5+2")
+    }
+}

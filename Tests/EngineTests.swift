@@ -229,3 +229,27 @@ extension EngineTests {
         XCTAssertTrue(units.text.contains("600"), units.text)
     }
 }
+
+extension EngineTests {
+    @MainActor func testExplicitEditingNeverSubstitutesAnswer() async throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let model = CalculatorModel(historyURL: url)
+        model.mode = .calculator; model.notation = .exact
+        for operation in ["^", "+", "-", "*", "/"] {
+            model.clear(); model.expression = "4+5"; model.selection = NSRange(location: 3, length: 0)
+            model.calculate()
+            while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+            model.beginEditingExpression(); model.insertOperator(operation)
+            model.insertDigit("0"); model.insertDigit("."); model.insertDigit("5")
+            XCTAssertEqual(model.expression, "4+5" + operation + "0.5")
+            XCTAssertEqual(model.result?.text, "9")
+        }
+        model.clear(); model.expression = "4+5"; model.selection = NSRange(location: 3, length: 0); model.calculate()
+        while model.busy { try await Task.sleep(for: .milliseconds(20)) }
+        model.beginEditingExpression(); model.insertDigit("2")
+        XCTAssertEqual(model.expression, "4+52")
+        model.backspace(); model.insertOperator("+")
+        XCTAssertEqual(model.expression, "4+5+")
+    }
+}

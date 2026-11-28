@@ -12,6 +12,10 @@ struct ExpressionEditor: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
         view.delegate = context.coordinator
+        let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.expressionTapped))
+        tap.cancelsTouchesInView = false
+        tap.delegate = context.coordinator
+        view.addGestureRecognizer(tap)
         view.inputView = context.coordinator.keypadInputView
         view.font = .monospacedSystemFont(ofSize: 21, weight: .regular)
         view.backgroundColor = .clear; view.textColor = .label
@@ -29,7 +33,7 @@ struct ExpressionEditor: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
-    final class Coordinator: NSObject, UITextViewDelegate {
+    final class Coordinator: NSObject, UITextViewDelegate, UIGestureRecognizerDelegate {
         var parent: ExpressionEditor
         let keypadInputView = UIView(frame: .zero)
         var systemKeyboard = false
@@ -52,6 +56,8 @@ struct ExpressionEditor: UIViewRepresentable {
             let safe = NSRange(location: start, length: min(selection.length, length - start))
             if view.selectedRange != safe { view.selectedRange = safe }
         }
+        @objc func expressionTapped() { parent.onFocus?() }
+        func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool { true }
         func textViewDidBeginEditing(_ view: UITextView) { if !synchronizing { parent.onFocus?(); parent.keyboardVisible = systemKeyboard } }
         func textViewDidEndEditing(_ view: UITextView) { if !synchronizing { parent.keyboardVisible = false } }
         func textViewDidChange(_ view: UITextView) {

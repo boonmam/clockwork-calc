@@ -122,7 +122,7 @@ struct CalculatorView: View {
     }
     private var expressionInput: some View {
             HStack(alignment: .center, spacing: 8) {
-                ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate)
+                ExpressionEditor(text: $model.expression, selection: $model.selection, keyboardVisible: $keyboardVisible, calculate: model.calculate, onFocus: model.beginEditingExpression)
                     .frame(height: keyboardVisible ? 90 : 64)
                 if !keyboardVisible {
                     Button { keyboardVisible = true } label: {
