@@ -30,11 +30,6 @@ struct CalculatorView: View {
         }
         .sheet(isPresented: $historyPresented) { NavigationStack { HistoryView().navigationTitle("History").toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { historyPresented = false } } } } }
         .sheet(isPresented: $aboutPresented) { AboutView() }
-        .sheet(isPresented: $variablesPresented) {
-            StoredVariablesView()
-                .presentationDetents([.height(380), .large])
-                .presentationDragIndicator(.visible)
-        }
         .alert("Calculation notes", isPresented: $notesPresented) { Button("Done", role: .cancel) {} } message: {
             Text(model.result?.warnings.joined(separator: "\n\n") ?? "")
         }
@@ -177,7 +172,7 @@ struct CalculatorView: View {
                 VStack(spacing: 12) {
                     calculationSettings
                     if model.mode == .calculator {
-                        Button { variablesPresented = true } label: {
+                        Button { variablesPresented.toggle() } label: {
                             Label("Variables · \(model.storedVariables.count)", systemImage: "tray.full")
                         }.accessibilityIdentifier("storedVariables")
                     }
@@ -188,6 +183,9 @@ struct CalculatorView: View {
                         }
                         .scrollBounceBehavior(.basedOnSize)
                         .accessibilityIdentifier("resultScroll")
+                    }
+                    if model.mode == .calculator && variablesPresented {
+                        StoredVariablesView { variablesPresented = false }
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -399,58 +397,58 @@ private struct ToolbarEdgeReader: View {
 
 private struct StoredVariablesView: View {
     @EnvironmentObject private var model: CalculatorModel
-    @Environment(\.dismiss) private var dismiss
+    var close: () -> Void
     @State private var name = "x"
     @State private var message: String?
     @State private var confirmClear = false
+    @FocusState private var editingName: Bool
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Save answer as variable") {
-                    if let answer = model.result ?? model.history.first {
-                        Text(answer.presentedText).font(.system(.body, design: .monospaced)).textSelection(.enabled)
-                    }
-                    HStack {
-                        TextField("Name", text: $name).textInputAutocapitalization(.never).autocorrectionDisabled()
-                            .accessibilityIdentifier("storedVariableName")
-                        Button(model.storedVariables[name] == nil ? "Save" : "Replace") {
-                            do { try model.storeAnswer(as: name); message = nil }
-                            catch { message = error.localizedDescription }
-                        }.buttonStyle(.borderedProminent).tint(Color.calculatorAccent)
-                            .foregroundStyle(Color.calculatorAccentText).fontWeight(.semibold)
-                            .disabled(model.result == nil && model.history.isEmpty).accessibilityIdentifier("storeAnswer")
-                    }
-                    if let message { Text(message).foregroundStyle(.red) }
-                }
-                Section {
-                    if model.storedVariables.isEmpty { Text("No saved variables. Save an answer above, then tap its name to use it.").foregroundStyle(.secondary) }
-                    ForEach(model.storedVariables.keys.sorted(), id: \.self) { key in
-                        Button {
-                            model.insertStoredVariable(key); dismiss()
-                        } label: {
-                            HStack {
-                                Text(key).bold()
-                                Spacer()
-                                Text(model.storedVariables[key] ?? "").font(.system(.body, design: .monospaced)).foregroundStyle(.secondary).lineLimit(2)
-                            }
-                        }.accessibilityIdentifier("useVariable_\(key)")
-                            .swipeActions {
-                                Button("Delete", role: .destructive) {
-                                    do { try model.removeVariable(key) } catch { message = error.localizedDescription }
-                                }
-                            }
-                    }
-                } header: { Text("Tap to insert · swipe to delete") }
-                if !model.storedVariables.isEmpty {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                TextField("Variable name", text: $name)
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                    .textFieldStyle(.roundedBorder).focused($editingName)
+                    .accessibilityIdentifier("storedVariableName")
+                Button(model.storedVariables[name] == nil ? "Save Ans" : "Replace") {
+                    do { try model.storeAnswer(as: name); message = nil; editingName = false }
+                    catch { message = error.localizedDescription }
+                }.buttonStyle(.borderedProminent).tint(Color.calculatorAccent)
+                    .foregroundStyle(Color.calculatorAccentText).fontWeight(.semibold)
+                    .disabled(model.result == nil && model.history.isEmpty).accessibilityIdentifier("storeAnswer")
+                Menu {
                     Button("Clear all variables", role: .destructive) { confirmClear = true }
-                }
-            }.navigationTitle("Variables").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
-                .confirmationDialog("Clear all saved variables?", isPresented: $confirmClear, titleVisibility: .visible) {
-                    Button("Clear all", role: .destructive) {
-                        do { try model.clearVariables() } catch { message = error.localizedDescription }
+                        .disabled(model.storedVariables.isEmpty)
+                } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("Variable options")
+                Button { editingName = false; close() } label: { Image(systemName: "xmark.circle.fill") }
+                    .accessibilityLabel("Hide variables")
+            }
+            if let message { Text(message).font(.caption).foregroundStyle(.red).lineLimit(2) }
+            if model.storedVariables.isEmpty {
+                Text("Save an answer above. Tap a saved variable to insert it.").font(.caption).foregroundStyle(.secondary)
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(model.storedVariables.keys.sorted(), id: \.self) { key in
+                            Button {
+                                editingName = false; model.insertStoredVariable(key)
+                            } label: {
+                                Text("\(key) = \(model.storedVariables[key] ?? "")")
+                                    .font(.system(.callout, design: .monospaced)).lineLimit(1)
+                            }.buttonStyle(.bordered).accessibilityIdentifier("useVariable_\(key)")
+                                .contextMenu {
+                                    Button("Delete \(key)", role: .destructive) {
+                                        do { try model.removeVariable(key) } catch { message = error.localizedDescription }
+                                    }
+                                }
+                        }
                     }
+                }.scrollIndicators(.hidden)
+            }
+        }.padding(10).background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+            .confirmationDialog("Clear all saved variables?", isPresented: $confirmClear, titleVisibility: .visible) {
+                Button("Clear all", role: .destructive) {
+                    do { try model.clearVariables() } catch { message = error.localizedDescription }
                 }
-        }
+            }
     }
 }
